@@ -4,7 +4,7 @@ import { useProduct } from '../../context/ProductContext';
 import { ProductService } from '../../services/productService';
 import { AlertDialog } from './content/dialog/AlertDialog';
 
-import { mapProductDataToServiceFormat } from '../../utils/ProductDataMapper';
+import { mapProductDataToServiceFormat } from '../../utils/productDataMapper';
 
 import { SaveButton } from '../buttons/SaveButton';
 
