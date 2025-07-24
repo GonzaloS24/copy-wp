@@ -154,7 +154,6 @@ export const ProductInfo = () => {
           )}
         </div>
 
-        {/* Descripción del producto */}
         <div className="mb-6 flex flex-col">
           <label className={`text-base font-semibold mb-2 ${
             !isFieldValid('description') ? 'text-red-500' : 'text-slate-700'

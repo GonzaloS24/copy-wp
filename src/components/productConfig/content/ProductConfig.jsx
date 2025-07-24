@@ -27,7 +27,6 @@ export const ProductConfig = () => {
       <div className="bg-white rounded-2xl p-10 shadow-lg border border-slate-200 w-full relative z-10">
         <h1 className="text-2xl font-bold text-gray-900 mb-8">Conexión con Dropi</h1>
         
-        {/* Radio Group */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-4">
             ¿Deseas conectar el asistente a dropi?
@@ -64,7 +63,6 @@ export const ProductConfig = () => {
           </div>
         </div>
 
-        {/* Integration ID */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-2">
             <label className="block text-sm font-medium text-gray-700">
@@ -104,7 +102,6 @@ export const ProductConfig = () => {
           />
         </div>
 
-        {/* Integration Token */}
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-2">
             <label className="block text-sm font-medium text-gray-700">
@@ -144,7 +141,6 @@ export const ProductConfig = () => {
           />
         </div>
 
-        {/* Country Select */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             País

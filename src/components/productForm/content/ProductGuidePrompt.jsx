@@ -52,7 +52,6 @@ export const ProductGuidePrompt = ({ guideData, onGuideDataChange }) => {
     };
     setFormData(newData);
     
-    // Llamar a onGuideDataChange para actualizar el contexto padre
     if (onGuideDataChange) {
       onGuideDataChange(newData);
     }
@@ -85,12 +84,10 @@ export const ProductGuidePrompt = ({ guideData, onGuideDataChange }) => {
     
     setFormData(newData);
     
-    // Asegurar que se actualice el contexto padre
     if (onGuideDataChange) {
       onGuideDataChange(newData);
     }
     
-    // Marcar el campo como tocado
     updateValidationState('freePrompt', {
       touchedFields: {
         ...validationState.freePrompt.touchedFields,
@@ -171,7 +168,6 @@ export const ProductGuidePrompt = ({ guideData, onGuideDataChange }) => {
             key={stageIndex}
             className="border-2 border-slate-200 rounded-3xl overflow-hidden bg-white shadow-lg hover:shadow-xl transition-all duration-300"
           >
-            {/* Stage Header */}
             <div className={`bg-gradient-to-r ${stage.headerClass} p-8 border-b border-slate-200 text-center`}>
               <h2 className="text-2xl font-bold text-slate-700 mb-2 flex items-center justify-center gap-3">
                 {stage.title}
@@ -181,7 +177,6 @@ export const ProductGuidePrompt = ({ guideData, onGuideDataChange }) => {
               </p>
             </div>
 
-            {/* Sections */}
             <div>
               {stage.sections.map((section, sectionIndex) => (
                 <div

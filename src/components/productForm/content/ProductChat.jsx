@@ -95,7 +95,6 @@ export const ProductChat = () => {
         </div>
       </div>
       
-      {/* Área de mensajes */}
       <div className="flex-1 bg-white shadow-lg overflow-hidden flex flex-col min-h-0">
         <div className="flex-1 overflow-y-auto p-6 space-y-4 scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent">
           {messages.map((message) => (
@@ -122,7 +121,6 @@ export const ProductChat = () => {
             </div>
           ))}
           
-          {/* Indicador de escritura */}
           {isTyping && (
             <div className="flex justify-start">
               <div className="max-w-xs">

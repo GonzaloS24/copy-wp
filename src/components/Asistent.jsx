@@ -38,24 +38,19 @@ export const Asistent = () => {
     setInstallError(null);
     
     try {
-      // Obtener workspaceId usando workspaceService
       const workspaceId = await fetchTeamInfo();
       if (!workspaceId) throw new Error('No se pudo obtener el workspaceId');
       
-      // Obtener flow_ns usando workspaceService
       const flow_ns = await fetchFlowSummary();
       if (!flow_ns) throw new Error('No se pudo obtener el flow_ns');
       
-      // Preparar payload para la instalación
       const payload = {
         flow_ns,
         template_ns: asistente.template_ns
       };
       
-      // Llamar al servicio de instalación
       const installedTemplate = await installTemplate(workspaceId, payload);
       
-      // Actualizar el estado de los asistentes
       const updatedAsistentes = asistentes.map(a => 
         a.template_ns === installedTemplate.template_ns 
           ? { 
@@ -281,7 +276,6 @@ export const Asistent = () => {
     );
   }
 
-  // Agregar manejo de errores de instalación
   if (installError) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -316,7 +310,7 @@ export const Asistent = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-8 w-full max-w-7xl mx-auto">
           {asistentes.map((asistente) => (
              <div key={asistente.id} className={getCardClasses(asistente.status)}>
-              {/* Header */}
+
               <div className={getHeaderClasses(asistente.status)}>
                 <div className={`absolute top-3 left-3 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5 z-10 ${getStatusClasses(asistente.status)}`}>
                   <span className={`w-1.5 h-1.5 rounded-full ${getStatusDotClasses(asistente.status)}`}></span>
@@ -330,7 +324,6 @@ export const Asistent = () => {
                 </div>
               </div>
 
-              {/* Body */}
               <div className={getBodyClasses(asistente.status)}>
                 <h3 className={getTitleClasses(asistente.status)}>
                   {asistente.title}

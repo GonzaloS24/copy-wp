@@ -30,7 +30,7 @@ export const ProductProvider = ({ children }) => {
     freePrompt: {
       promptType: 'libre', 
       promptText: '', // Para prompt libre
-      promptContent: { text: '', metadata: {} }, // Compatibilidad hacia atrás
+      promptContent: { text: '', metadata: {} }, 
       showTooltip: { libre: false, guiado: false },
       guidePromptData: {
         contextualizacion: '',

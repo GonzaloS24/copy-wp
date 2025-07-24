@@ -141,7 +141,7 @@ export const ProductButtons = () => {
       const mappedData = mapProductDataToServiceFormat(productData, isInactive);
       const productNameToSave = productData.info?.formData?.name || '';
       
-      // Verificar si estamos en modo edición
+
       if (isEditMode()) {
         console.log('Modo edición detectado - usando setBotFieldsByName');
         console.log('Actualizando producto:', productName);
@@ -193,8 +193,8 @@ export const ProductButtons = () => {
 
   const handleConfirmSecondAttempt = () => {
     setShowValidationDialog(false);
-    saveAssistant(true); // Forzar guardado como inactivo
-  };
+    saveAssistant(true); 
+    };
 
   const renderMissingFieldsContent = () => {
     const actionText = isEditMode() ? 'actualizar' : 'guardar';
@@ -243,7 +243,6 @@ export const ProductButtons = () => {
         className="fixed bottom-8 left-80"
       />
 
-      {/* Dialog de validación */}
       <AlertDialog
         title={isSecondAttempt ? 
           `Confirmar ${isEditMode() ? 'actualización' : 'guardado'} con campos faltantes` : 
@@ -261,7 +260,6 @@ export const ProductButtons = () => {
         cancelText="Cancelar"
       />
 
-      {/* Dialog para cuando falta el nombre del producto */}
       <AlertDialog
         title="Campo obligatorio faltante"
         content={

@@ -5,7 +5,6 @@ import { useProduct } from '../../../context/ProductContext';
 export const ProductRemarketing = () => {
   const { productData, updateProductData } = useProduct();
   
-  // Inicializar datos si no existen
   const remarketingData = productData.remarketing || {
     remarketing1: {
       time: 0,
@@ -24,7 +23,6 @@ export const ProductRemarketing = () => {
     ]
   };
 
-  // Handlers para remarketing 1
   const handleRemarketing1TimeChange = (value) => {
     updateProductData('remarketing', {
       remarketing1: {
@@ -52,7 +50,6 @@ export const ProductRemarketing = () => {
     });
   };
 
-  // Handlers para remarketing 2
   const handleRemarketing2TimeChange = (value) => {
     updateProductData('remarketing', {
       remarketing2: {
@@ -80,15 +77,12 @@ export const ProductRemarketing = () => {
     });
   };
 
-  // Handlers para plantillas
   const crearPlantilla = () => {
     console.log('Creando nueva plantilla...');
-    // Lógica para crear plantilla (podría actualizar el estado después)
   };
 
   const recargarPlantillas = () => {
     console.log('Recargando plantillas...');
-    // Lógica para recargar plantillas (podría actualizar el estado después)
   };
 
   return (

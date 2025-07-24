@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useLocation, Navigate, Outlet } from 'react-router-dom';
 import { getAuthToken, setAuthToken, removeAuthToken } from '../utils/authCookies';
 import { validateToken } from '../utils/validateToken';
-import { TokenAuthModal } from '../components/TokenAuthModal'; // Importa el componente
+import { TokenAuthModal } from '../components/TokenAuthModal';
 
 export const PrivateRoute = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);

@@ -46,21 +46,18 @@ const ProductContentFormInner = () => {
           return;
         }
 
-        // Parsear solo una vez
+      
         const apiData = typeof response.data[0].value === 'string' 
           ? JSON.parse(response.data[0].value) 
           : response.data[0].value;
 
         console.log('Datos de la API parseados:', apiData);
 
-        // Extraer datos del prompt según la nueva estructura
         const promptData = apiData.prompt || {};
         console.log('Datos del prompt: ', promptData)        
 
         const tipoPrompt = promptData.tipo_de_prompt || 'libre';
         
-        // Determinar el texto del prompt según el tipo
-// Determinar el texto del prompt según el tipo
         let promptText = '';
         let guidePromptData = {};
         let contextualizacionText = '';
@@ -77,30 +74,25 @@ const ProductContentFormInner = () => {
           };
           contextualizacionText = promptData.prompt_guiado_contextualizacion || '';
           
-          // Elimina esta línea que combina los campos guiados en promptText
-          // promptText = Object.values(guidePromptData).filter(Boolean).join('\n\n');
+        
         }
 
         console.log('Tipo de prompt:', tipoPrompt);
         console.log('Texto del prompt (solo para tipo libre):', tipoPrompt === 'libre' ? promptText : 'undefined');
         console.log('Datos del prompt guiado:', tipoPrompt === 'guiado' ? guidePromptData : 'undefined');
 
-        // CORRECCIÓN: Acceder correctamente a los activadores del flujo
         const activadoresData = apiData.activadores_del_flujo || {};
         console.log('Datos de activadores del flujo:', activadoresData);
 
-        // Procesar palabras clave - CORREGIDO
         const keywordsFromApi = activadoresData.palabras_clave 
           ? activadoresData.palabras_clave.split(',').map(k => k.trim()).filter(k => k)
           : [];
         
         console.log('Palabras clave extraídas de la API:', keywordsFromApi);
-        
-        // Mantener la estructura de 7 elementos
+      
         const defaultKeywords = ['', '', '', '', '', '', ''];
         const mergedKeywords = [...keywordsFromApi, ...defaultKeywords].slice(0, 7);
 
-        // Procesar IDs de anuncio - CORREGIDO
         const adIdsFromApi = activadoresData.ids_de_anuncio
           ? activadoresData.ids_de_anuncio.split(',').map(id => id.trim()).filter(id => id)
           : [];
@@ -113,7 +105,7 @@ const ProductContentFormInner = () => {
         console.log('Keywords finales:', mergedKeywords);
         console.log('Ad IDs finales:', mergedAdIds);
 
-        // Mapeo de datos de la API al estado del contexto
+      
         const mappedData = {
           info: {
             formData: {
@@ -139,10 +131,10 @@ const ProductContentFormInner = () => {
             ]
           },
           freePrompt: {
-            promptText: tipoPrompt === 'libre' ? promptText : undefined, // Solo para tipo libre
+            promptText: tipoPrompt === 'libre' ? promptText : undefined, 
             promptType: tipoPrompt,
             showTooltip: { libre: false, guiado: false },
-            guidePromptData: tipoPrompt === 'guiado' ? guidePromptData : undefined // Solo para tipo guiado
+            guidePromptData: tipoPrompt === 'guiado' ? guidePromptData : undefined 
           },
           voice: {
             voiceId: apiData.voz_con_ia?.id_de_la_voz || '',
@@ -190,7 +182,6 @@ const ProductContentFormInner = () => {
         console.log('Datos mapeados para contexto:', mappedData);
         console.log('Activators data específica:', mappedData.activators);
 
-        // Actualizar TODO el contexto de una sola vez
         updateProductData('', mappedData);
         setHasLoaded(true);
       } catch (error) {

@@ -15,7 +15,6 @@ export const ProductActivators = () => {
   const [editingAdId, setEditingAdId] = useState(null);
   const [tempAdIdValue, setTempAdIdValue] = useState('');
 
-  // Sincronizar con el contexto
   useEffect(() => {
     if (productData.activators) {
       setActivatorsData({
@@ -23,7 +22,6 @@ export const ProductActivators = () => {
         adIds: [...productData.activators.adIds]
       });
       
-      // Establecer la primera palabra clave no vacía para el diálogo
       const firstKeyword = productData.activators.keywords.find(k => k.trim()) || '';
       setSelectedKeyword(firstKeyword);
     }
@@ -46,7 +44,6 @@ export const ProductActivators = () => {
     setEditingKeyword(null);
     setTempKeywordValue('');
     
-    // Actualizar el contexto después de un pequeño retraso
     setTimeout(() => {
       updateProductData('activators', {
         keywords: newKeywords
@@ -86,7 +83,6 @@ export const ProductActivators = () => {
     setEditingAdId(null);
     setTempAdIdValue('');
     
-    // Actualizar el contexto después de un pequeño retraso
     setTimeout(() => {
       updateProductData('activators', {
         adIds: newAdIds
@@ -120,7 +116,7 @@ export const ProductActivators = () => {
   return (
     <div className="bg-white rounded-lg shadow-sm p-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Columna Palabras clave - Mejorada */}
+
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-6 shadow-sm">
           <h3 className="text-xl font-bold text-blue-600 text-center mb-6">
             Palabras clave
@@ -178,7 +174,6 @@ export const ProductActivators = () => {
           </div>
         </div>
 
-        {/* Columna IDs de anuncio - Mejorada */}
         <div className="bg-gradient-to-br from-slate-50 to-slate-100 border border-slate-200 rounded-xl p-6 shadow-sm">
           <h3 className="text-xl font-bold text-slate-600 text-center mb-6">
             IDs de anuncio
@@ -236,7 +231,6 @@ export const ProductActivators = () => {
         </div>
       </div>
 
-      {/* Botón generar enlace */}
       <div className="flex justify-end mt-8 pt-6">
         <button
           onClick={openLinkGeneratorModal}
@@ -250,7 +244,6 @@ export const ProductActivators = () => {
         </button>
       </div>
 
-      {/* Diálogo Modal */}
       {isLinkDialogOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="relative">

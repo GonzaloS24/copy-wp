@@ -85,11 +85,10 @@ export const ProductList = () => {
   };
 
   const handleConfigureProduct = (productName) => {
-    // Limpiar y formatear el nombre del producto para la URL
     const formattedName = productName
       .toLowerCase()
-      .replace(/\s+/g, '-') // Reemplazar espacios con guiones
-      .replace(/[^a-z0-9-]/g, ''); // Eliminar caracteres especiales
+      .replace(/\s+/g, '-') 
+      .replace(/[^a-z0-9-]/g, ''); 
     
     navigate(`/${formattedName}`);
   };

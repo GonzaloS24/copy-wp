@@ -61,19 +61,50 @@ export class ProductService {
     }
   }
 
-static async createProduct(productName, fieldData) {
+
+  static extractProductId(productName) {
+    if (!productName) return 0;
+    
+    const match = productName.match(/\[Producto Ventas Wp\]\s*(\d+)/);
+    return match ? parseInt(match[1], 10) : 0;
+  }
+
+  static async getNextProductId() {
+    try {
+      const existingProducts = await this.getWpSalesProducts();
+      
+      if (!existingProducts || existingProducts.length === 0) {
+        return 1; 
+      }
+
+
+      const existingIds = existingProducts
+        .map(product => this.extractProductId(product.name))
+        .filter(id => id > 0) 
+        .sort((a, b) => b - a); 
+
+    
+      return existingIds.length > 0 ? existingIds[0] + 1 : 1;
+    } catch (error) {
+      console.error('Error al obtener el siguiente ID:', error);
+   
+      return Date.now() % 10000; 
+    }
+  }
+
+  static async createProduct(productName, fieldData) {
     try {
       const token = getAuthToken();
       if (!token) throw new Error('No se encontró token de autenticación');
 
-      // Generar un número aleatorio de 4 dígitos (entre 1000 y 9999)
-      const randomId = Math.floor(1000 + Math.random() * 9000);
+      
+      const nextId = await this.getNextProductId();
 
-      // Procesar los datos usando el método existente
+  
       const processedData = this.processFieldData(productName, fieldData);
 
       const requestBody = {
-        name: `[Producto Ventas Wp] ${randomId}`,  // Usamos el ID aleatorio en lugar del nombre
+        name: `[Producto Ventas Wp] ${nextId}`,
         var_ns: "",
         var_type: "array",
         description: "",
@@ -82,6 +113,7 @@ static async createProduct(productName, fieldData) {
       };
 
       console.log('Enviando datos al servidor:', requestBody);
+      console.log('ID generado mediante autoincremento:', nextId);
 
       const response = await fetch('https://chateapro.app/api/flow/create-bot-field', {
         method: 'POST',
@@ -106,7 +138,7 @@ static async createProduct(productName, fieldData) {
 
       return {
         ...data,
-        generatedId: randomId  // Devolvemos también el ID generado por si acaso
+        generatedId: nextId  
       };
     } catch (error) {
       console.error('Error en ProductService.createProduct:', error);
@@ -158,7 +190,6 @@ static async createProduct(productName, fieldData) {
       const token = getAuthToken();
       if (!token) throw new Error('No se encontró token de autenticación');
 
-      // Procesar los datos usando el método existente
       const processedData = this.processFieldData(productName, fieldData);
 
       const requestBody = {
@@ -199,27 +230,24 @@ static async createProduct(productName, fieldData) {
   }
 
   static processFieldData(productName, fieldData) {
-    // Hacer una copia profunda de los datos
+  
     const processedData = JSON.parse(JSON.stringify(fieldData));
 
-    // Asegurar que el nombre del producto esté establecido
+   
     if (processedData.informacion_de_producto) {
       processedData.informacion_de_producto.nombre_del_producto = productName;
     }
 
-    // Procesar tipo de producto (convertir simple/variable a no/si)
     if (processedData.informacion_de_producto?.tipo_de_producto) {
       processedData.informacion_de_producto.tipo_de_producto = 
         processedData.informacion_de_producto.tipo_de_producto === "simple" ? "no" : "si";
     }
 
-    // Procesar speaker_boost (convertir si/no a true/false)
     if (processedData.voz_con_ia?.speaker_boost) {
       processedData.voz_con_ia.speaker_boost = 
         processedData.voz_con_ia.speaker_boost === "si" ? "true" : "false";
     }
 
-    // Procesar palabras clave (convertir array a string)
     if (processedData.activadores_del_flujo?.palabras_clave) {
       if (Array.isArray(processedData.activadores_del_flujo.palabras_clave)) {
         processedData.activadores_del_flujo.palabras_clave = 
@@ -227,7 +255,6 @@ static async createProduct(productName, fieldData) {
       }
     }
 
-    // Procesar IDs de anuncio (convertir array a string)
     if (processedData.activadores_del_flujo?.ids_de_anuncio) {
       if (Array.isArray(processedData.activadores_del_flujo.ids_de_anuncio)) {
         processedData.activadores_del_flujo.ids_de_anuncio = 
@@ -235,7 +262,7 @@ static async createProduct(productName, fieldData) {
       }
     }
 
-    // Template con la estructura esperada por la API
+  
     const template = {
       informacion_de_producto: {
         id: "",
@@ -290,17 +317,16 @@ static async createProduct(productName, fieldData) {
        }
     };
 
-    // Combinar con el template para asegurar que todos los campos están presentes
     return this.mergeWithTemplate(processedData, template);
   }
 
   static mergeWithTemplate(data, template) {
     const result = { ...template };
     
-    // Recorrer cada sección del template
+    
     for (const section in template) {
       if (data[section]) {
-        // Combinar los datos de la sección con los valores por defecto
+       
         result[section] = { ...template[section], ...data[section] };
       }
     }

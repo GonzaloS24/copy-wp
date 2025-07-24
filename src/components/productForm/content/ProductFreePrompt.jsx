@@ -147,7 +147,7 @@ export const ProductFreePrompt = ({ productName }) => {
         
         <div className="mb-12 p-8 bg-slate-50 rounded-2xl border border-slate-200">
           <div className="flex items-center justify-center gap-8 max-w-2xl mx-auto">
-            {/* Opción Prompt Libre */}
+
             <div className="flex items-center gap-2 relative">
               <span className="text-2xl">✏️</span>
               <span className={`text-lg font-semibold transition-colors duration-300 ${

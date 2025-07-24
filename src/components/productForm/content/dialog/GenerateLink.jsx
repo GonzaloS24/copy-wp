@@ -17,7 +17,6 @@ export const GenerateLink = ({ initialMessage = 'quiero más información', onCl
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(generatedLink);
-    // Opcional: mostrar feedback visual de copiado
   };
 
   const closeModal = () => {
