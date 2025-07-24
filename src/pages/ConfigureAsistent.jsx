@@ -54,6 +54,18 @@ export const ConfigureAsistent = () => {
           ],
           buttonText: 'Guardar Configuración WhatsApp'
         };
+      case 'mjvisba1ugmhdttuqnbpvjtocbllluea':
+        return {
+          title: `Configuración del Asistente de carritos abandonados`,
+          videoDescription: 'Aprende a recuperar ventas automaticamente.',
+          benefits: [
+            'Recupera hasta un 20% de carritos abandonados',
+            'Instalación rapida en segundos',
+            'Mensajes automáticos y personalizados',
+            'Aumenta tus ventas sin esfuerzo adicional'
+          ],
+          buttonText: 'Guardar Configuración de carritos'
+        };
       default:
         return {
           title: `Configuración del Asistente`,
