@@ -4,6 +4,7 @@ import { HomePage } from './pages/HomePage';
 import { ConfigureAsistent } from './pages/ConfigureAsistent';
 import { ProductConfigPage } from './pages/ProductConfigPage';
 import { ProductContentForm } from './pages/ProductContentForm';
+import CarritosPage from './pages/CarritosPage';
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
           <Route path="/productos-config" element={<ProductConfigPage />} />
           <Route path="/agregando" element={<ProductContentForm />} />
           <Route path="/:productName" element={<ProductContentForm />} />
+          <Route path="/asistente-carritos" element={<CarritosPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

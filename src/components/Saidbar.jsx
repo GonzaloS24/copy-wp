@@ -6,7 +6,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
       icon: FiUsers,
       title: "Asistentes",
       description: "Activa asistentes que venden, responden y automatizan por ti",
-      href: "#"
+      href: "/"
     },
     {
       icon: FiZap,

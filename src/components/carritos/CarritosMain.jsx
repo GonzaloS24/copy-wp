@@ -1,0 +1,67 @@
+import React, { useState } from "react";
+import CarritosInstaller from "./content/CarritosInstaller";
+import CarritosSidebar from "./CarritosSidebar";
+import IdentitySection from "./content/sections/IdentitySection";
+import StoreDataSection from "./content/sections/StoreDataSection";
+import LogisticsSection from "./content/sections/LogisticsSection";
+import RecoveryMessagesSection from "./content/sections/RecoveryMessagesSection";
+import EmailSection from "./content/sections/EmailSection";
+import SpecialActionsSection from "./content/sections/SpecialActionsSection";
+import TestAssistantSection from "./content/sections/TestAssistantSection";
+
+const CarritosMain = () => {
+  const [isInstalled, setIsInstalled] = useState(false);
+  const [activeSection, setActiveSection] = useState("identidad-asistente");
+
+  const handleInstall = () => {
+    setIsInstalled(true);
+  };
+
+  const handleSectionChange = (sectionId) => {
+    setActiveSection(sectionId);
+  };
+
+  const handleBackToProducts = () => {
+    alert("Funcionalidad para volver a productos");
+  };
+
+  const renderActiveSection = () => {
+    switch (activeSection) {
+      case "identidad-asistente":
+        return <IdentitySection />;
+      case "datos-tienda":
+        return <StoreDataSection />;
+      case "datos-logisticos":
+        return <LogisticsSection />;
+      case "mensajes-recuperacion":
+        return <RecoveryMessagesSection />;
+      case "envio-correos":
+        return <EmailSection />;
+      case "acciones-especiales":
+        return <SpecialActionsSection />;
+      case "prueba-asistente":
+        return <TestAssistantSection />;
+      default:
+        return <IdentitySection />;
+    }
+  };
+
+  if (!isInstalled) {
+    return <CarritosInstaller onInstall={handleInstall} />;
+  }
+
+  return (
+    <div className="flex min-h-screen bg-slate-50">
+      <CarritosSidebar
+        activeSection={activeSection}
+        onSectionChange={handleSectionChange}
+        onBackToProducts={handleBackToProducts}
+      />
+      <main className="ml-72 flex-1 p-8 overflow-y-auto bg-slate-50 min-w-0">
+        {renderActiveSection()}
+      </main>
+    </div>
+  );
+};
+
+export default CarritosMain;

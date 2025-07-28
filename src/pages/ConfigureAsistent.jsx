@@ -64,7 +64,8 @@ export const ConfigureAsistent = () => {
             'Mensajes automáticos y personalizados',
             'Aumenta tus ventas sin esfuerzo adicional'
           ],
-          buttonText: 'Guardar Configuración de carritos'
+          buttonText: 'Guardar Configuración de carritos',
+          src: "/asistente-carritos",
         };
       default:
         return {
@@ -80,10 +81,14 @@ export const ConfigureAsistent = () => {
     }
   };
   
-const handleSave = () => {
+const handleSave = (route) => {
   alert(`Configuración guardada para ${asistente?.title}`);
   
-  navigate('/productos-config', { state: { activeTab: 'productos' } });
+  if (template_ns === 'mjvisba1ugmhdttuqnbpvjtocbllluea') {
+    navigate('/asistente-carritos');
+  } else {
+    navigate('/productos-config', { state: { activeTab: 'productos' } });
+  }
 };
 
   if (isLoading) {
@@ -185,7 +190,6 @@ const handleSave = () => {
             </div>
           </div>
 
- 
           <div className="presentacion-section">
             <div className="video-container w-full mb-8">
               <div className="w-full h-48 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl relative overflow-hidden cursor-pointer transition-transform duration-200 hover:-translate-y-1 shadow-lg shadow-blue-500/25">
