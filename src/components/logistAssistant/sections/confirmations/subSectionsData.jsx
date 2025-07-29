@@ -24,4 +24,11 @@ export const subsectionsData = [
     label: "Validaciones de la orden",
     component: <OrderValidations />,
   },
+  {
+    id: "prepayment",
+    emoji: "🚧",
+    label: "Pago Anticipado",
+    comingSoon: true,
+    badgeText: "Próximamente",
+  },
 ];

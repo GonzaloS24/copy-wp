@@ -4,6 +4,7 @@ import { Card } from "../../../generalComponents/Card";
 
 export const AIBehaviour = () => {
   const [formData, setFormData] = useState({
+    sendingType: "",
     languageAdaptation: "",
     advisorGreeting: "",
     cancellationPrevention: "",
@@ -26,6 +27,34 @@ export const AIBehaviour = () => {
         Define el comportamiento general que tendrá la IA en todas las
         interacciones con los clientes
       </p>
+
+      {/* Envío de la información */}
+      <Card mb="8" shadow="sm">
+        <h3 className="text-lg font-semibold text-sky-500 mb-6">
+          Envío de la información
+        </h3>
+
+        <div className="mb-5">
+          <p className="text-base text-slate-500 mb-4 leading-relaxed text-sm">
+            Decide si deseas que la IA envíe los mensajes en un solo mensaje
+            completo o en mensajes separados
+          </p>
+
+          <label className="font-medium text-slate-700 text-sm block mb-2">
+            Tipo de envío
+          </label>
+
+          <select
+            id="sendingType"
+            className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
+            value={formData.sendingType}
+            onChange={handleInputChange}
+          >
+            <option value="1 solo mensaje">1 solo mensaje</option>
+            <option value="Varios mensajes">Varios mensajes</option>
+          </select>
+        </div>
+      </Card>
 
       {/* Adaptación del lenguaje */}
       <Card mb="8" shadow="sm">

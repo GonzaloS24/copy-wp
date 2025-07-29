@@ -1,11 +1,18 @@
 import { useState } from "react";
 import { SectionSideBar } from "./sideBar/Container";
 import { Card } from "../generalComponents/Card";
+import { FloatingSaveButton } from "../generalComponents/FloatingSaveButton";
 
 export const SectionContainer = ({ subsectionsData }) => {
   const [activeSubsection, setActiveSubsection] = useState(
     subsectionsData[0].id
   );
+  const [isLoading, setIsLoading] = useState(false);
+  const handleSave = () => {
+    setIsLoading((_) => true);
+    alert("Guardando configuración... " + activeSubsection);
+    setIsLoading((_) => false);
+  };
 
   return (
     <div className="flex gap-10">
@@ -41,6 +48,7 @@ export const SectionContainer = ({ subsectionsData }) => {
           </div>
         </div>
       </main>
+      <FloatingSaveButton onClick={handleSave} isLoading={isLoading} />
     </div>
   );
 };
