@@ -15,7 +15,7 @@ const CarritosInstaller = ({ onInstall }) => {
 
   const benefits = [
     {
-      title: "Recupera ventas perdidas",
+      title: "Recupera hasta un 20% de carritos abandonados",
       emoji: "✓",
     },
     {

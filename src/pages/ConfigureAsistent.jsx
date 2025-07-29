@@ -81,7 +81,7 @@ export const ConfigureAsistent = () => {
     }
   };
   
-const handleSave = (route) => {
+const handleSave = () => {
   alert(`Configuración guardada para ${asistente?.title}`);
   
   if (template_ns === 'mjvisba1ugmhdttuqnbpvjtocbllluea') {

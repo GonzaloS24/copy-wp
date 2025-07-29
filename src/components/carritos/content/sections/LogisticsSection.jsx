@@ -74,7 +74,6 @@ const LogisticsSection = () => {
           type="text"
           className="w-full p-3 sm:p-4 border-2 border-slate-200 rounded-xl text-sm sm:text-base transition-all duration-200 bg-white text-slate-700 font-inherit focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10 placeholder-slate-400"
           placeholder="de 2 a 5 días hábiles para ciudades principales y de 5 a 7 días para ciudades no principales"
-          value={formData.shippingTime}
           onChange={(e) => handleInputChange("shippingTime", e.target.value)}
         />
       </div>
@@ -140,7 +139,6 @@ const LogisticsSection = () => {
           type="text"
           className="w-full p-3 sm:p-4 border-2 border-slate-200 rounded-xl text-sm sm:text-base transition-all duration-200 bg-white text-slate-700 font-inherit focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10 placeholder-slate-400"
           placeholder="envia, servientrega, interrapidísimo, etc"
-          value={formData.carriers}
           onChange={(e) => handleInputChange("carriers", e.target.value)}
         />
       </div>
