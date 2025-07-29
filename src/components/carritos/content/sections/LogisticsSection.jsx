@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Tooltip from "./Tooltip";
 
 const LogisticsSection = () => {
   const [formData, setFormData] = useState({
@@ -14,25 +15,55 @@ const LogisticsSection = () => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const Tooltip = ({ content }) => (
-    <div className="relative inline-block group">
-      <span className="w-5 h-5 rounded-full bg-sky-500 text-white flex items-center justify-center text-xs font-semibold cursor-help transition-all duration-200 hover:bg-sky-600 hover:scale-110 shadow-sm hover:shadow-md">
-        i
-      </span>
-      <div className="invisible group-hover:visible group-hover:opacity-100 group-hover:-translate-y-1 opacity-0 absolute z-50 bottom-full right-0 mb-3 mr-35 w-70 bg-slate-800 text-white text-left rounded-xl p-4 text-sm leading-relaxed shadow-xl border border-slate-600 transition-all duration-300">
-        {content}
-        <div className="absolute top-full right-35 -mt-2 border-8 border-transparent border-t-slate-800"></div>
+  const CustomCheckbox = ({ id, checked, onChange, label }) => (
+    <div className="flex items-center gap-3">
+      <div className="relative">
+        <input
+          type="checkbox"
+          id={id}
+          className="sr-only"
+          checked={checked}
+          onChange={onChange}
+        />
+        <label
+          htmlFor={id}
+          className={`w-5 h-5 border-2 rounded-md cursor-pointer flex items-center justify-center transition-all duration-200 ${
+            checked
+              ? "bg-sky-500 border-sky-500"
+              : "bg-white border-slate-300 hover:border-slate-400"
+          }`}
+        >
+          {checked && (
+            <svg
+              className="w-3 h-3 text-white"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                clipRule="evenodd"
+              />
+            </svg>
+          )}
+        </label>
       </div>
+      <label
+        htmlFor={id}
+        className="text-sm sm:text-base text-slate-700 cursor-pointer font-medium"
+      >
+        {label}
+      </label>
     </div>
   );
 
   return (
-    <div className="bg-white rounded-2xl p-10 shadow-xl border border-slate-200 w-full relative z-5">
-      <h1 className="text-4xl mb-12 text-sky-500 font-bold tracking-tight">
+    <div className="bg-white rounded-2xl p-4 sm:p-6 md:p-8 lg:p-10 shadow-xl border border-slate-200 w-full relative z-5">
+      <h1 className="text-2xl sm:text-3xl md:text-4xl mb-8 sm:mb-10 md:mb-12 text-sky-500 font-bold tracking-tight">
         Datos logísticos
       </h1>
 
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8">
         <div className="flex items-center gap-3 mb-3">
           <label className="block font-semibold text-slate-700 text-base tracking-tight">
             Tiempos de envío
@@ -41,14 +72,14 @@ const LogisticsSection = () => {
         </div>
         <input
           type="text"
-          className="w-full p-4 border-2 border-slate-200 rounded-xl text-base transition-all duration-200 bg-white text-slate-700 font-inherit focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10 placeholder-slate-400"
+          className="w-full p-3 sm:p-4 border-2 border-slate-200 rounded-xl text-sm sm:text-base transition-all duration-200 bg-white text-slate-700 font-inherit focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10 placeholder-slate-400"
           placeholder="de 2 a 5 días hábiles para ciudades principales y de 5 a 7 días para ciudades no principales"
           value={formData.shippingTime}
           onChange={(e) => handleInputChange("shippingTime", e.target.value)}
         />
       </div>
 
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8">
         <div className="flex items-center gap-3 mb-3">
           <label className="block font-semibold text-slate-700 text-base tracking-tight">
             Método de pago
@@ -56,46 +87,28 @@ const LogisticsSection = () => {
           <Tooltip content="Opciones de pago que ofrece tu tienda. Selecciona una o ambas. El asistente usará esta información para explicar cómo se paga el pedido según lo que el cliente prefiera." />
         </div>
         <div className="flex flex-col gap-6">
-          <div className="flex gap-10">
-            <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                id="pago-contraentrega"
-                className="w-5 h-5 border-2 border-slate-300 rounded-md cursor-pointer relative appearance-none transition-all duration-200 bg-white checked:bg-sky-500 checked:border-sky-500"
-                checked={formData.cashOnDelivery}
-                onChange={(e) =>
-                  handleInputChange("cashOnDelivery", e.target.checked)
-                }
-              />
-              <label
-                htmlFor="pago-contraentrega"
-                className="text-base text-slate-700 cursor-pointer font-medium"
-              >
-                Pago contraentrega
-              </label>
-            </div>
-            <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                id="pago-anticipado"
-                className="w-5 h-5 border-2 border-slate-300 rounded-md cursor-pointer relative appearance-none transition-all duration-200 bg-white checked:bg-sky-500 checked:border-sky-500"
-                checked={formData.advancePayment}
-                onChange={(e) =>
-                  handleInputChange("advancePayment", e.target.checked)
-                }
-              />
-              <label
-                htmlFor="pago-anticipado"
-                className="text-base text-slate-700 cursor-pointer font-medium"
-              >
-                Pago anticipado
-              </label>
-            </div>
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-10">
+            <CustomCheckbox
+              id="pago-contraentrega"
+              checked={formData.cashOnDelivery}
+              onChange={(e) =>
+                handleInputChange("cashOnDelivery", e.target.checked)
+              }
+              label="Pago contraentrega"
+            />
+            <CustomCheckbox
+              id="pago-anticipado"
+              checked={formData.advancePayment}
+              onChange={(e) =>
+                handleInputChange("advancePayment", e.target.checked)
+              }
+              label="Pago anticipado"
+            />
           </div>
 
           {/* Textarea que aparece cuando se marca pago anticipado */}
           {formData.advancePayment && (
-            <div className="mt-2 p-6 bg-slate-50 border border-slate-200 rounded-xl transition-all duration-300">
+            <div className="mt-2 p-4 sm:p-6 bg-slate-50 border border-slate-200 rounded-xl transition-all duration-300">
               <div className="flex items-center gap-3 mb-3">
                 <label className="block font-semibold text-slate-700 text-base tracking-tight">
                   Datos del pago anticipado
@@ -103,7 +116,7 @@ const LogisticsSection = () => {
                 <Tooltip content="Indica el medio de pago que el bot le debe sugerir al cliente para que realice el pago anticipado" />
               </div>
               <textarea
-                className="w-full p-4 border-2 border-slate-200 rounded-xl text-base transition-all duration-200 bg-white text-slate-700 font-inherit resize-vertical min-h-24 leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10 placeholder-slate-400"
+                className="w-full p-3 sm:p-4 border-2 border-slate-200 rounded-xl text-sm sm:text-base transition-all duration-200 bg-white text-slate-700 font-inherit resize-vertical min-h-20 sm:min-h-24 leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10 placeholder-slate-400"
                 rows="3"
                 placeholder="Banco, número de cuenta, etc"
                 value={formData.advancePaymentDetails}
@@ -116,7 +129,7 @@ const LogisticsSection = () => {
         </div>
       </div>
 
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8">
         <div className="flex items-center gap-3 mb-3">
           <label className="block font-semibold text-slate-700 text-base tracking-tight">
             Transportadoras disponibles
@@ -125,7 +138,7 @@ const LogisticsSection = () => {
         </div>
         <input
           type="text"
-          className="w-full p-4 border-2 border-slate-200 rounded-xl text-base transition-all duration-200 bg-white text-slate-700 font-inherit focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10 placeholder-slate-400"
+          className="w-full p-3 sm:p-4 border-2 border-slate-200 rounded-xl text-sm sm:text-base transition-all duration-200 bg-white text-slate-700 font-inherit focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10 placeholder-slate-400"
           placeholder="envia, servientrega, interrapidísimo, etc"
           value={formData.carriers}
           onChange={(e) => handleInputChange("carriers", e.target.value)}

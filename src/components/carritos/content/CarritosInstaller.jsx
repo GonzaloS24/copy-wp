@@ -14,10 +14,22 @@ const CarritosInstaller = ({ onInstall }) => {
   };
 
   const benefits = [
-    "Recupera hasta un 20% de carritos abandonados",
-    "Instalación rápida en segundos",
-    "Mensajes automáticos y personalizados",
-    "Aumenta tus ventas sin esfuerzo adicional",
+    {
+      title: "Recupera ventas perdidas",
+      emoji: "✓",
+    },
+    {
+      title: "Instalación rápida en segundos",
+      emoji: "⚡",
+    },
+    {
+      title: "Mensajes automáticos y personalizados",
+      emoji: "💬",
+    },
+    {
+      title: "Aumenta tus ventas sin esfuerzo adicional",
+      emoji: "📈",
+    },
   ];
 
   return (
@@ -26,7 +38,7 @@ const CarritosInstaller = ({ onInstall }) => {
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
           {/* Sección del Video */}
           <div className="lg:col-span-3 flex flex-col gap-6">
-            <h2 className="text-3xl lg:text-4xl font-bold text-sky-500 leading-tight tracking-tight mb-2 text-left">
+            <h2 className="text-3xl lg:text-2xl font-bold text-sky-500 leading-tight tracking-tight mb-2 text-left">
               Descubre cómo este asistente puede ayudarte a recuperar ventas
               automáticamente
             </h2>
@@ -39,12 +51,6 @@ const CarritosInstaller = ({ onInstall }) => {
                   Próximamente: Video de YouTube embebido
                 </small>
               </div>
-              <button
-                className="absolute w-16 h-16 bg-white bg-opacity-90 hover:bg-white rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110"
-                onClick={() => alert("Video próximamente disponible")}
-              >
-                <div className="w-0 h-0 border-l-4 border-r-0 border-t-3 border-b-3 border-l-sky-500 border-t-transparent border-b-transparent ml-1"></div>
-              </button>
             </div>
           </div>
 
@@ -61,10 +67,10 @@ const CarritosInstaller = ({ onInstall }) => {
                   className="flex items-center gap-3 p-3 bg-slate-50 hover:bg-blue-50 rounded-xl border border-slate-200 hover:border-sky-500 transition-all duration-200 hover:translate-x-1"
                 >
                   <div className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                    ✓
+                    {benefit.emoji}
                   </div>
                   <div className="text-sm font-medium text-slate-700 leading-tight">
-                    {benefit}
+                    {benefit.title}
                   </div>
                 </div>
               ))}
