@@ -1,22 +1,27 @@
+import { ConfirmMessages } from "../confirmations/subsections/ConfirmMessages";
+import { DirectionAnalisis } from "./subsections/DirectionAnalisis";
+import { ShippingTimes } from "./subsections/ShippingTimes";
+import { OrderValidations } from "./subsections/OrderValidations";
+
 export const subsectionsData = [
   {
     id: "confirmMessages",
     label: "Mensajes de confirmación",
-    component: <></>,
+    component: <ConfirmMessages />,
   },
   {
     id: "shippingTimes",
     label: "Tiempos de envío",
-    component: <></>,
+    component: <ShippingTimes />,
   },
   {
     id: "directionAnalisis",
     label: "Análisis de dirección",
-    component: <></>,
+    component: <DirectionAnalisis />,
   },
   {
     id: "orderValidations",
     label: "Validaciones de la orden",
-    component: <></>,
+    component: <OrderValidations />,
   },
 ];

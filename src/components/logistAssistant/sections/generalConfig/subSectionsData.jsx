@@ -1,3 +1,4 @@
+import { AIBehaviour } from "./subsections/AIBehaviour";
 import { StoreData } from "./subsections/StoreData";
 
 export const subsectionsData = [
@@ -9,6 +10,6 @@ export const subsectionsData = [
   {
     id: "AIBehaviour",
     label: "Comportamiento de la IA",
-    component: <></>,
+    component: <AIBehaviour />,
   },
 ];

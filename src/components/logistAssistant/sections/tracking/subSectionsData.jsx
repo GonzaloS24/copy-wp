@@ -1,12 +1,15 @@
+import { TrackMessages } from "./subsections/TrackMessages";
+import { ShippingTimes } from "./subsections/ShippingTimes";
+
 export const subsectionsData = [
   {
     id: "trackMessages",
     label: "Mensajes de seguimiento",
-    component: <></>,
+    component: <TrackMessages />,
   },
   {
     id: "shippingTimes",
     label: "Tiempos de envío",
-    component: <></>,
+    component: <ShippingTimes />,
   },
 ];

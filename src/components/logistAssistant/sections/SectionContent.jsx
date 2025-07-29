@@ -1,4 +1,5 @@
 import { tabsData } from "../tabs/tabsData";
+import { SectionContainer } from "./Container";
 
 export const SectionContent = ({ activeTab }) => {
   return (
@@ -12,7 +13,7 @@ export const SectionContent = ({ activeTab }) => {
             aria-labelledby={tab.id}
             className={activeTab === tab.id ? "block" : "hidden"}
           >
-            {tab.component}
+            <SectionContainer subsectionsData={tab.subsectionsData} />
           </div>
         ))}
       </div>

@@ -1,172 +1,155 @@
 import { useState } from "react";
+import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
+import { Card } from "../../../generalComponents/Card";
 
 export const StoreData = () => {
-  const [dropiConnection, setDropiConnection] = useState("si");
-  const [integrationId, setIntegrationId] = useState("");
-  const [integrationToken, setIntegrationToken] = useState("");
-  const [country, setCountry] = useState("");
-  const [showIdTooltip, setShowIdTooltip] = useState(false);
-  const [showTokenTooltip, setShowTokenTooltip] = useState(false);
+  const [formData, setFormData] = useState({
+    storeName: "",
+    storeLink: "",
+    storeLocation: "",
+    warrantyPolicies: "",
+    dataSource: "",
+  });
 
-  const handleRadioChange = (value) => {
-    setDropiConnection(value);
+  const handleInputChange = ({ target }) => {
+    setFormData((prev) => ({
+      ...prev,
+      [target.id]: target.value,
+    }));
   };
 
-  const countries = [
-    { value: "colombia", label: "Colombia" },
-    { value: "chile", label: "Chile" },
-    { value: "mexico", label: "México" },
-    { value: "ecuador", label: "Ecuador" },
-    { value: "peru", label: "Perú" },
-    { value: "paraguay", label: "Paraguay" },
-    { value: "panama", label: "Panamá" },
-  ];
-
   return (
-    <div className="block">
-      <div className="bg-white rounded-2xl p-10 shadow-lg border border-slate-200 w-full relative z-10">
-        <h1 className="text-2xl font-bold text-gray-900 mb-8">
-          Conexión con Dropi
-        </h1>
+    <div className="flex flex-col flex-1">
+      <h2 className="text-3xl font-bold text-sky-500 mb-4 tracking-tight">
+        🏪 Datos de la Tienda
+      </h2>
+      <p className="text-base text-slate-500 mb-8 leading-relaxed">
+        Configura la información básica que la IA utilizará para personalizar
+        los mensajes automáticos
+      </p>
 
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-4">
-            ¿Deseas conectar el asistente a dropi?
+      {/* Nombre de la tienda */}
+      <Card mb="8" shadow="sm">
+        <h3 className="text-lg font-semibold text-sky-500 mb-6">
+          Nombre de la tienda
+        </h3>
+
+        <div className="mb-5">
+          <label className="block mb-2 font-medium text-slate-700 text-sm">
+            Nombre de la tienda{" "}
+            <span className="text-red-500 font-bold">*</span>
           </label>
-          <div className="flex flex-col gap-4 mt-4">
-            <div
-              className="flex items-center gap-3 cursor-pointer"
-              onClick={() => handleRadioChange("si")}
-            >
-              <div className="w-5 h-5 border-2 border-slate-300 rounded-full relative transition-all duration-200 bg-white flex-shrink-0">
-                {dropiConnection === "si" && (
-                  <>
-                    <div className="border-2 border-sky-500 rounded-full w-full h-full absolute inset-0" />
-                    <div className="w-2.5 h-2.5 bg-sky-500 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
-                  </>
-                )}
-              </div>
-              <span className="text-gray-700">Sí</span>
-            </div>
-            <div
-              className="flex items-center gap-3 cursor-pointer"
-              onClick={() => handleRadioChange("no")}
-            >
-              <div className="w-5 h-5 border-2 border-slate-300 rounded-full relative transition-all duration-200 bg-white flex-shrink-0">
-                {dropiConnection === "no" && (
-                  <>
-                    <div className="border-2 border-sky-500 rounded-full w-full h-full absolute inset-0" />
-                    <div className="w-2.5 h-2.5 bg-sky-500 rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2" />
-                  </>
-                )}
-              </div>
-              <span className="text-gray-700">No</span>
-            </div>
-          </div>
+          <input
+            id="storeName"
+            type="text"
+            className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
+            placeholder="Ej. Moda Urbana Colombia"
+            onChange={handleInputChange}
+          />
         </div>
+      </Card>
 
-        <div className="mb-6">
+      {/* Datos adicionales */}
+      <Card mb="8" shadow="sm">
+        <h3 className="text-lg font-semibold text-sky-500 mb-6">
+          Datos adicionales
+        </h3>
+
+        <div className="mb-5">
           <div className="flex items-center gap-2 mb-2">
-            <label className="block text-sm font-medium text-gray-700">
-              ID de integración
+            <label className="font-medium text-slate-700 text-sm">
+              Enlace de la tienda{" "}
+              <span className="text-red-500 font-bold">*</span>
             </label>
-            <div className="relative">
-              <button
-                type="button"
-                className="w-4 h-4 rounded-full bg-slate-400 text-white flex items-center justify-center text-xs font-medium cursor-help transition-all duration-200 hover:bg-slate-500 hover:scale-110"
-                onMouseEnter={() => setShowIdTooltip(true)}
-                onMouseLeave={() => setShowIdTooltip(false)}
-                onClick={() => setShowIdTooltip(!showIdTooltip)}
-                aria-label="Información sobre ID de integración"
-              >
-                ?
-              </button>
-
-              {showIdTooltip && (
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50 animate-in fade-in slide-in-from-bottom-1 duration-200">
-                  <div className="w-80 bg-slate-800 text-white text-sm rounded-lg p-4 shadow-xl">
-                    <div className="font-medium mb-2">
-                      ¿Cómo obtener el ID de integración?
-                    </div>
-                    <div className="text-slate-300 leading-relaxed">
-                      Ve a tu panel de Dropi → Configuración → Integraciones →
-                      Copia el ID que aparece en tu integración activa.
-                    </div>
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-slate-800"></div>
-                  </div>
-                </div>
-              )}
-            </div>
+            <TooltipIcon
+              tooltipId="storeLink"
+              content="Indica que el enlace de tu página web. En caso de no tenerla, podrías agregar cualquier otro enlace en el que el cliente pueda conocer más información sobre tu tienda. Si prefieres, lo puedes dejar en blanco. La IA usará esta información para redireccionar a tus clientes hacia ver tus otros productos"
+            />
           </div>
           <input
-            type="text"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-colors"
-            placeholder="Ingresa el ID de integración"
-            value={integrationId}
-            onChange={(e) => setIntegrationId(e.target.value)}
+            id="storeLink"
+            type="url"
+            className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
+            placeholder="https://mitienda.com"
+            onChange={handleInputChange}
           />
         </div>
 
-        <div className="mb-6">
+        <div className="mb-5">
           <div className="flex items-center gap-2 mb-2">
-            <label className="block text-sm font-medium text-gray-700">
-              Token de Integración
+            <label className="font-medium text-slate-700 text-sm">
+              Ubicación de la tienda{" "}
+              <span className="text-red-500 font-bold">*</span>
             </label>
-            <div className="relative">
-              <button
-                type="button"
-                className="w-4 h-4 rounded-full bg-slate-400 text-white flex items-center justify-center text-xs font-medium cursor-help transition-all duration-200 hover:bg-slate-500 hover:scale-110"
-                onMouseEnter={() => setShowTokenTooltip(true)}
-                onMouseLeave={() => setShowTokenTooltip(false)}
-                onClick={() => setShowTokenTooltip(!showTokenTooltip)}
-                aria-label="Información sobre Token de integración"
-              >
-                ?
-              </button>
-
-              {showTokenTooltip && (
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 z-50 animate-in fade-in slide-in-from-bottom-1 duration-200">
-                  <div className="w-80 bg-slate-800 text-white text-sm rounded-lg p-4 shadow-xl">
-                    <div className="font-medium mb-2">
-                      ¿Cómo obtener el Token de integración?
-                    </div>
-                    <div className="text-slate-300 leading-relaxed">
-                      En tu panel de Dropi → Configuración → API → Generar nuevo
-                      token → Copia el token generado y pégalo aquí.
-                    </div>
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-l-transparent border-r-transparent border-t-slate-800"></div>
-                  </div>
-                </div>
-              )}
-            </div>
+            <TooltipIcon
+              tooltipId="storeLocation"
+              content="En caso de tener un local físico, puedes indicarle a la IA la dirección para que esta se la pueda dar a tus clientes. En caso de no tener, podrías indicar que es una tienda virtual con algunos detalles adicionales que eleven la confianza del cliente"
+            />
           </div>
-          <input
-            type="text"
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-colors"
-            placeholder="Ingresa el token de integración"
-            value={integrationToken}
-            onChange={(e) => setIntegrationToken(e.target.value)}
+          <textarea
+            id="storeLocation"
+            className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
+            rows="4"
+            placeholder="Ej. Somos una tienda virtual de la más alta calidad con 5 años de experiencia y más de 3000 clientes satisfechos"
+            onChange={handleInputChange}
           />
         </div>
+      </Card>
 
-        <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            País
-          </label>
+      {/* Manejo de garantías */}
+      <Card mb="8" shadow="sm">
+        <h3 className="text-lg font-semibold text-sky-500 mb-6">
+          Manejo de garantías
+        </h3>
+
+        <div className="mb-5">
+          <div className="flex items-center gap-2 mb-2">
+            <label className="font-medium text-slate-700 text-sm">
+              Políticas de garantía
+            </label>
+            <TooltipIcon
+              tooltipId="warrantyPolicies"
+              content="Ingresa las políticas de garantía de tu tienda a nivel general. La IA utilizará esta información para indicarle a tus clientes cómo se manejan las garantía en caso de que los clientes manifiesten inquietudes sobre el tema"
+            />
+          </div>
+          <textarea
+            id="warrantyPolicies"
+            className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
+            rows="4"
+            placeholder="Ej. Aceptamos devoluciones dentro de los primeros 10 días hábiles..."
+            onChange={handleInputChange}
+          />
+        </div>
+      </Card>
+
+      {/* Obtención de los datos del pedido */}
+      <Card mb="8" shadow="sm">
+        <h3 className="text-lg font-semibold text-sky-500 mb-6">
+          Obtención de los datos del pedido
+        </h3>
+
+        <div className="mb-5">
+          <div className="flex items-center gap-2 mb-2">
+            <label className="font-medium text-slate-700 text-sm">
+              Origen de los datos del pedido{" "}
+              <span className="text-red-500 font-bold">*</span>
+            </label>
+            <TooltipIcon
+              tooltipId="dataSource"
+              content="Indica de dónde prefieres que la IA obtenga los datos de tus productos para tener el contexto suficiente para responder cualquier pregunta del cliente. Si seleccionas shopify, debes tener shopify conectado en la sección de integraciones. Si seleccionas Ecommerce de Chatea PRO, debes tener tus productos agregados con el ID del producto en Dropi"
+            />
+          </div>
           <select
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-colors bg-white"
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
+            id="dataSource"
+            className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
+            onChange={handleInputChange}
           >
-            <option value="">Selecciona un país</option>
-            {countries.map((country) => (
-              <option key={country.value} value={country.value}>
-                {country.label}
-              </option>
-            ))}
+            <option value="">Selecciona el origen de datos</option>
+            <option value="shopify">Shopify</option>
+            <option value="chatea-pro">Ecommerce de Chatea PRO</option>
           </select>
         </div>
-      </div>
+      </Card>
     </div>
   );
 };

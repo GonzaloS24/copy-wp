@@ -1,4 +1,4 @@
-import { Card } from "../../Card";
+import { Card } from "../../generalComponents/Card";
 import { tabsData } from "../tabsData";
 import { Element } from "./Element";
 

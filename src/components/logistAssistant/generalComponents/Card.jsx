@@ -1,11 +1,12 @@
 export const Card = ({
   children,
-  gap = 4,
+  gap = "4",
   bg = "white",
-  p = 6,
+  p = "6",
   rounded = "2xl",
   shadow = "lg",
   borderColor = "slate-200",
+  mb = "0",
 }) => {
   return (
     <div
@@ -15,7 +16,8 @@ export const Card = ({
         `p-${p} ` +
         `rounded-${rounded} ` +
         `shadow-${shadow} ` +
-        `border border-${borderColor}`
+        `border border-${borderColor} ` +
+        `mb-${mb} `
       }
     >
       {children}
