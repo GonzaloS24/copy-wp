@@ -5,28 +5,30 @@ export const Sidebar = ({ isOpen, onClose }) => {
     {
       icon: FiUsers,
       title: "Asistentes",
-      description: "Activa asistentes que venden, responden y automatizan por ti",
-      href: "/"
+      description:
+        "Activa asistentes que venden, responden y automatizan por ti",
+      href: "/",
     },
     {
       icon: FiZap,
       title: "Integraciones",
-      description: "Conecta Chatea PRO con Shopify, Open IA, Google Sheets y más",
-      href: "#"
+      description:
+        "Conecta Chatea PRO con Shopify, Open IA, Google Sheets y más",
+      href: "#",
     },
     {
       icon: FiBookOpen,
       title: "Academia",
       description: "Aprende a instalar y usarlos a nivel profesional",
-      href: "#"
+      href: "#",
     },
     {
       icon: FiHelpCircle,
       title: "Asesorías",
-      description: "Accede a sesiones grupales y privadas con nuestros expertos",
-      href: "#"
+      description:
+        "Accede a sesiones grupales y privadas con nuestros expertos",
+      href: "#",
     },
-
   ];
 
   return (
