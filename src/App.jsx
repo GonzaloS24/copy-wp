@@ -6,8 +6,51 @@ import { ProductConfigPage } from './pages/ProductConfigPage';
 import { ProductContentForm } from './pages/ProductContentForm';
 import CarritosPage from './pages/CarritosPage';
 import { LogistAssistantPage } from "./pages/LogistAssistantPage";
+import { useEffect, useState } from "react";
+import { shouldShowWelcomeWizard } from "./services/welcomeService";
+import WelcomeWizard from "./components/welcome/WelcomeWizard";
 
 export default function App() {
+  const [showWelcome, setShowWelcome] = useState(null);
+  const [isCheckingWelcome, setIsCheckingWelcome] = useState(true);
+
+  useEffect(() => {
+    const checkWelcomeStatus = async () => {
+      try {
+        const shouldShow = await shouldShowWelcomeWizard();
+        setShowWelcome(shouldShow);
+      } catch (error) {
+        console.error("Error checking welcome status:", error);
+        setShowWelcome(false);
+      } finally {
+        setIsCheckingWelcome(false);
+      }
+    };
+
+    checkWelcomeStatus();
+  }, []);
+
+  const handleWelcomeComplete = () => {
+    setShowWelcome(false);
+  };
+
+  // Mostrar loading mientras se verifica
+  if (isCheckingWelcome) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-sky-500 mx-auto mb-4"></div>
+          <p className="text-slate-600">Cargando...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Mostrar wizard de bienvenida si es necesario
+  if (showWelcome) {
+    return <WelcomeWizard onComplete={handleWelcomeComplete} />;
+  }
+
   return (
     <BrowserRouter>
       <Routes>
