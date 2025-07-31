@@ -24,3 +24,7 @@ privateRoutes
 *.njsproj
 *.sln
 *.sw?
+
+tests
+
+.env
