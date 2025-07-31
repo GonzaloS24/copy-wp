@@ -14,7 +14,7 @@ export default function App() {
           <Route path="/configurar/:template_ns" element={<ConfigureAsistent />} />
           <Route path="/productos-config" element={<ProductConfigPage />} />
           <Route path="/agregando" element={<ProductContentForm />} />
-          <Route path="/:productName" element={<ProductContentForm />} />
+          <Route path="/producto/:productName" element={<ProductContentForm />} />
         </Route>
       </Routes>
     </BrowserRouter>

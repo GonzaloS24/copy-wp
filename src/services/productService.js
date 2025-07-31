@@ -1,336 +1,401 @@
 import { getAuthToken } from '../utils/authCookies';
-import { ProductUtils } from '../utils/productUtils';
 
 export class ProductService {
-  static async getMockProducts() {
-    await new Promise(resolve => setTimeout(resolve, 800)); 
-    const mockData = ProductUtils.getMockProducts();
-    return ProductUtils.parseProductValues(mockData.data);
+  static createFetchOptions(token) {
+    return {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json'
+      },
+      credentials: 'include'
+    };
   }
 
-  static async getMockProductConfiguration(productName) {
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    const mockData = ProductUtils.getMockProducts();
-    const product = mockData.data.find(p => 
-      p.name.toLowerCase().includes(productName.toLowerCase())
-    );
-    
-    if (!product) {
-      return { data: [mockData.data[0]] };
-    }
-    
-    return { data: [product] };
+  static createPostFetchOptions(token, body) {
+    return {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(body)
+    };
   }
 
-  static async getWpSalesProducts() {
-    try {
-      if (process.env.NODE_ENV === 'development') {
-        return await this.getMockProducts();
-      }
-
-      const token = getAuthToken();
-      if (!token) throw new Error('No se encontró token de autenticación');
-
-      const endpoint = 'https://chateapro.app/api/flow/bot-fields?name=%5BProducto%20Ventas%20Wp%5D%20';
-      
-      const response = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        credentials: 'include'
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      
-      if (data.status !== 'ok') {
-        throw new Error(data.message || 'Respuesta inesperada de la API');
-      }
-
-      return ProductUtils.parseProductValues(data.data || []);
-    } catch (error) {
-      console.error('Error en ProductService.getWpSalesProducts:', error);
-      return await this.getMockProducts();
-    }
-  }
-
-
-  static extractProductId(productName) {
-    if (!productName) return 0;
-    
-    const match = productName.match(/\[Producto Ventas Wp\]\s*(\d+)/);
-    return match ? parseInt(match[1], 10) : 0;
-  }
-
-  static async getNextProductId() {
-    try {
-      const existingProducts = await this.getWpSalesProducts();
-      
-      if (!existingProducts || existingProducts.length === 0) {
-        return 1; 
-      }
-
-
-      const existingIds = existingProducts
-        .map(product => this.extractProductId(product.name))
-        .filter(id => id > 0) 
-        .sort((a, b) => b - a); 
-
-    
-      return existingIds.length > 0 ? existingIds[0] + 1 : 1;
-    } catch (error) {
-      console.error('Error al obtener el siguiente ID:', error);
-   
-      return Date.now() % 10000; 
-    }
-  }
-
-  static async createProduct(productName, fieldData) {
+  static async createProduct(productData) {
     try {
       const token = getAuthToken();
       if (!token) throw new Error('No se encontró token de autenticación');
 
-      
-      const nextId = await this.getNextProductId();
+      if (!productData || typeof productData !== 'object') {
+        throw new Error('Los datos del producto son requeridos');
+      }
 
-  
-      const processedData = this.processFieldData(productName, fieldData);
-
-      const requestBody = {
-        name: `[Producto Ventas Wp] ${nextId}`,
-        var_ns: "",
-        var_type: "array",
-        description: "",
-        value: JSON.stringify(processedData),
-        is_template_field: false
+      const payload = {
+        productData: {
+          value: productData
+        }
       };
 
-      console.log('Enviando datos al servidor:', requestBody);
-      console.log('ID generado mediante autoincremento:', nextId);
+      console.log('📦 Creando producto con payload simplificado:', JSON.stringify(payload, null, 2));
 
-      const response = await fetch('https://chateapro.app/api/flow/create-bot-field', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'accept': 'application/json'
-        },
-        body: JSON.stringify(requestBody)
-      });
+      const response = await fetch(
+        'http://localhost:3000/api/integrations/chateapro/bot-fields',
+        this.createPostFetchOptions(token, payload)
+      );
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Error ${response.status}: ${response.statusText} - ${errorText}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || 
+          `Error ${response.status}: ${response.statusText}`
+        );
       }
 
-      const data = await response.json();
+      const result = await response.json();
+      console.log('✅ Producto creado exitosamente:', result);
       
-      if (data.status !== 'ok') {
-        throw new Error(data.message || 'Respuesta inesperada de la API');
-      }
-
-      return {
-        ...data,
-        generatedId: nextId  
-      };
+      return result;
+      
     } catch (error) {
       console.error('Error en ProductService.createProduct:', error);
       throw error;
     }
   }
 
-  static async getProductConfiguration(productName) {
-    try {
-      if (process.env.NODE_ENV === 'development') {
-        return await this.getMockProductConfiguration(productName);
-      }
-
-      const token = getAuthToken();
-      if (!token) throw new Error('No se encontró token de autenticación');
-
-      const encodedName = encodeURIComponent(`[Producto Ventas Wp] ${productName}`);
-      const endpoint = `https://chateapro.app/api/flow/bot-fields?name=${encodedName}`;
-      
-      const response = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        credentials: 'include'
-      });
-
-      if (!response.ok) {
-        throw new Error(`Error ${response.status}: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      
-      if (data.status !== 'ok') {
-        throw new Error(data.message || 'Respuesta inesperada de la API');
-      }
-
-      return data;
-    } catch (error) {
-      console.error('Error en ProductService.getProductConfiguration:', error);
-      return await this.getMockProductConfiguration(productName);
-    }
-  }
-
-    static async setBotFieldsByName(productName, fieldData) {
+  static async getProducts() {
     try {
       const token = getAuthToken();
       if (!token) throw new Error('No se encontró token de autenticación');
 
-      const processedData = this.processFieldData(productName, fieldData);
-
-      const requestBody = {
-        data: [{
-          name: `[Producto Ventas Wp] ${productName}`,
-          value: JSON.stringify(processedData)
-        }]
-      };
-
-      console.log('Actualizando producto:', requestBody);
-
-      const response = await fetch('https://chateapro.app/api/flow/set-bot-fields-by-name', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json',
-          'accept': 'application/json'
-        },
-        body: JSON.stringify(requestBody)
-      });
+      const response = await fetch('http://localhost:3000/api/integrations/chateapro/products', 
+        this.createFetchOptions(token)
+      );
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Error ${response.status}: ${response.statusText} - ${errorText}`);
+        const errorData = await response.json();
+        throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
       }
 
-      const data = await response.json();
+      const result = await response.json();
+      const productsData = this.extractProductsData(result);
       
-      if (data.status !== 'ok') {
-        throw new Error(data.message || 'Respuesta inesperada de la API');
-      }
-
-      return data;
+      console.log('📦 Productos obtenidos:', productsData);
+      return productsData.map(product => this.normalizeProductData(product));
+      
     } catch (error) {
-      console.error('Error en ProductService.setBotFieldsByName:', error);
+      console.error('Error en ProductService.getProducts:', error);
       throw error;
     }
   }
 
-  static processFieldData(productName, fieldData) {
-  
-    const processedData = JSON.parse(JSON.stringify(fieldData));
 
-   
-    if (processedData.informacion_de_producto) {
-      processedData.informacion_de_producto.nombre_del_producto = productName;
-    }
+  static async getProductConfiguration(productId) {
+    try {
+      const token = getAuthToken();
+      if (!token) throw new Error('No se encontró token de autenticación');
 
-    if (processedData.informacion_de_producto?.tipo_de_producto) {
-      processedData.informacion_de_producto.tipo_de_producto = 
-        processedData.informacion_de_producto.tipo_de_producto === "simple" ? "no" : "si";
-    }
+      const cleanId = this.extractNumericId(productId);
+      
+      console.log('🔍 Obteniendo configuración del producto ID:', cleanId);
+      
+      const endpoint = `http://localhost:3000/api/integrations/chateapro/products/${cleanId}`;
+      
+      const response = await fetch(endpoint, this.createFetchOptions(token));
 
-    if (processedData.voz_con_ia?.speaker_boost) {
-      processedData.voz_con_ia.speaker_boost = 
-        processedData.voz_con_ia.speaker_boost === "si" ? "true" : "false";
-    }
-
-    if (processedData.activadores_del_flujo?.palabras_clave) {
-      if (Array.isArray(processedData.activadores_del_flujo.palabras_clave)) {
-        processedData.activadores_del_flujo.palabras_clave = 
-          processedData.activadores_del_flujo.palabras_clave.join(",");
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || 
+          `Error ${response.status}: ${response.statusText}`
+        );
       }
-    }
 
-    if (processedData.activadores_del_flujo?.ids_de_anuncio) {
-      if (Array.isArray(processedData.activadores_del_flujo.ids_de_anuncio)) {
-        processedData.activadores_del_flujo.ids_de_anuncio = 
-          processedData.activadores_del_flujo.ids_de_anuncio.join(",");
+      const result = await response.json();
+      console.log('📋 Configuración del producto obtenida:', result);
+      
+      if (!result.success) {
+        throw new Error(result.message || 'Error al obtener la configuración del producto');
       }
+
+      if (!result.data) {
+        throw new Error('No se encontraron datos del producto');
+      }
+
+      return {
+        status: 'ok',
+        data: [{
+          name: result.data.name,
+          value: result.data.value
+        }]
+      };
+      
+    } catch (error) {
+      console.error('Error en ProductService.getProductConfiguration:', error);
+      throw error;
     }
-
-  
-    const template = {
-      informacion_de_producto: {
-        id: "",
-        nombre: "",
-        precio: "",
-        id_dropi: "",
-        tipo: "no", // por defecto simple
-        imagen: "",
-        estado_producto: ""
-      },
-      embudo_de_ventas: {
-        mensaje_inicial: "",
-        multimedia:{
-          c1: ""
-        },
-        pregunta_de_entrada: ""
-      },
-      prompt: {
-        tipo_de_prompt: "",
-        prompt_libre: "",
-        prompt_guiado_contextualizacion: "",
-        prompt_guiado_ficha_tecnica: "",
-        prompt_guiado_guion_conversacional: "",
-        prompt_guiado_posibles_situaciones: "",
-        prompt_guiado_reglas: ""
-      },
-      voz_con_ia: {
-        id: "",
-        api_key: "",
-        estabilidad: 0.3,
-        similaridad: 0.7,
-        estilo: 0.5,
-        speaker_boost: "false"
-      },
-      recordatorios: {
-         tiempo_1: 5,
-         mensaje_1: "",
-         tiempo_2: 10,
-         mensaje_2: "",
-         horario_minimo: "",
-         horario_maximo: ""
-       },
-       remarketing: {
-         tiempo_1: "",
-         plantilla_1: "",
-         tiempo_2: "",
-         plantilla_2: ""
-       },
-       activadores_del_flujo: {
-         palabras_clave: "",
-          ids_de_anuncio: ""
-       }
-    };
-
-    return this.mergeWithTemplate(processedData, template);
   }
 
-  static mergeWithTemplate(data, template) {
-    const result = { ...template };
+  static async updateProduct(productName, productData) {
+  try {
+    const token = getAuthToken();
+    if (!token) throw new Error('No se encontró token de autenticación');
+
+    if (!productData || typeof productData !== 'object') {
+      throw new Error('Los datos del producto son requeridos');
+    }
+
+    if (!productName || typeof productName !== 'string') {
+      throw new Error('El nombre del producto es requerido');
+    }
+
+    const normalizedData = this.normalizeProductDataForUpdate(productData);
+
+    const payload = {
+      name: `[Producto Ventas Wp] ${productName.trim()}`,
+      value: JSON.stringify(normalizedData)
+    };
+
+    console.log('🔄 Actualizando producto:', productName);
+    console.log('📦 Payload de actualización:', payload);
+
+
+    const fetchOptions = {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(payload)
+    };
+
+    const response = await fetch(
+      'http://localhost:3000/api/integrations/chateapro/bot-fields',
+      fetchOptions
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(
+        errorData.message || 
+        `Error ${response.status}: ${response.statusText}`
+      );
+    }
+
+    const result = await response.json();
+    console.log('✅ Producto actualizado exitosamente:', result);
     
+    return result;
     
-    for (const section in template) {
-      if (data[section]) {
-       
-        result[section] = { ...template[section], ...data[section] };
+  } catch (error) {
+    console.error('Error en ProductService.updateProduct:', error);
+    throw error;
+  }
+  }
+
+  static normalizeProductDataForUpdate(productData) {
+
+    const info = productData.informacion_de_producto || {};
+    const embudo = productData.embudo_de_ventas || {};
+    const prompt = productData.prompt || {};
+    const voz = productData.voz_con_ia || {};
+    const recordatorios = productData.recordatorios || {};
+    const remarketing = productData.remarketing || {};
+    const activadores = productData.activadores_del_flujo || {};
+
+    return {
+      informacion_de_producto: {
+        id: info.id || info.id_del_producto_en_dropi || "",
+        nombre: info.nombre_del_producto || info.nombre || "",
+        precio: info.precio_del_producto || info.precio || "",
+        id_dropi: info.id_del_producto_en_dropi || info.id_dropi || "",
+        tipo: info.tipo_de_producto || info.tipo || "simple",
+        imagen: info.imagen_del_producto || info.imagen || "",
+        estado_producto: info.estado_producto || info.estado || "inactivo",
+        estado: info.estado || info.estado_producto || "inactivo",
+        nombre_del_producto: info.nombre_del_producto || info.nombre || ""
+      },
+      embudo_de_ventas: {
+        mensaje_inicial: embudo.mensaje_inicial || "",
+        multimedia: {
+          c1: embudo.multimedia?.c1 || ""
+        },
+        pregunta_de_entrada: embudo.pregunta_de_entrada || "",
+        imagen_1: embudo.imagen_1 || ""
+      },
+      prompt: {
+        tipo_de_prompt: prompt.tipo_de_prompt || "libre",
+        prompt_libre: prompt.prompt_libre || "",
+        prompt_guiado_contextualizacion: prompt.prompt_guiado_contextualizacion || "",
+        prompt_guiado_ficha_tecnica: prompt.prompt_guiado_ficha_tecnica || "",
+        prompt_guiado_guion_conversacional: prompt.prompt_guiado_guion_conversacional || "",
+        prompt_guiado_posibles_situaciones: prompt.prompt_guiado_posibles_situaciones || "",
+        prompt_guiado_reglas: prompt.prompt_guiado_reglas || ""
+      },
+      voz_con_ia: {
+        id: voz.id || "",
+        api_key: voz.api_key_elevenlabs || voz.api_key || "",
+        estabilidad: voz.estabilidad || 0.3,
+        similaridad: voz.similaridad || 0.7,
+        estilo: voz.estilo || 0.5,
+        speaker_boost: String(voz.speaker_boost === "no" || voz.speaker_boost === false ? "false" : voz.speaker_boost || "false")
+      },
+      recordatorios: {
+        tiempo_1: recordatorios.tiempo_recordatorio_1 || recordatorios.tiempo_1 || 5,
+        mensaje_1: recordatorios.mensaje_recordatorio_1 || recordatorios.mensaje_1 || "",
+        tiempo_2: recordatorios.tiempo_recordatorio_2 || recordatorios.tiempo_2 || 10,
+        mensaje_2: recordatorios.mensaje_recordatorio_2 || recordatorios.mensaje_2 || "",
+        horario_minimo: recordatorios.horario_minimo || "",
+        horario_maximo: recordatorios.horario_maximo || ""
+      },
+      remarketing: {
+        tiempo_1: remarketing.tiempo_remarketing_1 || remarketing.tiempo_1 || "",
+        plantilla_1: remarketing.plantilla_remarketing_1 || remarketing.plantilla_1 || "",
+        tiempo_2: remarketing.tiempo_remarketing_2 || remarketing.tiempo_2 || "",
+        plantilla_2: remarketing.plantilla_remarketing_2 || remarketing.plantilla_2 || ""
+      },
+      activadores_del_flujo: {
+        palabras_clave: Array.isArray(activadores.palabras_clave) ? 
+          activadores.palabras_clave.join(',') : 
+          (activadores.palabras_clave || ""),
+        ids_de_anuncio: Array.isArray(activadores.ids_de_anuncio) ? 
+          activadores.ids_de_anuncio.join(',') : 
+          (activadores.ids_de_anuncio || "")
+      }
+    };
+  }
+
+  static extractNumericId(input) {
+    if (!input || typeof input !== 'string') return '';
+    
+    if (/^\d+$/.test(input.trim())) {
+      return input.trim();
+    }
+    
+    const patterns = [
+      /\[Producto Ventas Wp\]\s*(\d+)/i,
+      /producto\s*(\d+)/i,
+      /(\d+)$/,
+      /(\d+)/
+    ];
+    
+    for (const pattern of patterns) {
+      const match = input.match(pattern);
+      if (match && match[1]) {
+        return match[1];
       }
     }
     
-    return result;
+    return input.replace(/\D/g, '') || input;
+  }
+
+  static extractProductsData(result) {
+    if (result.data && result.data.data) return result.data.data;
+    if (result.data && Array.isArray(result.data)) return result.data;
+    if (Array.isArray(result)) return result;
+    throw new Error('Estructura de respuesta no reconocida');
+  }
+
+
+  static normalizeProductData(product) {
+    try {
+      let productData;
+      if (typeof product.value === 'string') {
+        productData = JSON.parse(product.value);
+      } else if (typeof product.value === 'object') {
+        productData = product.value;
+      } else {
+        console.warn('Producto sin datos válidos:', product);
+        return this.createFallbackProduct(product);
+      }
+
+      const info = productData.informacion_de_producto || {};
+      
+      return {
+        id: this.extractIdFromProductName(product.name) || info.id || 'unknown',
+        name: this.getProductName(info, product),
+        price: this.getProductPrice(info),
+        type: this.getProductType(info),
+        status: this.getProductStatus(info),
+        image: this.getProductImage(info),
+        dropiId: info.id_del_producto_en_dropi || info.id_dropi || '',
+        rawData: product,
+        productData: productData
+      };
+      
+    } catch (error) {
+      console.error('Error al normalizar producto:', error, product);
+      return this.createFallbackProduct(product);
+    }
+  }
+
+  static createFallbackProduct(product) {
+    const extractedId = this.extractIdFromProductName(product.name);
+    return {
+      id: extractedId || 'unknown',
+      name: extractedId ? `Producto ${extractedId}` : (product.name || 'Producto sin nombre'),
+      price: '$0.00',
+      type: 'Simple',
+      status: 'inactivo',
+      image: '',
+      dropiId: '',
+      rawData: product,
+      productData: null
+    };
+  }
+
+  static extractIdFromProductName(productName) {
+    if (!productName) return null;
+    const match = productName.match(/\[Producto Ventas Wp\]\s*(.+)/);
+    return match ? match[1].trim() : null;
+  }
+
+  static getProductName(info, product) {
+    const name = info.nombre_del_producto || 
+                 info.nombre || 
+                 info.nombre_de_producto ||
+                 product.nombre ||
+                 this.extractIdFromProductName(product.name) ||
+                 'Producto sin nombre';
+    
+    if (!name || name.trim() === '') {
+      const extractedId = this.extractIdFromProductName(product.name);
+      return extractedId ? `Producto ${extractedId}` : 'Producto sin nombre';
+    }
+    return name;
+  }
+
+  static getProductPrice(info) {
+    const price = info.precio_del_producto || 
+                  info.precio || 
+                  info.precio_de_producto ||
+                  '0';
+    
+    if (typeof price === 'string' && (price.includes('$') || price.includes('€'))) {
+      return price;
+    }
+    const numericPrice = parseFloat(price) || 0;
+    return `$${numericPrice.toFixed(2)}`;
+  }
+
+  static getProductStatus(info) {
+    const status = info.estado || info.estado_producto || 'inactivo';
+    return status === 'activo' ? 'activo' : 'inactivo';
+  }
+
+  static getProductType(info) {
+    const type = info.tipo_de_producto || info.tipo || 'simple';
+    if (type === 'simple' || type === 'no') return 'Simple';
+    if (type === 'variable' || type === 'si') return 'Variable';
+    return 'Simple';
+  }
+
+  static getProductImage(info) {
+    return info.imagen_del_producto || info.imagen || '';
   }
 }

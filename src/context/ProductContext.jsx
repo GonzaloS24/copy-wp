@@ -129,13 +129,11 @@ export const ProductProvider = ({ children }) => {
 
   const updateProductData = (section, data) => {
     if (section === '') {
-      // Reemplazo completo del estado
       setProductData(prev => ({
         ...prev,
         ...data
       }));
     } else {
-      // Actualización parcial como antes
       setProductData(prev => ({
         ...prev,
         [section]: {
@@ -156,7 +154,6 @@ export const ProductProvider = ({ children }) => {
     }));
   };
 
-  // Función utilitaria para obtener los datos del prompt en la estructura de la API
   const getPromptDataForAPI = () => {
     const freePromptData = productData.freePrompt;
     const tipoPrompt = freePromptData.promptType || 'libre';

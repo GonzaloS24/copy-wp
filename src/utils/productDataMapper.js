@@ -1,18 +1,20 @@
 export const mapProductDataToServiceFormat = (productData, isInactive = false) => {
   const guideData = productData.freePrompt?.guidePromptData || {};
-  
+
   return {
     informacion_de_producto: {
-      nombre: productData.info?.formData?.name || '',
-      precio: productData.info?.formData?.price || '',
-      id_dropi: productData.info?.formData?.dropiId || '',
-      tipo: productData.info?.formData?.productType || 'simple',
-      imagen: productData.info?.formData?.image || '',
+      nombre_del_producto: productData.info?.formData?.name || '',
+      precio_del_producto: productData.info?.formData?.price || '', 
+      id_del_producto_en_dropi: productData.info?.formData?.dropiId || '', 
+      tipo_de_producto: productData.info?.productType || 'simple', 
+      imagen_del_producto: productData.info?.formData?.image || '', 
       estado: isInactive ? 'inactivo' : 'activo'
     },
     embudo_de_ventas: {
       mensaje_inicial: productData.messageWel?.formData?.initialMessage || '',
-      imagen_1: productData.messageWel?.formData?.image1 || '',
+      multimedia: { 
+        c1: productData.messageWel?.formData?.image1 || ''
+      },
       pregunta_de_entrada: productData.messageWel?.formData?.entryQuestion || ''
     },
     prompt: {
@@ -26,29 +28,33 @@ export const mapProductDataToServiceFormat = (productData, isInactive = false) =
     },
     voz_con_ia: {
       id: productData.voice?.voiceId || '',
-      api_key: productData.voice?.apiKey || '',
-      estabilidad: productData.voice?.stability || '0.5',
-      similaridad: productData.voice?.similarity || '0.6',
-      estilo: productData.voice?.style || '1.0',
-      speaker_boost: productData.voice?.speakerBoost || 'false'
+      api_key_elevenlabs: productData.voice?.apiKey || '', 
+      estabilidad: productData.voice?.stability || 0.5, 
+      similaridad: productData.voice?.similarity || 0.7, 
+      estilo: productData.voice?.style || 0.5,
+      speaker_boost: productData.voice?.useSpeakerBoost ? 'si' : 'no' 
     },
     recordatorios: {
-      tiempo_1: productData.reminder?.reminder1?.time || '',
-      mensaje_1: productData.reminder?.reminder1?.text || '',
-      tiempo_2: productData.reminder?.reminder2?.time || '',
-      mensaje_2: productData.reminder?.reminder2?.text || '',
-      horario_minimo: productData.reminder?.minTime || '',
-      horario_maximo: productData.reminder?.maxTime || ''
+      tiempo_recordatorio_1: productData.reminder?.reminder1?.time && productData.reminder?.reminder1?.unit 
+        ? `${productData.reminder.reminder1.time}${productData.reminder.reminder1.unit}` 
+        : '',
+      mensaje_recordatorio_1: productData.reminder?.reminder1?.text || '', 
+      tiempo_recordatorio_2: productData.reminder?.reminder2?.time && productData.reminder?.reminder2?.unit 
+        ? `${productData.reminder.reminder2.time}${productData.reminder.reminder2.unit}` 
+        : '',
+      mensaje_recordatorio_2: productData.reminder?.reminder2?.text || '', 
+      horario_minimo: productData.reminder?.timeRange?.enabled ? productData.reminder.timeRange.minTime : '', 
+      horario_maximo: productData.reminder?.timeRange?.enabled ? productData.reminder.timeRange.maxTime : ''  
     },
     remarketing: {
-      tiempo_1: productData.remarketing?.time1 || '',
-      plantilla_1: productData.remarketing?.template1 || '',
-      tiempo_2: productData.remarketing?.time2 || '',
-      plantilla_2: productData.remarketing?.template2 || ''
+      tiempo_remarketing_1: productData.remarketing?.remarketing1?.time ? `${productData.remarketing.remarketing1.time}${productData.remarketing.remarketing1.unit}` : '', 
+      plantilla_remarketing_1: productData.remarketing?.remarketing1?.template || '', 
+      tiempo_remarketing_2: productData.remarketing?.remarketing2?.time ? `${productData.remarketing.remarketing2.time}${productData.remarketing.remarketing2.unit}` : '',
+      plantilla_remarketing_2: productData.remarketing?.remarketing2?.template || '' 
     },
     activadores_del_flujo: {
-      palabras_clave: productData.triggers?.keywords || '',
-      ids_de_anuncio: productData.triggers?.adIds || ''
+      palabras_clave: productData.activators?.keywords || [], 
+      ids_de_anuncio: productData.activators?.adIds || [] 
     }
   };
 };

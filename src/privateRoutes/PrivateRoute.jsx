@@ -15,13 +15,13 @@ export const PrivateRoute = () => {
     const token = getAuthToken();
     
     if (token) {
-      console.log('Token encontrado, validando...');
+ //     console.log('Token encontrado, validando...');
       const isValid = await validateToken(token);
       
       if (isValid) {
-        console.log('Token válido. Acceso concedido');
+    //    console.log('Token válido. Acceso concedido');
       } else {
-        console.warn('Token inválido. Eliminando de cookies...');
+    //    console.warn('Token inválido. Eliminando de cookies...');
         removeAuthToken();
       }
       

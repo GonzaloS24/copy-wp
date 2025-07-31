@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate  } from 'react-router-dom';
 import { useProduct } from '../../context/ProductContext';
 import { ProductService } from '../../services/productService';
 import { AlertDialog } from './content/dialog/AlertDialog';
@@ -12,6 +12,7 @@ export const ProductButtons = () => {
   const { productData, validationState } = useProduct();
   const { productName } = useParams();
   const location = useLocation();
+   const navigate = useNavigate(); 
   const [isLoading, setIsLoading] = useState(false);
   const [showValidationDialog, setShowValidationDialog] = useState(false);
   const [missingFields, setMissingFields] = useState([]);
@@ -22,7 +23,6 @@ export const ProductButtons = () => {
     console.log('Abriendo modal de asistente automático');
   };
 
-  // Función para verificar si la ruta contiene /:productName
   const isEditMode = () => {
     return productName && location.pathname.includes(`/${productName}`);
   };
@@ -50,13 +50,27 @@ export const ProductButtons = () => {
     return '';
   };
 
+  const validateProductData = (mappedData) => {
+    const errors = [];
+    
+    if (!mappedData || typeof mappedData !== 'object') {
+      errors.push('Datos del producto inválidos');
+      return errors;
+    }
+
+    if (!mappedData.informacion_de_producto) {
+      errors.push('Información del producto requerida');
+    }
+
+    return errors;
+  };
+
   const validateRequiredFields = () => {
     const missing = [];
 
-    // Validación especial para nombre del producto (siempre obligatorio)
     if (!productData.info?.formData?.name?.trim()) {
       missing.push('Nombre del producto');
-      return missing; // Retornar inmediatamente si falta el nombre
+      return missing;
     }
 
     if (!productData.info?.formData?.price?.trim()) {
@@ -139,38 +153,34 @@ export const ProductButtons = () => {
     
     try {
       const mappedData = mapProductDataToServiceFormat(productData, isInactive);
-      const productNameToSave = productData.info?.formData?.name || '';
+      const productNameFromData = productData.info?.formData?.name?.trim() || '';
       
-
+      const validationErrors = validateProductData(mappedData);
+      if (validationErrors.length > 0) {
+        throw new Error(`Datos inválidos: ${validationErrors.join(', ')}`);
+      }
+      
       if (isEditMode()) {
-        console.log('Modo edición detectado - usando setBotFieldsByName');
-        console.log('Actualizando producto:', productName);
-        console.log('Datos a enviar:', mappedData);
+        console.log('Modo edición - actualizando producto:', productName);
+
+        const response = await ProductService.updateProduct(productName, mappedData);
+
         
-        const response = await ProductService.setBotFieldsByName(productName, mappedData);
-        
-        if (response.status === 'ok') {
-          alert(`¡Producto "${productName}" actualizado exitosamente!`);
+         if (response && (response.status === 'ok' || response.message || response.data)) {
+        alert(`¡Producto "${productName || 'nuevo'}" actualizado exitosamente!`);
+        navigate('/productos-config'); 
         } else {
-          throw new Error(response.message || 'Error al actualizar el producto');
+          throw new Error('Error al actualizar el producto');
         }
       } else {
-        console.log('Modo creación - usando createProduct');
-        console.log('Cuerpo de la petición a enviar:', {
-          name: `[Producto Ventas Wp] ${productNameToSave}`,
-          var_ns: "",
-          var_type: "array",
-          description: "",
-          value: JSON.stringify(mappedData),
-          is_template_field: false
-        });
+        console.log('Modo creación - creando nuevo producto');
+        navigate('/productos-config')
+        const response = await ProductService.createProduct(mappedData);
 
-        const response = await ProductService.createProduct(productNameToSave, mappedData);
-
-        if (response.status === 'ok') {
-          alert(`¡Asistente guardado exitosamente como ${isInactive ? 'inactivo' : 'activo'}!`);
+        if (response && (response.status === 'ok' || response.message || response.data)) {
+          alert(`¡Asistente "${productNameFromData}" guardado exitosamente como ${isInactive ? 'inactivo' : 'activo'}!`);
         } else {
-          throw new Error(response.message || 'Error al guardar el asistente');
+          throw new Error('Error al guardar el asistente');
         }
       }
     } catch (error) {
@@ -194,7 +204,7 @@ export const ProductButtons = () => {
   const handleConfirmSecondAttempt = () => {
     setShowValidationDialog(false);
     saveAssistant(true); 
-    };
+  };
 
   const renderMissingFieldsContent = () => {
     const actionText = isEditMode() ? 'actualizar' : 'guardar';
