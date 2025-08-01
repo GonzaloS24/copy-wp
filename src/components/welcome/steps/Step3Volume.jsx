@@ -1,12 +1,11 @@
-import OptionButton from "../shared/OptionButton";
 import NavigationButtons from "../shared/NavigationButtons";
+import OptionButton from "../shared/OptionButton";
 
 const Step3Volume = ({
   selectedValue,
   onSelect,
   onNext,
   onPrevious,
-  onSkip,
   canProceed,
 }) => {
   const options = [
@@ -37,15 +36,15 @@ const Step3Volume = ({
   ];
 
   return (
-    <div className="text-center max-w-4xl mx-auto px-8">
-      <h2 className="text-3xl font-bold text-slate-800 mb-4">
+    <div className="max-w-[600px] w-full text-center mx-auto px-8">
+      <h2 className="text-2xl font-bold text-slate-700 mb-4 tracking-tight">
         ¿Cuántos pedidos diarios manejas actualmente?
       </h2>
-      <p className="text-lg text-slate-600 mb-10">
+      <p className="text-base text-slate-600 mb-10 leading-relaxed">
         Esto nos ayudará a adaptar las herramientas a tu nivel de operación.
       </p>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <div className="grid grid-cols-2 gap-6 mb-12">
         {options.map((option) => (
           <OptionButton
             key={option.value}
@@ -65,7 +64,7 @@ const Step3Volume = ({
         canProceed={canProceed}
         onNext={onNext}
         onPrevious={onPrevious}
-        onSkip={onSkip}
+        isLastStep={false}
       />
     </div>
   );
