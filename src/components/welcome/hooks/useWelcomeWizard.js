@@ -9,6 +9,7 @@ export const useWelcomeWizard = () => {
     goals: "",
     fullName: "",
     whatsappNumber: "",
+    countryCode: "+57",
   });
 
   const totalSteps = 7;
@@ -69,7 +70,6 @@ export const useWelcomeWizard = () => {
 
   const finishWizard = async () => {
     await saveProgress();
-    // marcar como completado en localstorage
     localStorage.setItem("welcomeWizardCompleted", "true");
   };
 

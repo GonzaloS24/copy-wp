@@ -1,5 +1,10 @@
 import { useState, useEffect } from "react";
-import NavigationButtons from "../shared/NavigationButtons";
+import NavigationButtons from "../components/NavigationButtons";
+import {
+  COUNTRIES,
+  PHONE_LENGTHS,
+  PHONE_PLACEHOLDERS,
+} from "../data/wizardOptions";
 
 const Step5Contact = ({
   fullName,
@@ -15,49 +20,31 @@ const Step5Contact = ({
   const [errors, setErrors] = useState({});
   const [selectedCountryCode, setSelectedCountryCode] = useState(countryCode);
 
-  const countries = [
-    { code: "+57", name: "Colombia", flag: "🇨🇴" },
-    { code: "+56", name: "Chile", flag: "🇨🇱" },
-    { code: "+593", name: "Ecuador", flag: "🇪🇨" },
-    { code: "+52", name: "México", flag: "🇲🇽" },
-    { code: "+51", name: "Perú", flag: "🇵🇪" },
-    { code: "+595", name: "Paraguay", flag: "🇵🇾" },
-    { code: "+507", name: "Panamá", flag: "🇵🇦" },
-  ];
-
   // Sincronizar estado local con prop cuando cambie
   useEffect(() => {
     setSelectedCountryCode(countryCode);
   }, [countryCode]);
 
-  // Función para obtener la longitud esperada del teléfono según el país
+  // Funciones auxiliares movidas a archivo de datos
   const getPhoneLengthByCountry = (code) => {
-    const phoneLengths = {
-      "+57": 10, // Colombia
-      "+56": 9, // Chile
-      "+593": 9, // Ecuador
-      "+52": 10, // México
-      "+51": 9, // Perú
-      "+595": 9, // Paraguay
-      "+507": 8, // Panamá
-    };
-    return phoneLengths[code] || 10;
+    return PHONE_LENGTHS[code] || 10;
   };
 
-  // Función para obtener el nombre del país
   const getCountryName = (code) => {
-    const country = countries.find((c) => c.code === code);
+    const country = COUNTRIES.find((c) => c.code === code);
     return country ? country.name : "el país seleccionado";
+  };
+
+  const getPhonePlaceholder = (countryCode) => {
+    return PHONE_PLACEHOLDERS[countryCode] || "Número de teléfono";
   };
 
   const validateName = (name) => {
     if (!name || !name.trim()) return "El nombre es requerido";
     if (name.trim().length < 2)
       return "El nombre debe tener al menos 2 caracteres";
-    // Validar que contenga al menos un nombre y un apellido
     const nameParts = name.trim().split(/\s+/);
     if (nameParts.length < 2) return "Ingresa tu nombre y apellido completos";
-    // Validar que solo contenga letras, espacios y caracteres especiales del español
     if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/.test(name.trim()))
       return "El nombre solo puede contener letras";
     return "";
@@ -67,11 +54,9 @@ const Step5Contact = ({
     if (!phone || !phone.trim()) return "El número de WhatsApp es requerido";
     const cleanPhone = phone.replace(/\s/g, "");
 
-    // Validar que solo contenga números
     if (!/^\d+$/.test(cleanPhone))
       return "El número solo puede contener dígitos";
 
-    // Validar longitud según el país seleccionado
     const phoneLength = getPhoneLengthByCountry(currentCountryCode);
     if (cleanPhone.length !== phoneLength)
       return `El número debe tener ${phoneLength} dígitos para ${getCountryName(
@@ -105,7 +90,6 @@ const Step5Contact = ({
   const handlePhoneChange = (e) => {
     let value = e.target.value;
 
-    // Permitir borrar completamente
     if (value === "") {
       onPhoneChange("");
       setErrors((prev) => ({
@@ -115,10 +99,8 @@ const Step5Contact = ({
       return;
     }
 
-    // Solo permitir números y espacios
     value = value.replace(/[^\d\s]/g, "");
 
-    // Limitar la longitud máxima
     const maxLength = getPhoneLengthByCountry(selectedCountryCode) + 3;
     if (value.length > maxLength) {
       return;
@@ -134,32 +116,14 @@ const Step5Contact = ({
     const newCountryCode = e.target.value;
     console.log("CAMBIANDO PAÍS A:", newCountryCode);
 
-    // Actualizar estado local inmediatamente
     setSelectedCountryCode(newCountryCode);
-
-    // Llamar función del padre
     onCountryCodeChange(newCountryCode);
 
-    // Limpiar el número cuando cambie el país para evitar confusiones
     onPhoneChange("");
     setErrors((prev) => ({
       ...prev,
       whatsappNumber: "El número de WhatsApp es requerido",
     }));
-  };
-
-  // Función auxiliar para obtener el placeholder según el país
-  const getPhonePlaceholder = (countryCode) => {
-    const placeholders = {
-      "+57": "300 123 4567",
-      "+56": "9 1234 5678",
-      "+593": "99 123 4567",
-      "+52": "55 1234 5678",
-      "+51": "999 123 456",
-      "+595": "981 123 456",
-      "+507": "6123 4567",
-    };
-    return placeholders[countryCode] || "Número de teléfono";
   };
 
   // Verificar si realmente puede proceder (sin errores)
@@ -220,7 +184,7 @@ const Step5Contact = ({
             <div className="relative flex items-center px-4 py-4 bg-gradient-to-r from-slate-50 to-slate-100 border-r border-slate-200 min-w-[140px] cursor-pointer hover:from-slate-100 hover:to-slate-150 transition-all duration-200 group">
               <span className="text-base font-bold text-slate-800 tracking-wide group-hover:text-slate-900 transition-colors duration-200">
                 <span className="text-lg mr-2">
-                  {countries.find((c) => c.code === selectedCountryCode)?.flag}
+                  {COUNTRIES.find((c) => c.code === selectedCountryCode)?.flag}
                 </span>
                 <span className="font-mono">{selectedCountryCode}</span>
               </span>
@@ -234,7 +198,7 @@ const Step5Contact = ({
                   outline: "none",
                 }}
               >
-                {countries.map((country) => (
+                {COUNTRIES.map((country) => (
                   <option
                     key={country.code}
                     value={country.code}

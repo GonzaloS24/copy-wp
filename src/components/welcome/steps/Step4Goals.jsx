@@ -1,5 +1,6 @@
-import OptionButton from "../shared/OptionButton";
-import NavigationButtons from "../shared/NavigationButtons";
+import OptionButton from "../components/OptionButton";
+import NavigationButtons from "../components/NavigationButtons";
+import { WIZARD_OPTIONS } from "../data/wizardOptions";
 
 const Step4Goals = ({
   selectedValue,
@@ -8,32 +9,7 @@ const Step4Goals = ({
   onPrevious,
   canProceed,
 }) => {
-  const options = [
-    {
-      value: "aumentar-ventas",
-      title: "Aumentar ventas",
-      description: "Quiero vender más o recuperar carritos.",
-      icon: "💰",
-    },
-    {
-      value: "atencion-cliente",
-      title: "Mejorar atención al cliente",
-      description: "Quiero responder más rápido y mejor.",
-      icon: "🎯",
-    },
-    {
-      value: "automatizar",
-      title: "Automatizar procesos",
-      description: "Quiero ahorrar tiempo automatizando tareas.",
-      icon: "🤖",
-    },
-    {
-      value: "todo",
-      title: "Todo lo anterior",
-      description: "Quiero aprovechar todo el potencial de la plataforma.",
-      icon: "🧩",
-    },
-  ];
+  const options = WIZARD_OPTIONS.goals;
 
   return (
     <div className="max-w-[600px] w-full text-center mx-auto px-8">
@@ -44,7 +20,7 @@ const Step4Goals = ({
         Selecciona lo que más se ajusta a tus metas actuales.
       </p>
 
-      <div className="grid grid-cols-2 gap-6 mb-12">
+      <div className="grid grid-cols-2 gap-6 mb-5">
         {options.map((option) => (
           <OptionButton
             key={option.value}

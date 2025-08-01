@@ -4,6 +4,7 @@ const NavigationButtons = ({
   onNext,
   onPrevious,
   isLastStep = false,
+  showPrevious = true,
 }) => {
   if (currentStep === 0 || currentStep === 6) {
     return null;
@@ -11,7 +12,7 @@ const NavigationButtons = ({
 
   return (
     <div className="flex justify-between items-center pt-6">
-      {currentStep > 1 ? (
+      {showPrevious && currentStep > 1 ? (
         <button
           onClick={onPrevious}
           className="text-slate-500 hover:text-slate-700 font-medium underline transition-colors duration-200"
