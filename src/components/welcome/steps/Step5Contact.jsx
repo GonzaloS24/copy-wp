@@ -136,26 +136,28 @@ const Step5Contact = ({
     whatsappNumber &&
     whatsappNumber.trim();
 
+  const selectedCountry = COUNTRIES.find((c) => c.code === selectedCountryCode);
+
   return (
-    <div className="max-w-[600px] w-full text-center mx-auto px-8">
-      <h2 className="text-3xl font-bold text-slate-700 mb-4 tracking-tight">
+    <div className="max-w-[600px] w-full text-center mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 className="text-2xl sm:text-3xl font-bold text-slate-700 mb-3 sm:mb-4 tracking-tight">
         ¡Casi terminamos!
       </h2>
-      <p className="text-base text-slate-600 mb-10 leading-relaxed">
+      <p className="text-sm sm:text-base text-slate-600 mb-8 sm:mb-10 leading-relaxed">
         Necesitamos estos datos para brindarte asesoría personalizada cuando
         nuestra IA detecte que necesites ayuda.
       </p>
 
-      <div className="space-y-6 mb-12 text-left">
+      <div className="space-y-5 sm:space-y-6 mb-10 sm:mb-12 text-left">
         <div>
-          <label className="block text-base font-semibold text-slate-700 mb-2">
+          <label className="block text-sm sm:text-base font-semibold text-slate-700 mb-2">
             Nombre y apellido completos
           </label>
           <input
             type="text"
             value={fullName || ""}
             onChange={handleNameChange}
-            className={`w-full px-4 py-4 border-2 rounded-xl text-base transition-all duration-200 ${
+            className={`w-full px-3 sm:px-4 py-3 sm:py-4 border-2 rounded-xl text-sm sm:text-base transition-all duration-200 ${
               errors.fullName
                 ? "border-red-300 focus:border-red-500"
                 : "border-slate-200 focus:border-sky-500"
@@ -165,52 +167,41 @@ const Step5Contact = ({
             maxLength={50}
           />
           {errors.fullName && (
-            <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>
+            <p className="text-red-500 text-xs sm:text-sm mt-1">
+              {errors.fullName}
+            </p>
           )}
         </div>
 
         <div>
-          <label className="block text-base font-semibold text-slate-700 mb-2">
+          <label className="block text-sm sm:text-base font-semibold text-slate-700 mb-2">
             Número de WhatsApp personal
           </label>
           <div
-            className={`flex border-2 rounded-xl transition-all duration-200 overflow-hidden ${
+            className={`flex overflow-hidden border-2 rounded-xl transition-all duration-200 ${
               errors.whatsappNumber
                 ? "border-red-300 focus-within:border-red-500"
                 : "border-slate-200 focus-within:border-sky-500"
             } focus-within:ring-4 focus-within:ring-sky-500/10`}
           >
-            {/* Selector de país */}
-            <div className="relative flex items-center px-4 py-4 bg-gradient-to-r from-slate-50 to-slate-100 border-r border-slate-200 min-w-[140px] cursor-pointer hover:from-slate-100 hover:to-slate-150 transition-all duration-200 group">
-              <span className="text-base font-bold text-slate-800 tracking-wide group-hover:text-slate-900 transition-colors duration-200">
-                <span className="text-lg mr-2">
-                  {COUNTRIES.find((c) => c.code === selectedCountryCode)?.flag}
-                </span>
-                <span className="font-mono">{selectedCountryCode}</span>
-              </span>
+            {/* Selector de país simple */}
+            <div className="relative flex-shrink-0 border-r border-slate-200">
               <select
                 value={selectedCountryCode}
                 onChange={handleCountryCodeChange}
-                className="absolute inset-0 opacity-0 w-full h-full cursor-pointer text-base"
-                style={{
-                  background: "transparent",
-                  border: "none",
-                  outline: "none",
-                }}
+                className="appearance-none bg-white border-0 px-2 py-3 sm:py-4 pr-6 text-xs sm:text-sm font-medium text-slate-700 focus:outline-none cursor-pointer hover:bg-slate-50 transition-colors duration-200"
+                style={{ width: "75px" }}
               >
                 {COUNTRIES.map((country) => (
-                  <option
-                    key={country.code}
-                    value={country.code}
-                    className="py-2 px-3 text-base bg-white hover:bg-blue-50"
-                  >
-                    {country.flag} {country.code} - {country.name}
+                  <option key={country.code} value={country.code}>
+                    {country.flag} {country.code}
                   </option>
                 ))}
               </select>
-              <div className="ml-3 transform group-hover:scale-110 transition-transform duration-200">
+              {/* Icono de flecha personalizado */}
+              <div className="absolute inset-y-0 right-1 flex items-center pointer-events-none">
                 <svg
-                  className="w-4 h-4 text-slate-500 group-hover:text-slate-700 transition-colors duration-200 pointer-events-none"
+                  className="w-3 h-3 text-slate-500"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -218,25 +209,28 @@ const Step5Contact = ({
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth={2.5}
+                    strokeWidth={2}
                     d="M19 9l-7 7-7-7"
                   />
                 </svg>
               </div>
             </div>
+
             <input
               type="tel"
               value={whatsappNumber || ""}
               onChange={handlePhoneChange}
-              className="flex-1 px-4 py-4 border-none text-base focus:outline-none bg-white"
+              className="flex-1 min-w-0 px-3 sm:px-4 py-3 sm:py-4 border-0 text-sm sm:text-base focus:outline-none bg-white"
               placeholder={getPhonePlaceholder(selectedCountryCode)}
               autoComplete="tel"
             />
           </div>
           {errors.whatsappNumber && (
-            <p className="text-red-500 text-sm mt-1">{errors.whatsappNumber}</p>
+            <p className="text-red-500 text-xs sm:text-sm mt-1">
+              {errors.whatsappNumber}
+            </p>
           )}
-          <p className="text-sm text-slate-500 mt-2 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-500 mt-2 leading-relaxed">
             Solo lo usaremos para asesorías personalizadas cuando necesites
             ayuda. Debe ser un número válido de WhatsApp.
           </p>

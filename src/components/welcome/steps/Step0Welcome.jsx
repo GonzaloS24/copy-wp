@@ -1,9 +1,15 @@
 const Step0Welcome = ({ onNext }) => {
   return (
-    <div className="text-center max-w-2xl mx-auto px-8">
-      <div className="mb-8">
-        <div className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-sky-500 to-sky-600 rounded-full flex items-center justify-center shadow-xl">
-          <svg width="80" height="80" viewBox="0 0 100 100" fill="none">
+    <div className="text-center max-w-2xl mx-auto px-4 sm:px-8 py-4 sm:py-0">
+      <div className="mb-6 sm:mb-8">
+        <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-4 sm:mb-6 bg-gradient-to-br from-sky-500 to-sky-600 rounded-full flex items-center justify-center shadow-xl">
+          <svg
+            width="60"
+            height="60"
+            viewBox="0 0 100 100"
+            fill="none"
+            className="sm:w-20 sm:h-20"
+          >
             <path
               d="M25 50C25 38.95 33.95 30 45 30C48.5 30 51.8 31 54.6 32.7C58.4 25.8 65.8 21 74 21C85.05 21 94 29.95 94 41C94 42.1 93.9 43.2 93.7 44.2C96.6 46.8 98.5 50.7 98.5 55C98.5 62.5 92.5 68.5 85 68.5H30C21.7 68.5 15 61.8 15 53.5C15 46.2 20.3 40.1 27.2 39.2C25.8 42.5 25 46 25 50Z"
               fill="white"
@@ -21,18 +27,18 @@ const Step0Welcome = ({ onNext }) => {
         </div>
       </div>
 
-      <h1 className="text-4xl font-bold text-sky-500 mb-6 tracking-tight">
+      <h1 className="text-2xl sm:text-4xl font-bold text-sky-500 mb-4 sm:mb-6 tracking-tight leading-tight">
         ¡Bienvenido a Chatea PRO!
       </h1>
 
-      <p className="text-xl text-slate-600 mb-10 leading-relaxed">
+      <p className="text-base sm:text-xl text-slate-600 mb-6 sm:mb-10 leading-relaxed px-2 sm:px-0">
         Queremos conocerte mejor para personalizar tu experiencia y mostrarte
         las herramientas más relevantes para tu negocio.
       </p>
 
       <button
         onClick={onNext}
-        className="bg-gradient-to-r from-sky-500 to-sky-600 text-white px-12 py-4 rounded-2xl text-xl font-semibold hover:from-sky-600 hover:to-sky-700 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-xl"
+        className="bg-gradient-to-r from-sky-500 to-sky-600 text-white px-8 sm:px-12 py-3 sm:py-4 rounded-xl sm:rounded-2xl text-base sm:text-xl font-semibold hover:from-sky-600 hover:to-sky-700 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-xl w-full sm:w-auto"
       >
         Personalizar mi experiencia
       </button>

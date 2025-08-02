@@ -11,7 +11,7 @@ const NavigationButtons = ({
   }
 
   return (
-    <div className="flex justify-between items-center pt-6">
+    <div className="flex justify-between items-center pt-4">
       {showPrevious && currentStep > 1 ? (
         <button
           onClick={onPrevious}

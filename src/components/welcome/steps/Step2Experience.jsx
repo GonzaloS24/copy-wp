@@ -12,7 +12,7 @@ const Step2Experience = ({
   const options = WIZARD_OPTIONS.experience;
 
   return (
-    <div className="text-center max-w-3xl mx-auto px-4">
+    <div className="text-center max-w-3xl mx-auto px-4 py-4 pb-20">
       <h2 className="text-2xl md:text-3xl font-bold text-slate-800 mb-3">
         ¿Cuánto tiempo llevas vendiendo?
       </h2>
@@ -22,7 +22,7 @@ const Step2Experience = ({
       </p>
 
       <div className="max-w-xl mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           {options.map((option) => (
             <OptionButton
               key={option.value}

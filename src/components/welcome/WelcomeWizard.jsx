@@ -179,29 +179,31 @@ const WelcomeWizard = ({ onComplete }) => {
   };
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-slate-50 to-slate-100 z-[5000] overflow-hidden">
-      <div className="relative w-full h-full flex items-center justify-center p-8">
+    <div className="fixed inset-0 bg-gradient-to-br from-slate-50 to-slate-100 z-[5000]">
+      <div className="relative w-full h-full overflow-y-auto">
         <ProgressBar
           progress={getProgress()}
           currentStep={currentStep}
           totalSteps={totalSteps}
         />
 
-        <div
-          className={`w-full max-w-6xl transition-all duration-500 ease-in-out ${
-            currentStep === 0 || currentStep === 6 ? "mt-0" : "mt-16"
-          }`}
-        >
+        <div className="flex items-center justify-center min-h-full p-4 sm:p-0">
           <div
-            className={`step-transition ${
-              isTransitioning
-                ? direction > 0
-                  ? "transform translate-x-8 opacity-0 scale-[0.98]"
-                  : "transform -translate-x-8 opacity-0 scale-[0.98]"
-                : "transform translate-x-0 opacity-100 scale-100"
+            className={`w-full max-w-6xl transition-all duration-500 ease-in-out ${
+              currentStep === 0 || currentStep === 6 ? "mt-0" : "mt-16 sm:mt-16"
             }`}
           >
-            {renderStep()}
+            <div
+              className={`step-transition ${
+                isTransitioning
+                  ? direction > 0
+                    ? "transform translate-x-8 opacity-0 scale-[0.98]"
+                    : "transform -translate-x-8 opacity-0 scale-[0.98]"
+                  : "transform translate-x-0 opacity-100 scale-100"
+              }`}
+            >
+              {renderStep()}
+            </div>
           </div>
         </div>
       </div>
