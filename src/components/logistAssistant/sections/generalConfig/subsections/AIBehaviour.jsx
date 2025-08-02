@@ -4,11 +4,15 @@ import { Card } from "../../../generalComponents/Card";
 
 export const AIBehaviour = () => {
   const [formData, setFormData] = useState({
-    sendingType: "",
-    languageAdaptation: "",
-    advisorGreeting: "",
-    cancellationPrevention: "",
-    generalRestrictions: "",
+    sendingType: "1 solo mensaje",
+    languageAdaptation:
+      "Hablar de forma cercana pero profesional, usar un lenguaje claro y directo, evitar tecnicismos",
+    advisorGreeting:
+      "Entiendo tu consulta, voy a conectarte con uno de nuestros asesores especializados para brindarte la mejor atención",
+    cancellationPrevention:
+      "Mostrar empatía, identificar la razón específica de cancelación, ofrecer alternativas como cambio de producto o fecha de entrega, destacar beneficios únicos",
+    generalRestrictions:
+      "Nunca proporcionar información personal de otros clientes, no hacer promesas que no pueda cumplir, mantener siempre un tono respetuoso, no insistir más de 3 veces en la misma propuesta",
   });
 
   const handleInputChange = ({ target }) => {
@@ -73,7 +77,8 @@ export const AIBehaviour = () => {
             id="languageAdaptation"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="4"
-            placeholder="Ej. Hablar de forma cercana pero profesional, usar un lenguaje claro y directo, evitar tecnicismos..."
+            value={formData.languageAdaptation}
+            placeholder={`Ej. ${formData.languageAdaptation}...`}
             onChange={handleInputChange}
           />
         </div>
@@ -96,7 +101,8 @@ export const AIBehaviour = () => {
             id="advisorGreeting"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="3"
-            placeholder="Ej. Entiendo tu consulta, voy a conectarte con uno de nuestros asesores especializados para brindarte la mejor atención..."
+            value={formData.advisorGreeting}
+            placeholder={`Ej. ${formData.advisorGreeting}...`}
             onChange={handleInputChange}
           />
         </div>
@@ -112,7 +118,8 @@ export const AIBehaviour = () => {
             id="cancellationPrevention"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="5"
-            placeholder="Ej. Mostrar empatía, identificar la razón específica de cancelación, ofrecer alternativas como cambio de producto o fecha de entrega, destacar beneficios únicos..."
+            value={formData.cancellationPrevention}
+            placeholder={`Ej. ${formData.cancellationPrevention}...`}
             onChange={handleInputChange}
           />
         </div>
@@ -135,7 +142,8 @@ export const AIBehaviour = () => {
             id="generalRestrictions"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="6"
-            placeholder="Ej. Nunca proporcionar información personal de otros clientes, no hacer promesas que no pueda cumplir, mantener siempre un tono respetuoso, no insistir más de 3 veces en la misma propuesta..."
+            value={formData.generalRestrictions}
+            placeholder={`Ej. ${formData.generalRestrictions}...`}
             onChange={handleInputChange}
           />
         </div>

@@ -2,9 +2,12 @@ import { useState } from "react";
 import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { Card } from "../../../generalComponents/Card";
 
+const deliveryTimesPlaceholder =
+  "De 3 a 5 días en ciudades principales y de 5 a 7 días en ciudades no principales";
+
 export const ShippingTimes = () => {
   const [formData, setFormData] = useState({
-    deliveryTimes: "",
+    deliveryTimes: deliveryTimesPlaceholder,
   });
 
   const handleInputChange = ({ target }) => {
@@ -43,7 +46,8 @@ export const ShippingTimes = () => {
             id="deliveryTimes"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="4"
-            placeholder="Ej. De 3 a 5 días en ciudades principales y de 5 a 7 días en ciudades no principales"
+            value={deliveryTimesPlaceholder}
+            placeholder={`Ej. ${deliveryTimesPlaceholder}`}
             onChange={handleInputChange}
           />
         </div>

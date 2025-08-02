@@ -2,13 +2,25 @@ import { useState } from "react";
 import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { Card } from "../../../generalComponents/Card";
 
+const availableCountries = [
+  { key: "colombia", value: "Colombia" },
+  { key: "chile", value: "Chile" },
+  { key: "mexico", value: "México" },
+  { key: "ecuador", value: "Ecuador" },
+  { key: "peru", value: "Perú" },
+  { key: "paraguay", value: "Paraguay" },
+  { key: "panama", value: "Panama" },
+];
+
 export const StoreData = () => {
   const [formData, setFormData] = useState({
     storeName: "",
     storeLink: "",
-    storeLocation: "",
-    warrantyPolicies: "",
-    dataSource: "",
+    storeLocation:
+      "Somos una tienda virtual de la más alta calidad con 5 años de experiencia y más de 3000 clientes satisfechos",
+    warrantyPolicies:
+      "Aceptamos devoluciones dentro de los primeros 10 días hábiles",
+    dataSource: "shopify",
   });
 
   const handleInputChange = ({ target }) => {
@@ -27,6 +39,35 @@ export const StoreData = () => {
         Configura la información básica que la IA utilizará para personalizar
         los mensajes automáticos
       </p>
+
+      {/* Selección del país de la tienda */}
+      <Card mb="8" shadow="sm">
+        <h3 className="text-lg font-semibold text-sky-500 mb-6">
+          Selecciona el país donde trabaja tu tienda
+        </h3>
+
+        <div className="mb-5">
+          <div className="flex items-center gap-2 mb-2">
+            <label className="font-medium text-slate-700 text-sm">
+              País <span className="text-red-500 font-bold">*</span>
+            </label>
+            {/* <TooltipIcon
+              tooltipId="dataSource"
+              content="Indica"
+            /> */}
+          </div>
+          <select
+            id="dataSource"
+            className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
+            onChange={handleInputChange}
+          >
+            <option value="">Selecciona el país</option>
+            {availableCountries.map((country) => (
+              <option value={country.key}>{country.value}</option>
+            ))}
+          </select>
+        </div>
+      </Card>
 
       {/* Nombre de la tienda */}
       <Card mb="8" shadow="sm">
@@ -90,7 +131,8 @@ export const StoreData = () => {
             id="storeLocation"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="4"
-            placeholder="Ej. Somos una tienda virtual de la más alta calidad con 5 años de experiencia y más de 3000 clientes satisfechos"
+            value={formData.storeLocation}
+            placeholder={`Ej. ${formData.storeLocation}`}
             onChange={handleInputChange}
           />
         </div>
@@ -116,7 +158,8 @@ export const StoreData = () => {
             id="warrantyPolicies"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="4"
-            placeholder="Ej. Aceptamos devoluciones dentro de los primeros 10 días hábiles..."
+            value={formData.warrantyPolicies}
+            placeholder={`Ej. ${formData.warrantyPolicies}...`}
             onChange={handleInputChange}
           />
         </div>
@@ -142,6 +185,7 @@ export const StoreData = () => {
           <select
             id="dataSource"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
+            value={formData.dataSource}
             onChange={handleInputChange}
           >
             <option value="">Selecciona el origen de datos</option>

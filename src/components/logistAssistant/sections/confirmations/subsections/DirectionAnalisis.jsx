@@ -3,10 +3,13 @@ import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { ToggleSwitch } from "../../../generalComponents/ToggleSwitch";
 import { Card } from "../../../generalComponents/Card";
 
+const addressPromptPlaceholder =
+  "#ROL: Asume el papel de un experto en direcciones colombianas. Tu tarea es analizar y evaluar una dirección colombiana proporcionada para determinar si parece estar bien estructurada, es suficientemente específica y contiene las referencias necesarias. Las direcciones en Colombia pueden adoptar diferentes formas, incluyendo calle, carrera, avenida, diagonal, transversal, corregimiento, entre otros términos relevantes según la nomenclatura local. Debes considerar si la dirección tiene suficientes detalles y referencias adicionales como el número de casa, el barrio o un punto de referencia.\n\n#CRITERIOS PARA EVALUAR LA DIRECCIÓN:\nA) Suficientemente específica: La dirección incluye un tipo de vía (calle, carrera, avenida, etc.), el número correspondiente, y referencia claras como un número de puerta o apartamento. También hay casos especiales, como nombre del sector, manzana, y número de casa, lo que permite identificar la ubicación precisa.";
+
 export const DirectionAnalisis = () => {
   const [formData, setFormData] = useState({
     evaluateAddress: false,
-    addressPrompt: "",
+    addressPrompt: addressPromptPlaceholder,
   });
 
   const handleInputChange = (field, value) => {
@@ -57,9 +60,7 @@ export const DirectionAnalisis = () => {
           <textarea
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="12"
-            placeholder={
-              "Ej.\n#ROL: Asume el papel de un experto en direcciones colombianas. Tu tarea es analizar y evaluar una dirección colombiana proporcionada para determinar si parece estar bien estructurada, es suficientemente específica y contiene las referencias necesarias. Las direcciones en Colombia pueden adoptar diferentes formas, incluyendo calle, carrera, avenida, diagonal, transversal, corregimiento, entre otros términos relevantes según la nomenclatura local. Debes considerar si la dirección tiene suficientes detalles y referencias adicionales como el número de casa, el barrio o un punto de referencia.\n\n#CRITERIOS PARA EVALUAR LA DIRECCIÓN:\nA) Suficientemente específica: La dirección incluye un tipo de vía (calle, carrera, avenida, etc.), el número correspondiente, y referencia claras como un número de puerta o apartamento. También hay casos especiales, como nombre del sector, manzana, y número de casa, lo que permite identificar la ubicación precisa."
-            }
+            placeholder={`Ej.\n${addressPromptPlaceholder}`}
             value={formData.addressPrompt}
             onChange={(e) => handleInputChange("addressPrompt", e.target.value)}
           />

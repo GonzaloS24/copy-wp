@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { TooltipIcon } from "../../generalComponents/TooltipIcon";
-import { ToggleSwitch } from "../../generalComponents/ToggleSwitch";
-import { Card } from "../../generalComponents/Card";
+import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
+import { ToggleSwitch } from "../../../generalComponents/ToggleSwitch";
+import { Card } from "../../../generalComponents/Card";
 
 export const SpecialActions = () => {
   const [formData, setFormData] = useState({

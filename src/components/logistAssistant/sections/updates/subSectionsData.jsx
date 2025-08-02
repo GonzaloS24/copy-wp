@@ -1,6 +1,6 @@
-import { OfferDays } from "./OfferDays";
-import { SpecialActions } from "./SpecialActions";
-import { UpdateMessages } from "./UpdateMessages";
+import { OfferDays } from "./subsections/OfferDays";
+import { SpecialActions } from "./subsections/SpecialActions";
+import { UpdateMessages } from "./subsections/UpdateMessages";
 
 export const subsectionsData = [
   {

@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { ExampleBox } from "../../generalComponents/ExampleBox";
-import { ExplanationBox } from "../../generalComponents/ExplanationBox";
-import { InfoBox } from "../../generalComponents/InfoBox";
-import { TooltipIcon } from "../../generalComponents/TooltipIcon";
+import { ExampleBox } from "../../../generalComponents/ExampleBox";
+import { ExplanationBox } from "../../../generalComponents/ExplanationBox";
+import { InfoBox } from "../../../generalComponents/InfoBox";
+import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 
 export const OfferDays = () => {
   const [formData, setFormData] = useState({
@@ -18,11 +18,11 @@ export const OfferDays = () => {
   };
 
   const dayOptions = [
-    { value: "1", label: "1 día hábil" },
-    { value: "2", label: "2 días hábiles" },
-    { value: "3", label: "3 días hábiles" },
-    { value: "4", label: "4 días hábiles" },
-    { value: "5", label: "5 días hábiles" },
+    { key: "1", value: "1 día hábil" },
+    { key: "2", value: "2 días hábiles" },
+    { key: "3", value: "3 días hábiles" },
+    { key: "4", value: "4 días hábiles" },
+    { key: "5", value: "5 días hábiles" },
   ];
 
   return (
@@ -70,8 +70,8 @@ export const OfferDays = () => {
               onChange={(e) => handleInputChange("minDay", e.target.value)}
             >
               {dayOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
+                <option key={option.key} value={option.key}>
+                  {option.value}
                 </option>
               ))}
             </select>
@@ -109,8 +109,8 @@ export const OfferDays = () => {
               onChange={(e) => handleInputChange("maxDay", e.target.value)}
             >
               {dayOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
+                <option key={option.key} value={option.key}>
+                  {option.value}
                 </option>
               ))}
             </select>

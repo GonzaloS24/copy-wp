@@ -8,8 +8,8 @@ export const OrderValidations = () => {
   const [formData, setFormData] = useState({
     autoConfirm: false,
     validateDeliveries: false,
-    minSuccessPercentage: undefined,
-    minOrdersValidation: undefined,
+    minSuccessPercentage: 70,
+    minOrdersValidation: 3,
     validateShipping: false,
     maxShippingValue: 15000,
   });
@@ -78,6 +78,7 @@ export const OrderValidations = () => {
               Porcentaje mínimo de entregas exitosas
             </label>
             <PercentageInput
+              value={formData.minSuccessPercentage}
               placeholder="Ej. 70"
               onChange={(value) =>
                 handleInputChange("minSuccessPercentage", value)
@@ -92,6 +93,7 @@ export const OrderValidations = () => {
             <input
               type="number"
               className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
+              value={formData.minOrdersValidation}
               placeholder="Ej. 3"
               min="1"
               onChange={(e) =>
@@ -129,6 +131,7 @@ export const OrderValidations = () => {
           <input
             type="number"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
+            value={formData.maxShippingValue}
             placeholder="15000"
             onChange={(e) =>
               handleInputChange(

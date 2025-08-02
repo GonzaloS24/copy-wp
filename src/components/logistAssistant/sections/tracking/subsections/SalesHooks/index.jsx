@@ -10,16 +10,13 @@ import {
 
 export const SalesHooks = () => {
   const [formData, setFormData] = useState({
-    generatedGuideHook: "",
-    deliveryHook: "",
-    officeHook: "",
-    deliveredHook: "",
+    generatedGuideHook: generatedGuideHook,
+    deliveryHook: deliveredHook,
+    officeHook: officeHook,
+    deliveredHook: deliveredHook,
   });
 
   const handleInputChange = ({ target }) => {
-    console.log(formData);
-    console.log(target.id);
-    console.log(target.value);
     setFormData((prev) => ({
       ...prev,
       [target.id]: target.value,
@@ -58,7 +55,8 @@ export const SalesHooks = () => {
             id="generatedGuideHook"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="8"
-            placeholder={generatedGuideHook}
+            value={formData.generatedGuideHook}
+            placeholder={formData.generatedGuideHook}
             onChange={handleInputChange}
           />
         </div>
@@ -84,7 +82,8 @@ export const SalesHooks = () => {
             id="deliveryHook"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="8"
-            placeholder={deliveryHook}
+            value={formData.deliveryHook}
+            placeholder={formData.deliveryHook}
             onChange={handleInputChange}
           />
         </div>
@@ -110,7 +109,8 @@ export const SalesHooks = () => {
             id="officeHook"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="12"
-            placeholder={officeHook}
+            value={formData.officeHook}
+            placeholder={formData.officeHook}
             onChange={handleInputChange}
           />
         </div>
@@ -136,7 +136,8 @@ export const SalesHooks = () => {
             id="deliveredHook"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="10"
-            placeholder={deliveredHook}
+            value={formData.deliveredHook}
+            placeholder={formData.deliveredHook}
             onChange={handleInputChange}
           />
         </div>

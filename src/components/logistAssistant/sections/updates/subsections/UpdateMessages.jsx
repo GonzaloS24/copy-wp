@@ -1,12 +1,14 @@
 import { useState } from "react";
-import { Card } from "../../generalComponents/Card";
-import { TemplateReinstallation } from "../../generalComponents/TemplateReinstallation";
-import { TooltipIcon } from "../../generalComponents/TooltipIcon";
+import { Card } from "../../../generalComponents/Card";
+import { TemplateReinstallation } from "../../../generalComponents/TemplateReinstallation";
+import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 
 export const UpdateMessages = () => {
   const [formData, setFormData] = useState({
-    officeReminderTime: 1,
-    officeReminderUnit: "dias",
+    reminder1TimeUpdate: 2,
+    reminder1Unit: "horas",
+    reminder2TimeUpdate: 24,
+    reminder2Unit: "horas",
   });
 
   const handleInputChange = (field, value) => {
@@ -106,14 +108,15 @@ export const UpdateMessages = () => {
               <input
                 id="reminder1TimeUpdate"
                 type="number"
-                placeholder="2"
+                value={formData.reminder1TimeUpdate}
+                placeholder={formData.reminder1TimeUpdate}
                 className="w-30 p-3.5 border border-gray-300 rounded-l-lg border-r-0 text-center text-sm bg-white focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
                 onChange={handleInputChange}
               />
               <select
                 id="reminder1Unit"
                 className="flex-1 p-3.5 border border-gray-300 rounded-r-lg text-sm bg-white cursor-pointer min-w-36 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-                value={"horas"}
+                value={formData.reminder1Unit}
                 onChange={handleInputChange}
               >
                 <option value="minutos">minutos</option>
@@ -137,14 +140,15 @@ export const UpdateMessages = () => {
               <input
                 id="reminder2Time"
                 type="number"
-                placeholder="24"
+                value={formData.reminder2TimeUpdate}
+                placeholder={formData.reminder2TimeUpdate}
                 className="w-30 p-3.5 border border-gray-300 rounded-l-lg border-r-0 text-center text-sm bg-white focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
                 onChange={handleInputChange}
               />
               <select
                 id="reminder2Unit"
                 className="flex-1 p-3.5 border border-gray-300 rounded-r-lg text-sm bg-white cursor-pointer min-w-36 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-                value={"horas"}
+                value={formData.reminder2Unit}
                 onChange={handleInputChange}
               >
                 <option value="minutos">minutos</option>
