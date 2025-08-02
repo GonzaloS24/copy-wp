@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { saveWelcomeAnswers } from "../services/welcomeService";
 
 export const useWelcomeWizard = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -11,11 +12,14 @@ export const useWelcomeWizard = () => {
     whatsappNumber: "",
     countryCode: "+57",
   });
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState(null);
 
   const totalSteps = 7;
 
   const updateAnswer = (key, value) => {
     setAnswers((prev) => ({ ...prev, [key]: value }));
+    if (saveError) setSaveError(null);
   };
 
   const nextStep = () => {
@@ -63,20 +67,80 @@ export const useWelcomeWizard = () => {
     return isStepValid(currentStep);
   };
 
-  const saveProgress = async () => {
-    // API para guardar progreso
-    console.log("Guardando progreso:", answers);
+  const finishWizard = async () => {
+    setIsSaving(true);
+    setSaveError(null);
+
+    try {
+      if (
+        !answers.salesChannel ||
+        !answers.experience ||
+        !answers.volume ||
+        !answers.goals
+      ) {
+        throw new Error("Faltan respuestas requeridas en la encuesta");
+      }
+
+      if (!answers.fullName || !answers.whatsappNumber) {
+        throw new Error("Faltan datos de contacto requeridos");
+      }
+
+      // Guardar las respuestas en Google Sheets
+      const result = await saveWelcomeAnswers(answers);
+
+      console.log("✅ Respuestas guardadas exitosamente:", result);
+
+      // Marcar como completado solo si se guardó exitosamente
+      localStorage.setItem("welcomeWizardCompleted", "true");
+      localStorage.setItem(
+        "welcomeWizardCompletedAt",
+        new Date().toISOString()
+      );
+
+      // Limpiar respaldos locales si existían
+      localStorage.removeItem("welcomeWizardBackups");
+
+      return result;
+    } catch (error) {
+      console.error("❌ Error al finalizar wizard:", error);
+      setSaveError(error.message);
+      throw error;
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const finishWizard = async () => {
-    await saveProgress();
-    localStorage.setItem("welcomeWizardCompleted", "true");
+  const retryFinish = async () => {
+    try {
+      setSaveError(null);
+      return await finishWizard();
+    } catch (error) {
+      console.error("❌ Error en reintento:", error);
+      throw error;
+    }
+  };
+
+  const getSummary = () => {
+    return {
+      totalAnswers: Object.values(answers).filter(
+        (answer) => answer && answer.trim()
+      ).length,
+      answers: answers,
+      isComplete:
+        isStepValid(1) &&
+        isStepValid(2) &&
+        isStepValid(3) &&
+        isStepValid(4) &&
+        isStepValid(5),
+    };
   };
 
   return {
     currentStep,
     answers,
     totalSteps,
+    isSaving,
+    saveError,
     updateAnswer,
     nextStep,
     previousStep,
@@ -84,7 +148,8 @@ export const useWelcomeWizard = () => {
     isStepValid,
     getProgress,
     canProceed,
-    saveProgress,
     finishWizard,
+    retryFinish,
+    getSummary,
   };
 };

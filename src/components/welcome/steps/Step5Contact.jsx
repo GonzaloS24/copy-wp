@@ -16,6 +16,9 @@ const Step5Contact = ({
   onNext,
   onPrevious,
   canProceed,
+  isSaving = false,
+  saveError = null,
+  onRetry = null,
 }) => {
   const [errors, setErrors] = useState({});
   const [selectedCountryCode, setSelectedCountryCode] = useState(countryCode);
@@ -134,7 +137,8 @@ const Step5Contact = ({
     fullName &&
     fullName.trim() &&
     whatsappNumber &&
-    whatsappNumber.trim();
+    whatsappNumber.trim() &&
+    !isSaving;
 
   const selectedCountry = COUNTRIES.find((c) => c.code === selectedCountryCode);
 
@@ -157,11 +161,12 @@ const Step5Contact = ({
             type="text"
             value={fullName || ""}
             onChange={handleNameChange}
+            disabled={isSaving}
             className={`w-full px-3 sm:px-4 py-3 sm:py-4 border-2 rounded-xl text-sm sm:text-base transition-all duration-200 ${
               errors.fullName
                 ? "border-red-300 focus:border-red-500"
                 : "border-slate-200 focus:border-sky-500"
-            } focus:outline-none focus:ring-4 focus:ring-sky-500/10`}
+            } focus:outline-none focus:ring-4 focus:ring-sky-500/10 disabled:opacity-50 disabled:cursor-not-allowed`}
             placeholder="Ej: Juan Pablo Restrepo"
             autoComplete="name"
             maxLength={50}
@@ -182,14 +187,17 @@ const Step5Contact = ({
               errors.whatsappNumber
                 ? "border-red-300 focus-within:border-red-500"
                 : "border-slate-200 focus-within:border-sky-500"
-            } focus-within:ring-4 focus-within:ring-sky-500/10`}
+            } focus-within:ring-4 focus-within:ring-sky-500/10 ${
+              isSaving ? "opacity-50" : ""
+            }`}
           >
-            {/* Selector de país simple */}
+            {/* Selector de país */}
             <div className="relative flex-shrink-0 border-r border-slate-200">
               <select
                 value={selectedCountryCode}
                 onChange={handleCountryCodeChange}
-                className="appearance-none bg-white border-0 px-2 py-3 sm:py-4 pr-6 text-xs sm:text-sm font-medium text-slate-700 focus:outline-none cursor-pointer hover:bg-slate-50 transition-colors duration-200"
+                disabled={isSaving}
+                className="appearance-none bg-white border-0 px-2 py-3 sm:py-4 pr-6 text-xs sm:text-sm font-medium text-slate-700 focus:outline-none cursor-pointer hover:bg-slate-50 transition-colors duration-200 disabled:cursor-not-allowed"
                 style={{ width: "75px" }}
               >
                 {COUNTRIES.map((country) => (
@@ -220,7 +228,8 @@ const Step5Contact = ({
               type="tel"
               value={whatsappNumber || ""}
               onChange={handlePhoneChange}
-              className="flex-1 min-w-0 px-3 sm:px-4 py-3 sm:py-4 border-0 text-sm sm:text-base focus:outline-none bg-white"
+              disabled={isSaving}
+              className="flex-1 min-w-0 px-3 sm:px-4 py-3 sm:py-4 border-0 text-sm sm:text-base focus:outline-none bg-white disabled:cursor-not-allowed"
               placeholder={getPhonePlaceholder(selectedCountryCode)}
               autoComplete="tel"
             />
@@ -236,6 +245,59 @@ const Step5Contact = ({
           </p>
         </div>
       </div>
+
+      {/* Mensaje de estado de guardado */}
+      {isSaving && (
+        <div className="mb-6 p-4 bg-sky-50 border border-sky-500 rounded-xl shadow-sm">
+          <div className="flex items-center justify-center space-x-3">
+            <div className="relative">
+              <div className="animate-spin rounded-full h-5 w-5 border-2 border-sky-500"></div>
+              <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-sky-500 absolute top-0 left-0"></div>
+            </div>
+            <div className="text-center">
+              <p className="text-sky-700 font-semibold text-sm">
+                Guardando tus respuestas...
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Mensaje de error de guardado */}
+      {saveError && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl shadow-sm">
+          <div className="flex items-start space-x-3">
+            <div className="flex-shrink-0 w-5 h-5 bg-red-100 rounded-full flex items-center justify-center mt-0.5">
+              <svg
+                className="w-3 h-3 text-red-500"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <div className="flex-1">
+              <p className="text-red-700 font-semibold text-sm mb-1">
+                Error al guardar las respuestas
+              </p>
+              <p className="text-red-600 text-xs mb-3">{saveError}</p>
+              {onRetry && (
+                <button
+                  onClick={onRetry}
+                  disabled={isSaving}
+                  className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 disabled:opacity-50 text-sm font-medium transition-colors duration-200 hover:shadow-md"
+                >
+                  {isSaving ? "Reintentando..." : "Reintentar"}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       <NavigationButtons
         currentStep={5}

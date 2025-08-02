@@ -14,12 +14,15 @@ const WelcomeWizard = ({ onComplete }) => {
     currentStep,
     answers,
     totalSteps,
+    isSaving,
+    saveError,
     updateAnswer,
     nextStep,
     previousStep,
     getProgress,
     canProceed,
     finishWizard,
+    retryFinish,
   } = useWelcomeWizard();
 
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -30,9 +33,6 @@ const WelcomeWizard = ({ onComplete }) => {
     setDirection(1);
     setIsTransitioning(true);
     setTimeout(() => {
-      if (currentStep === totalSteps - 2) {
-        finishWizard();
-      }
       nextStep();
       setIsTransitioning(false);
     }, 150);
@@ -49,22 +49,40 @@ const WelcomeWizard = ({ onComplete }) => {
 
   const handleNext = async () => {
     if (currentStep === totalSteps - 2) {
-      await finishWizard();
+      try {
+        await finishWizard();
+        animatedNextStep();
+      } catch (error) {
+        console.error("No se pudo guardar, no avanzando al siguiente paso");
+      }
+    } else {
+      animatedNextStep();
     }
-    animatedNextStep();
   };
 
   const handlePrevious = () => {
     animatedPreviousStep();
   };
 
-  const handleSkip = () => {
-    animatedNextStep();
+  const handleFinish = async () => {
+    try {
+      if (saveError) {
+        // Si hubo un error previo, reintentar
+        await retryFinish();
+      }
+      onComplete();
+    } catch (error) {
+      console.error("Error al finalizar:", error);
+    }
   };
 
-  const handleFinish = async () => {
-    await finishWizard();
-    onComplete();
+  const handleRetry = async () => {
+    try {
+      await retryFinish();
+      animatedNextStep();
+    } catch (error) {
+      console.error("Error en reintento:", error);
+    }
   };
 
   const renderStep = () => {
@@ -90,7 +108,6 @@ const WelcomeWizard = ({ onComplete }) => {
             onSelect={(value) => updateAnswer("experience", value)}
             onNext={handleNext}
             onPrevious={handlePrevious}
-            onSkip={handleSkip}
             canProceed={canProceed()}
           />
         );
@@ -102,7 +119,6 @@ const WelcomeWizard = ({ onComplete }) => {
             onSelect={(value) => updateAnswer("volume", value)}
             onNext={handleNext}
             onPrevious={handlePrevious}
-            onSkip={handleSkip}
             canProceed={canProceed()}
           />
         );
@@ -114,7 +130,6 @@ const WelcomeWizard = ({ onComplete }) => {
             onSelect={(value) => updateAnswer("goals", value)}
             onNext={handleNext}
             onPrevious={handlePrevious}
-            onSkip={handleSkip}
             canProceed={canProceed()}
           />
         );
@@ -130,8 +145,10 @@ const WelcomeWizard = ({ onComplete }) => {
             onCountryCodeChange={(value) => updateAnswer("countryCode", value)}
             onNext={handleNext}
             onPrevious={handlePrevious}
-            onSkip={handleSkip}
             canProceed={canProceed()}
+            isSaving={isSaving}
+            saveError={saveError}
+            onRetry={handleRetry}
           />
         );
 
@@ -158,17 +175,53 @@ const WelcomeWizard = ({ onComplete }) => {
               ¡Gracias!
             </h1>
             <h2 className="text-2xl font-semibold text-slate-700 mb-6 leading-tight animate-slide-up-2">
-              Personalizamos tu experiencia
+              Respuestas guardadas exitosamente
             </h2>
             <p className="text-lg text-slate-600 mb-10 leading-relaxed max-w-xl mx-auto animate-slide-up-3">
-              Hemos configurado Chatea PRO según tus necesidades. Ahora verás
-              recomendaciones y asistentes más relevantes para tu negocio.
+              Hemos configurado Chatea PRO según tus necesidades y guardado tus
+              respuestas. Ahora verás recomendaciones y asistentes más
+              relevantes para tu negocio.
             </p>
+
+            {saveError && (
+              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl shadow-sm animate-slide-up-3">
+                <div className="flex items-start space-x-3">
+                  <div className="flex-shrink-0 w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
+                    <svg
+                      className="w-4 h-4 text-red-500"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-red-700 font-semibold mb-1">
+                      Hubo un problema al guardar
+                    </p>
+                    <p className="text-red-600 text-sm mb-4">{saveError}</p>
+                    <button
+                      onClick={handleRetry}
+                      disabled={isSaving}
+                      className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 disabled:opacity-50 font-medium transition-all duration-200 hover:shadow-md"
+                    >
+                      {isSaving ? "Reintentando..." : "Reintentar guardado"}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <button
               onClick={handleFinish}
-              className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-12 py-4 rounded-2xl text-xl font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-xl animate-slide-up-4 hover:scale-105 active:scale-95"
+              disabled={isSaving}
+              className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-12 py-4 rounded-2xl text-xl font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-xl animate-slide-up-4 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Continuar a la plataforma
+              {isSaving ? "Guardando..." : "Continuar a la plataforma"}
             </button>
           </div>
         );
