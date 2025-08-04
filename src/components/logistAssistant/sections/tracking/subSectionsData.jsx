@@ -6,16 +6,22 @@ export const subsectionsData = [
   {
     id: "trackMessages",
     label: "Mensajes de seguimiento",
-    component: <TrackMessages />,
+    component: (formData, setFormData) => (
+      <TrackMessages formData={formData} setFormData={setFormData} />
+    ),
   },
   {
     id: "shippingTimes",
     label: "Tiempos de envío",
-    component: <ShippingTimes />,
+    component: (formData, setFormData) => (
+      <ShippingTimes formData={formData} setFormData={setFormData} />
+    ),
   },
   {
     id: "salesHooks",
     label: "Ganchos de venta",
-    component: <SalesHooks />,
+    component: (formData, setFormData) => (
+      <SalesHooks formData={formData} setFormData={setFormData} />
+    ),
   },
 ];

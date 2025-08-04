@@ -13,7 +13,12 @@ export const SectionContent = ({ activeTab }) => {
             aria-labelledby={tab.id}
             className={activeTab === tab.id ? "block" : "hidden"}
           >
-            <SectionContainer subsectionsData={tab.subsectionsData} />
+            <SectionContainer
+              subsectionsData={tab.subsectionsData}
+              initialValues={tab.initialValues}
+              sectionName={tab.sectionName}
+              sectionId={tab.id}
+            />
           </div>
         ))}
       </div>

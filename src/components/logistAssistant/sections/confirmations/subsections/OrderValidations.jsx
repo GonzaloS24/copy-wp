@@ -1,25 +1,17 @@
-import { useState } from "react";
 import { ToggleSwitch } from "../../../generalComponents/ToggleSwitch";
 import { PercentageInput } from "../../../generalComponents/PercentageInput";
 import { Card } from "../../../generalComponents/Card";
 // import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
+import { orderValidationsInitialValues } from "../../../../../utils/logistAssistant/initialValues/confirmations";
 
-export const OrderValidations = () => {
-  const [formData, setFormData] = useState({
-    autoConfirm: false,
-    validateDeliveries: false,
-    minSuccessPercentage: 70,
-    minOrdersValidation: 3,
-    validateShipping: false,
-    maxShippingValue: 15000,
-  });
-
-  const [showTooltip, setShowTooltip] = useState({});
-
+export const OrderValidations = ({ formData, setFormData }) => {
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
-      [field]: value,
+      orderValidations: {
+        ...prev.orderValidations,
+        [field]: value,
+      },
     }));
   };
 
@@ -47,9 +39,9 @@ export const OrderValidations = () => {
               /> */}
             </div>
             <ToggleSwitch
-              checked={formData.autoConfirm}
+              checked={formData.orderValidations.autoConfirm}
               onChange={(value) => handleInputChange("autoConfirm", value)}
-              label={formData.autoConfirm ? "Sí" : "No"}
+              label={formData.orderValidations.autoConfirm ? "Sí" : "No"}
             />
           </div>
         </div>
@@ -66,9 +58,9 @@ export const OrderValidations = () => {
             ¿Deseas validar el historial de entregas?
           </label>
           <ToggleSwitch
-            checked={formData.validateDeliveries}
+            checked={formData.orderValidations.validateDeliveries}
             onChange={(value) => handleInputChange("validateDeliveries", value)}
-            label={formData.validateDeliveries ? "Sí" : "No"}
+            label={formData.orderValidations.validateDeliveries ? "Sí" : "No"}
           />
         </div>
 
@@ -78,8 +70,8 @@ export const OrderValidations = () => {
               Porcentaje mínimo de entregas exitosas
             </label>
             <PercentageInput
-              value={formData.minSuccessPercentage}
-              placeholder="Ej. 70"
+              value={formData.orderValidations.minSuccessPercentage}
+              placeholder={`Ej. ${orderValidationsInitialValues.minSuccessPercentage}`}
               onChange={(value) =>
                 handleInputChange("minSuccessPercentage", value)
               }
@@ -93,8 +85,8 @@ export const OrderValidations = () => {
             <input
               type="number"
               className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-              value={formData.minOrdersValidation}
-              placeholder="Ej. 3"
+              value={formData.orderValidations.minOrdersValidation}
+              placeholder={`Ej. ${orderValidationsInitialValues.minOrdersValidation}`}
               min="1"
               onChange={(e) =>
                 handleInputChange(
@@ -118,24 +110,25 @@ export const OrderValidations = () => {
             ¿Deseas Validar el valor del flete?
           </label>
           <ToggleSwitch
-            checked={formData.validateShipping}
+            checked={formData.orderValidations.validateShipping}
             onChange={(value) => handleInputChange("validateShipping", value)}
-            label={formData.validateShipping ? "Sí" : "No"}
+            label={formData.orderValidations.validateShipping ? "Sí" : "No"}
           />
         </div>
 
         <div className="mb-5">
           <label className="font-medium text-slate-700 text-sm block mb-2">
-            Valor de flete máximo
+            Valor de flete mínimo
           </label>
           <input
             type="number"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
-            value={formData.maxShippingValue}
-            placeholder="15000"
+            value={formData.orderValidations.minShippingValue}
+            min="0"
+            placeholder={orderValidationsInitialValues.minShippingValue}
             onChange={(e) =>
               handleInputChange(
-                "maxShippingValue",
+                "minShippingValue",
                 parseInt(e.target.value) || 0
               )
             }

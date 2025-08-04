@@ -1,21 +1,16 @@
-import { useState } from "react";
 import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { ToggleSwitch } from "../../../generalComponents/ToggleSwitch";
 import { Card } from "../../../generalComponents/Card";
+import { directionAnalisisInitialValues } from "../../../../../utils/logistAssistant/initialValues/confirmations";
 
-const addressPromptPlaceholder =
-  "#ROL: Asume el papel de un experto en direcciones colombianas. Tu tarea es analizar y evaluar una dirección colombiana proporcionada para determinar si parece estar bien estructurada, es suficientemente específica y contiene las referencias necesarias. Las direcciones en Colombia pueden adoptar diferentes formas, incluyendo calle, carrera, avenida, diagonal, transversal, corregimiento, entre otros términos relevantes según la nomenclatura local. Debes considerar si la dirección tiene suficientes detalles y referencias adicionales como el número de casa, el barrio o un punto de referencia.\n\n#CRITERIOS PARA EVALUAR LA DIRECCIÓN:\nA) Suficientemente específica: La dirección incluye un tipo de vía (calle, carrera, avenida, etc.), el número correspondiente, y referencia claras como un número de puerta o apartamento. También hay casos especiales, como nombre del sector, manzana, y número de casa, lo que permite identificar la ubicación precisa.";
-
-export const DirectionAnalisis = () => {
-  const [formData, setFormData] = useState({
-    evaluateAddress: false,
-    addressPrompt: addressPromptPlaceholder,
-  });
-
+export const DirectionAnalisis = ({ formData, setFormData }) => {
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
-      [field]: value,
+      directionAnalisis: {
+        ...prev.directionAnalisis,
+        [field]: value,
+      },
     }));
   };
 
@@ -41,7 +36,7 @@ export const DirectionAnalisis = () => {
             />
           </div>
           <ToggleSwitch
-            checked={formData.evaluateAddress}
+            checked={formData.directionAnalisis.evaluateAddress}
             onChange={(value) => handleInputChange("evaluateAddress", value)}
             label="Sí"
           />
@@ -60,8 +55,8 @@ export const DirectionAnalisis = () => {
           <textarea
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="12"
-            placeholder={`Ej.\n${addressPromptPlaceholder}`}
-            value={formData.addressPrompt}
+            placeholder={`Ej.\n${directionAnalisisInitialValues.addressPrompt}`}
+            value={formData.directionAnalisis.addressPrompt}
             onChange={(e) => handleInputChange("addressPrompt", e.target.value)}
           />
         </div>

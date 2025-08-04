@@ -1,20 +1,15 @@
-import { useState } from "react";
 // import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { Card } from "../../../generalComponents/Card";
+import { shippingTimesInitialValues } from "../../../../../utils/logistAssistant/initialValues/tracking";
 
-const placeholder =
-  "De 3 a 5 días en ciudades principales y de 5 a 7 días en ciudades no principales";
-
-export const ShippingTimes = () => {
-  const [formData, setFormData] = useState({
-    deliveryTimesGuide: placeholder,
-    deliveryTimesDistribution: placeholder,
-  });
-
+export const ShippingTimes = ({ formData, setFormData }) => {
   const handleInputChange = ({ target }) => {
     setFormData((prev) => ({
       ...prev,
-      [target.id]: target.value,
+      shippingTimes: {
+        ...prev.shippingTimes,
+        [target.id]: target.value,
+      },
     }));
   };
 
@@ -43,8 +38,8 @@ export const ShippingTimes = () => {
             id="deliveryTimesGuide"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="4"
-            value={formData.deliveryTimesGuide}
-            placeholder={`Ej. ${formData.deliveryTimesGuide}`}
+            value={formData.shippingTimes.deliveryTimesGuide}
+            placeholder={`Ej. ${shippingTimesInitialValues.deliveryTimesGuide}`}
             onChange={handleInputChange}
           />
         </div>
@@ -62,8 +57,8 @@ export const ShippingTimes = () => {
             id="deliveryTimesDistribution"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="4"
-            value={formData.deliveryTimesDistribution}
-            placeholder={`Ej. ${formData.deliveryTimesDistribution}`}
+            value={formData.shippingTimes.deliveryTimesDistribution}
+            placeholder={`Ej. ${shippingTimesInitialValues.deliveryTimesDistribution}`}
             onChange={handleInputChange}
           />
         </div>

@@ -1,6 +1,6 @@
-import { useState } from "react";
 import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { Card } from "../../../generalComponents/Card";
+import { storeDataInitialValues } from "../../../../../utils/logistAssistant/initialValues/generalConfig";
 
 const availableCountries = [
   { key: "colombia", value: "Colombia" },
@@ -12,21 +12,14 @@ const availableCountries = [
   { key: "panama", value: "Panama" },
 ];
 
-export const StoreData = () => {
-  const [formData, setFormData] = useState({
-    storeName: "",
-    storeLink: "",
-    storeLocation:
-      "Somos una tienda virtual de la más alta calidad con 5 años de experiencia y más de 3000 clientes satisfechos",
-    warrantyPolicies:
-      "Aceptamos devoluciones dentro de los primeros 10 días hábiles",
-    dataSource: "shopify",
-  });
-
+export const StoreData = ({ formData, setFormData }) => {
   const handleInputChange = ({ target }) => {
     setFormData((prev) => ({
       ...prev,
-      [target.id]: target.value,
+      storeData: {
+        ...prev.storeData,
+        [target.id]: target.value,
+      },
     }));
   };
 
@@ -52,18 +45,20 @@ export const StoreData = () => {
               País <span className="text-red-500 font-bold">*</span>
             </label>
             {/* <TooltipIcon
-              tooltipId="dataSource"
+              tooltipId="country"
               content="Indica"
             /> */}
           </div>
           <select
-            id="dataSource"
+            id="country"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
             onChange={handleInputChange}
           >
             <option value="">Selecciona el país</option>
             {availableCountries.map((country) => (
-              <option value={country.key}>{country.value}</option>
+              <option key={country.key} value={country.key}>
+                {country.value}
+              </option>
             ))}
           </select>
         </div>
@@ -84,6 +79,7 @@ export const StoreData = () => {
             id="storeName"
             type="text"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
+            value={formData.storeData.storeName}
             placeholder="Ej. Moda Urbana Colombia"
             onChange={handleInputChange}
           />
@@ -111,6 +107,7 @@ export const StoreData = () => {
             id="storeLink"
             type="url"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
+            value={formData.storeData.storeLink}
             placeholder="https://mitienda.com"
             onChange={handleInputChange}
           />
@@ -131,8 +128,8 @@ export const StoreData = () => {
             id="storeLocation"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="4"
-            value={formData.storeLocation}
-            placeholder={`Ej. ${formData.storeLocation}`}
+            value={formData.storeData.storeLocation}
+            placeholder={`Ej. ${storeDataInitialValues.storeLocation}`}
             onChange={handleInputChange}
           />
         </div>
@@ -158,8 +155,8 @@ export const StoreData = () => {
             id="warrantyPolicies"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="4"
-            value={formData.warrantyPolicies}
-            placeholder={`Ej. ${formData.warrantyPolicies}...`}
+            value={formData.storeData.warrantyPolicies}
+            placeholder={`Ej. ${storeDataInitialValues.warrantyPolicies}...`}
             onChange={handleInputChange}
           />
         </div>
@@ -185,7 +182,7 @@ export const StoreData = () => {
           <select
             id="dataSource"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-            value={formData.dataSource}
+            value={formData.storeData.dataSource}
             onChange={handleInputChange}
           >
             <option value="">Selecciona el origen de datos</option>

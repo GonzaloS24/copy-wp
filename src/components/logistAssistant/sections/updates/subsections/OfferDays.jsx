@@ -1,19 +1,16 @@
-import { useState } from "react";
 import { ExampleBox } from "../../../generalComponents/ExampleBox";
 import { ExplanationBox } from "../../../generalComponents/ExplanationBox";
 import { InfoBox } from "../../../generalComponents/InfoBox";
 import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 
-export const OfferDays = () => {
-  const [formData, setFormData] = useState({
-    minDay: "1",
-    maxDay: "3",
-  });
-
+export const OfferDays = ({ formData, setFormData }) => {
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
-      [field]: value,
+      offerDays: {
+        ...prev.offerDays,
+        [field]: value,
+      },
     }));
   };
 
@@ -66,7 +63,7 @@ export const OfferDays = () => {
             </div>
             <select
               className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-              value={formData.minDay}
+              value={formData.offerDays.minDay}
               onChange={(e) => handleInputChange("minDay", e.target.value)}
             >
               {dayOptions.map((option) => (
@@ -81,7 +78,10 @@ export const OfferDays = () => {
             <label className="font-medium text-slate-700 text-sm block mb-2">
               Explicación
             </label>
-            <ExplanationBox selectedValue={formData.minDay} type="min" />
+            <ExplanationBox
+              selectedValue={formData.offerDays.minDay}
+              type="min"
+            />
           </div>
         </div>
       </div>
@@ -105,7 +105,7 @@ export const OfferDays = () => {
             </div>
             <select
               className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-              value={formData.maxDay}
+              value={formData.offerDays.maxDay}
               onChange={(e) => handleInputChange("maxDay", e.target.value)}
             >
               {dayOptions.map((option) => (
@@ -120,7 +120,10 @@ export const OfferDays = () => {
             <label className="font-medium text-slate-700 text-sm block mb-2">
               Explicación
             </label>
-            <ExplanationBox selectedValue={formData.maxDay} type="max" />
+            <ExplanationBox
+              selectedValue={formData.offerDays.maxDay}
+              type="max"
+            />
           </div>
         </div>
       </div>

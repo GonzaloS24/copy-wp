@@ -6,16 +6,22 @@ export const subsectionsData = [
   {
     id: "udpateMessages",
     label: "Mensajes de novedad",
-    component: <UpdateMessages />,
+    component: (formData, setFormData) => (
+      <UpdateMessages formData={formData} setFormData={setFormData} />
+    ),
   },
   {
     id: "offerDays",
     label: "Días de ofrecimiento",
-    component: <OfferDays />,
+    component: (formData, setFormData) => (
+      <OfferDays formData={formData} setFormData={setFormData} />
+    ),
   },
   {
     id: "specialActions",
     label: "Acciones especiales",
-    component: <SpecialActions />,
+    component: (formData, setFormData) => (
+      <SpecialActions formData={formData} setFormData={setFormData} />
+    ),
   },
 ];

@@ -1,25 +1,15 @@
-import { useState } from "react";
-import { Card } from "../../../../generalComponents/Card";
-import { TooltipIcon } from "../../../../generalComponents/TooltipIcon";
-import {
-  generatedGuideHook,
-  deliveredHook,
-  deliveryHook,
-  officeHook,
-} from "./placeholders";
+import { Card } from "../../../generalComponents/Card";
+import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
+import { salesHooksInitialValues } from "../../../../../utils/logistAssistant/initialValues/tracking";
 
-export const SalesHooks = () => {
-  const [formData, setFormData] = useState({
-    generatedGuideHook: generatedGuideHook,
-    deliveryHook: deliveredHook,
-    officeHook: officeHook,
-    deliveredHook: deliveredHook,
-  });
-
+export const SalesHooks = ({ formData, setFormData }) => {
   const handleInputChange = ({ target }) => {
     setFormData((prev) => ({
       ...prev,
-      [target.id]: target.value,
+      salesHooks: {
+        ...prev.salesHooks,
+        [target.id]: target.value,
+      },
     }));
   };
 
@@ -55,8 +45,8 @@ export const SalesHooks = () => {
             id="generatedGuideHook"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="8"
-            value={formData.generatedGuideHook}
-            placeholder={formData.generatedGuideHook}
+            value={formData.salesHooks.generatedGuideHook}
+            placeholder={salesHooksInitialValues.generatedGuideHook}
             onChange={handleInputChange}
           />
         </div>
@@ -82,8 +72,8 @@ export const SalesHooks = () => {
             id="deliveryHook"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="8"
-            value={formData.deliveryHook}
-            placeholder={formData.deliveryHook}
+            value={formData.salesHooks.deliveryHook}
+            placeholder={salesHooksInitialValues.deliveryHook}
             onChange={handleInputChange}
           />
         </div>
@@ -109,8 +99,8 @@ export const SalesHooks = () => {
             id="officeHook"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="12"
-            value={formData.officeHook}
-            placeholder={formData.officeHook}
+            value={formData.salesHooks.officeHook}
+            placeholder={salesHooksInitialValues.officeHook}
             onChange={handleInputChange}
           />
         </div>
@@ -136,8 +126,8 @@ export const SalesHooks = () => {
             id="deliveredHook"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="10"
-            value={formData.deliveredHook}
-            placeholder={formData.deliveredHook}
+            value={formData.salesHooks.deliveredHook}
+            placeholder={salesHooksInitialValues.deliveredHook}
             onChange={handleInputChange}
           />
         </div>

@@ -1,17 +1,15 @@
-import { useState } from "react";
-import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
+// import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { ToggleSwitch } from "../../../generalComponents/ToggleSwitch";
 import { Card } from "../../../generalComponents/Card";
 
-export const SpecialActions = () => {
-  const [formData, setFormData] = useState({
-    evaluateAddress: false,
-  });
-
+export const SpecialActions = ({ formData, setFormData }) => {
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
-      [field]: value,
+      specialActions: {
+        ...prev.specialActions,
+        [field]: value,
+      },
     }));
   };
 
@@ -32,13 +30,13 @@ export const SpecialActions = () => {
               Solucionar novedad automáticamente
             </label>
             {/* <TooltipIcon
-              tooltipId="evaluateAddress"
-              content="Activar validación automática de direcciones"
+              tooltipId="autoUpdate"
+              content=""
             /> */}
           </div>
           <ToggleSwitch
-            checked={formData.evaluateAddress}
-            onChange={(value) => handleInputChange("evaluateAddress", value)}
+            checked={formData.specialActions.autoUpdate}
+            onChange={(value) => handleInputChange("autoUpdate", value)}
             label="Sí"
           />
         </div>

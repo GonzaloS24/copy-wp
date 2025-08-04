@@ -2,13 +2,21 @@ import { useState } from "react";
 import { SectionSideBar } from "./sideBar/Container";
 import { Card } from "../generalComponents/Card";
 import { FloatingSaveButton } from "../generalComponents/FloatingSaveButton";
+import { setBotFieldData } from "../../../services/logistAssistant";
 
-export const SectionContainer = ({ subsectionsData }) => {
+export const SectionContainer = ({
+  subsectionsData,
+  initialValues,
+  sectionName,
+  sectionId,
+}) => {
+  const [formData, setFormData] = useState(initialValues);
   const [activeSubsection, setActiveSubsection] = useState(
     subsectionsData[0].id
   );
   const [isLoading, setIsLoading] = useState(false);
   const handleSave = () => {
+    setBotFieldData(sectionId, sectionName, formData);
     setIsLoading((_) => true);
     alert("Guardando configuración... " + activeSubsection);
     setIsLoading((_) => false);
@@ -41,7 +49,7 @@ export const SectionContainer = ({ subsectionsData }) => {
                     activeSubsection === subsection.id ? "block" : "hidden"
                   }
                 >
-                  {subsection.component}
+                  {subsection.component(formData, setFormData)}
                 </div>
               ))}
             </Card>

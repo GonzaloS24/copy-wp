@@ -1,20 +1,16 @@
-import { useState } from "react";
 import { Card } from "../../../generalComponents/Card";
 import { TemplateReinstallation } from "../../../generalComponents/TemplateReinstallation";
 import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
+import { updateMessagesInitialValues } from "../../../../../utils/logistAssistant/initialValues/updates";
 
-export const UpdateMessages = () => {
-  const [formData, setFormData] = useState({
-    reminder1TimeUpdate: 2,
-    reminder1Unit: "horas",
-    reminder2TimeUpdate: 24,
-    reminder2Unit: "horas",
-  });
-
-  const handleInputChange = (field, value) => {
+export const UpdateMessages = ({ formData, setFormData }) => {
+  const handleInputChange = ({ target }) => {
     setFormData((prev) => ({
       ...prev,
-      [field]: value,
+      updateMessages: {
+        ...prev.updateMessages,
+        [target.id]: target.value,
+      },
     }));
   };
 
@@ -108,15 +104,15 @@ export const UpdateMessages = () => {
               <input
                 id="reminder1TimeUpdate"
                 type="number"
-                value={formData.reminder1TimeUpdate}
-                placeholder={formData.reminder1TimeUpdate}
+                value={formData.updateMessages.reminder1TimeUpdate}
+                placeholder={updateMessagesInitialValues.reminder1TimeUpdate}
                 className="w-30 p-3.5 border border-gray-300 rounded-l-lg border-r-0 text-center text-sm bg-white focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
                 onChange={handleInputChange}
               />
               <select
                 id="reminder1Unit"
                 className="flex-1 p-3.5 border border-gray-300 rounded-r-lg text-sm bg-white cursor-pointer min-w-36 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-                value={formData.reminder1Unit}
+                value={formData.updateMessages.reminder1Unit}
                 onChange={handleInputChange}
               >
                 <option value="minutos">minutos</option>
@@ -138,17 +134,17 @@ export const UpdateMessages = () => {
             </div>
             <div className="flex gap-0 w-full">
               <input
-                id="reminder2Time"
+                id="reminder2TimeUpdate"
                 type="number"
-                value={formData.reminder2TimeUpdate}
-                placeholder={formData.reminder2TimeUpdate}
+                value={formData.updateMessages.reminder2TimeUpdate}
+                placeholder={updateMessagesInitialValues.reminder2TimeUpdate}
                 className="w-30 p-3.5 border border-gray-300 rounded-l-lg border-r-0 text-center text-sm bg-white focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
                 onChange={handleInputChange}
               />
               <select
                 id="reminder2Unit"
                 className="flex-1 p-3.5 border border-gray-300 rounded-r-lg text-sm bg-white cursor-pointer min-w-36 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-                value={formData.reminder2Unit}
+                value={formData.updateMessages.reminder2Unit}
                 onChange={handleInputChange}
               >
                 <option value="minutos">minutos</option>
