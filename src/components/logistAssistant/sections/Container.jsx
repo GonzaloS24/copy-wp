@@ -3,7 +3,8 @@ import { SectionSideBar } from "./sideBar/Container";
 import { Card } from "../generalComponents/Card";
 import { FloatingSaveButton } from "../generalComponents/FloatingSaveButton";
 import { setBotFieldData } from "../../../services/logistAssistant";
-import { toast } from "react-toastify";
+import { ModalContainer } from "../../modals/Container";
+import { AssistantFormModal } from "../../modals/assistantFormSave";
 
 export const SectionContainer = ({
   subsectionsData,
@@ -11,6 +12,7 @@ export const SectionContainer = ({
   sectionName,
   sectionId,
 }) => {
+  const [modalData, setModalData] = useState({ open: false, type: "success" });
   const [formData, setFormData] = useState(initialValues);
   const [activeSubsection, setActiveSubsection] = useState(
     subsectionsData[0].id
@@ -18,17 +20,28 @@ export const SectionContainer = ({
   const [isLoading, setIsLoading] = useState(false);
   const handleSave = () => {
     setIsLoading((_) => true);
-    toast.promise(
-      setBotFieldData(sectionId, sectionName, formData)
-        .then((response) => {
-          console.log(response);
-        })
-        .finally(() => setIsLoading((_) => false)),
-      {
-        success: `Se guardaron los datos de ${sectionName} exitosamente.`,
-        error: "Ocurrió un error al intentar guardar los datos.",
-      }
-    );
+    setBotFieldData(sectionId, sectionName, formData)
+      .then((response) => {
+        console.log(response);
+        setModalData((prev) => ({
+          ...prev,
+          open: true,
+          type: "success",
+        }));
+      })
+      .catch((error) => {
+        console.error(error);
+        setModalData((prev) => ({
+          ...prev,
+          open: true,
+          type: "error",
+        }));
+      })
+      .finally(() => setIsLoading((_) => false));
+  };
+
+  const handleModalClose = () => {
+    setModalData((prev) => ({ ...prev, open: false }));
   };
 
   return (
@@ -66,6 +79,14 @@ export const SectionContainer = ({
         </div>
       </main>
       <FloatingSaveButton onClick={handleSave} isLoading={isLoading} />
+      {modalData?.open && (
+        <ModalContainer onClose={handleModalClose}>
+          <AssistantFormModal
+            type={modalData.type}
+            onClose={handleModalClose}
+          />
+        </ModalContainer>
+      )}
     </div>
   );
 };

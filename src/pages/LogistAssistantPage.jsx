@@ -3,7 +3,6 @@ import { MainLayout } from "../components/MainLayout";
 import { useState } from "react";
 import { TabSelector } from "../components/logistAssistant/tabs/tabSelector/Container";
 import { SectionContent } from "../components/logistAssistant/sections/SectionContent";
-import { ToastContainer } from "react-toastify";
 
 export const LogistAssistantPage = () => {
   const location = useLocation();
@@ -17,7 +16,6 @@ export const LogistAssistantPage = () => {
         <TabSelector activeTab={activeTab} setActiveTab={setActiveTab} />
         <SectionContent activeTab={activeTab} />
       </div>
-      <ToastContainer position="bottom-center" />
     </MainLayout>
   );
 };

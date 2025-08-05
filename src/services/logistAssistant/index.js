@@ -22,8 +22,6 @@ export const setBotFieldData = async (id, name, formData) => {
     name,
   };
 
-  console.log(body);
-
   const response = await axios.put(
     `${BACK_BASE_URL}/api/assistants/set-info`,
     {
