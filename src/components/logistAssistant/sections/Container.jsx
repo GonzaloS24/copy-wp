@@ -3,6 +3,7 @@ import { SectionSideBar } from "./sideBar/Container";
 import { Card } from "../generalComponents/Card";
 import { FloatingSaveButton } from "../generalComponents/FloatingSaveButton";
 import { setBotFieldData } from "../../../services/logistAssistant";
+import { toast } from "react-toastify";
 
 export const SectionContainer = ({
   subsectionsData,
@@ -16,10 +17,18 @@ export const SectionContainer = ({
   );
   const [isLoading, setIsLoading] = useState(false);
   const handleSave = () => {
-    setBotFieldData(sectionId, sectionName, formData);
     setIsLoading((_) => true);
-    alert("Guardando configuración... " + activeSubsection);
-    setIsLoading((_) => false);
+    toast.promise(
+      setBotFieldData(sectionId, sectionName, formData)
+        .then((response) => {
+          console.log(response);
+        })
+        .finally(() => setIsLoading((_) => false)),
+      {
+        success: `Se guardaron los datos de ${sectionName} exitosamente.`,
+        error: "Ocurrió un error al intentar guardar los datos.",
+      }
+    );
   };
 
   return (

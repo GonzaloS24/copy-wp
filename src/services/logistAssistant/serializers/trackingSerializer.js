@@ -22,4 +22,6 @@ export const trackingSerializer = (FormData) => {
       entregado: trackingData.salesHooks.deliveredHook,
     },
   };
+
+  return JSON.stringify(parsedData);
 };
