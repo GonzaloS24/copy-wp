@@ -5,6 +5,7 @@ export const generalConfigSerializer = (formData) => {
 
   const parsedData = {
     datos_de_la_tienda: {
+      pais: generalConfigData.storeData.storeCountry,
       nombre: generalConfigData.storeData.storeName,
       enlace: generalConfigData.storeData.storeLink,
       ubicacion: generalConfigData.storeData.storeLocation,
