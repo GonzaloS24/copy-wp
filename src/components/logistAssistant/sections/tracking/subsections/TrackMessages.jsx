@@ -1,18 +1,15 @@
-import { useState } from "react";
 import { Card } from "../../../generalComponents/Card";
 import { TemplateReinstallation } from "../../../generalComponents/TemplateReinstallation";
 import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 
-export const TrackMessages = () => {
-  const [formData, setFormData] = useState({
-    officeReminderTime: 1,
-    officeReminderUnit: "dias",
-  });
-
+export const TrackMessages = ({ formData, setFormData }) => {
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
-      [field]: value,
+      trackMessages: {
+        ...prev.trackMessages,
+        [field]: value,
+      },
     }));
   };
 
@@ -108,7 +105,7 @@ export const TrackMessages = () => {
             <input
               type="number"
               className="w-30 p-3.5 border border-gray-300 rounded-l-lg border-r-0 text-center text-sm bg-white focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-              value={formData.officeReminderTime}
+              value={formData.trackMessages.officeReminderTime}
               onChange={(e) =>
                 handleInputChange(
                   "officeReminderTime",
@@ -118,7 +115,7 @@ export const TrackMessages = () => {
             />
             <select
               className="flex-1 p-3.5 border border-gray-300 rounded-r-lg text-sm bg-white cursor-pointer min-w-36 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-              value={formData.officeReminderUnit}
+              value={formData.trackMessages.officeReminderUnit}
               onChange={(e) =>
                 handleInputChange("officeReminderUnit", e.target.value)
               }

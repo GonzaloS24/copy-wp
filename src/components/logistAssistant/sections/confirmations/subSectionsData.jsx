@@ -1,4 +1,4 @@
-import { ConfirmMessages } from "../confirmations/subsections/ConfirmMessages";
+import { ConfirmMessages } from "./subsections/ConfirmMessages";
 import { DirectionAnalisis } from "./subsections/DirectionAnalisis";
 import { ShippingTimes } from "./subsections/ShippingTimes";
 import { OrderValidations } from "./subsections/OrderValidations";
@@ -7,22 +7,30 @@ export const subsectionsData = [
   {
     id: "confirmMessages",
     label: "Mensajes de confirmación",
-    component: <ConfirmMessages />,
+    component: (formData, setFormData) => (
+      <ConfirmMessages formData={formData} setFormData={setFormData} />
+    ),
   },
   {
     id: "shippingTimes",
     label: "Tiempos de envío",
-    component: <ShippingTimes />,
+    component: (formData, setFormData) => (
+      <ShippingTimes formData={formData} setFormData={setFormData} />
+    ),
   },
   {
     id: "directionAnalisis",
     label: "Análisis de dirección",
-    component: <DirectionAnalisis />,
+    component: (formData, setFormData) => (
+      <DirectionAnalisis formData={formData} setFormData={setFormData} />
+    ),
   },
   {
     id: "orderValidations",
     label: "Validaciones de la orden",
-    component: <OrderValidations />,
+    component: (formData, setFormData) => (
+      <OrderValidations formData={formData} setFormData={setFormData} />
+    ),
   },
   {
     id: "prepayment",
@@ -30,5 +38,6 @@ export const subsectionsData = [
     label: "Pago Anticipado",
     comingSoon: true,
     badgeText: "Próximamente",
+    component: (_, __) => <></>,
   },
 ];

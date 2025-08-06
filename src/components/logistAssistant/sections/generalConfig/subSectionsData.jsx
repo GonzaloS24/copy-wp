@@ -6,16 +6,22 @@ export const subsectionsData = [
   {
     id: "storeData",
     label: "Datos de la tienda",
-    component: <StoreData />,
+    component: (formData, setFormData) => (
+      <StoreData formData={formData} setFormData={setFormData} />
+    ),
   },
   {
     id: "AIBehaviour",
     label: "Comportamiento de la IA",
-    component: <AIBehaviour />,
+    component: (formData, setFormData) => (
+      <AIBehaviour formData={formData} setFormData={setFormData} />
+    ),
   },
   {
     id: "AIAudio",
     label: "Audios con IA",
-    component: <AIAudio />,
+    component: (formData, setFormData) => (
+      <AIAudio formData={formData} setFormData={setFormData} />
+    ),
   },
 ];

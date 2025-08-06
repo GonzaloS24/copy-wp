@@ -2,16 +2,46 @@ import { useState } from "react";
 import { SectionSideBar } from "./sideBar/Container";
 import { Card } from "../generalComponents/Card";
 import { FloatingSaveButton } from "../generalComponents/FloatingSaveButton";
+import { setBotFieldData } from "../../../services/logistAssistant";
+import { ModalContainer } from "../../modals/Container";
+import { AssistantFormModal } from "../../modals/assistantFormSave";
 
-export const SectionContainer = ({ subsectionsData }) => {
+export const SectionContainer = ({
+  subsectionsData,
+  initialValues,
+  sectionName,
+  sectionId,
+}) => {
+  const [modalData, setModalData] = useState({ open: false, type: "success" });
+  const [formData, setFormData] = useState(initialValues);
   const [activeSubsection, setActiveSubsection] = useState(
     subsectionsData[0].id
   );
   const [isLoading, setIsLoading] = useState(false);
   const handleSave = () => {
     setIsLoading((_) => true);
-    alert("Guardando configuración... " + activeSubsection);
-    setIsLoading((_) => false);
+    setBotFieldData(sectionId, sectionName, formData)
+      .then((response) => {
+        console.log(response);
+        setModalData((prev) => ({
+          ...prev,
+          open: true,
+          type: "success",
+        }));
+      })
+      .catch((error) => {
+        console.error(error);
+        setModalData((prev) => ({
+          ...prev,
+          open: true,
+          type: "error",
+        }));
+      })
+      .finally(() => setIsLoading((_) => false));
+  };
+
+  const handleModalClose = () => {
+    setModalData((prev) => ({ ...prev, open: false }));
   };
 
   return (
@@ -41,7 +71,7 @@ export const SectionContainer = ({ subsectionsData }) => {
                     activeSubsection === subsection.id ? "block" : "hidden"
                   }
                 >
-                  {subsection.component}
+                  {subsection.component(formData, setFormData)}
                 </div>
               ))}
             </Card>
@@ -49,6 +79,14 @@ export const SectionContainer = ({ subsectionsData }) => {
         </div>
       </main>
       <FloatingSaveButton onClick={handleSave} isLoading={isLoading} />
+      {modalData?.open && (
+        <ModalContainer onClose={handleModalClose}>
+          <AssistantFormModal
+            type={modalData.type}
+            onClose={handleModalClose}
+          />
+        </ModalContainer>
+      )}
     </div>
   );
 };
