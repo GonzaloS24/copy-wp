@@ -21,8 +21,9 @@ const AIBehaviourSchema = z.object({
 });
 
 const storeDataSchema = z.object({
-  storeName: z.string(),
-  storeLink: z.string(),
+  storeCountry: z.string().min(1),
+  storeName: z.string().min(1),
+  storeLink: z.string().min(1),
   storeLocation: z.string(),
   warrantyPolicies: z.string(),
   dataSource: z.string(),

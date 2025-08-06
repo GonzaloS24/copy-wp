@@ -17,11 +17,6 @@ export const setBotFieldData = async (id, name, formData) => {
     });
   }
 
-  const body = {
-    value: serializedData,
-    name,
-  };
-
   const response = await axios.put(
     `${BACK_BASE_URL}/api/assistants/set-info`,
     {

@@ -45,12 +45,12 @@ export const StoreData = ({ formData, setFormData }) => {
               País <span className="text-red-500 font-bold">*</span>
             </label>
             {/* <TooltipIcon
-              tooltipId="country"
+              tooltipId="storeCountry"
               content="Indica"
             /> */}
           </div>
           <select
-            id="country"
+            id="storeCountry"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
             onChange={handleInputChange}
           >
