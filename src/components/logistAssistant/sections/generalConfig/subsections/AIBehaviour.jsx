@@ -1,20 +1,15 @@
-import { useState } from "react";
 import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { Card } from "../../../generalComponents/Card";
+import { AIBehaviourInitialValues } from "../../../../../utils/logistAssistant/initialValues/generalConfig";
 
-export const AIBehaviour = () => {
-  const [formData, setFormData] = useState({
-    sendingType: "",
-    languageAdaptation: "",
-    advisorGreeting: "",
-    cancellationPrevention: "",
-    generalRestrictions: "",
-  });
-
+export const AIBehaviour = ({ formData, setFormData }) => {
   const handleInputChange = ({ target }) => {
     setFormData((prev) => ({
       ...prev,
-      [target.id]: target.value,
+      AIBehaviour: {
+        ...prev.AIBehaviour,
+        [target.id]: target.value,
+      },
     }));
   };
 
@@ -47,7 +42,7 @@ export const AIBehaviour = () => {
           <select
             id="sendingType"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-            value={formData.sendingType}
+            value={formData.AIBehaviour.sendingType}
             onChange={handleInputChange}
           >
             <option value="1 solo mensaje">1 solo mensaje</option>
@@ -73,7 +68,8 @@ export const AIBehaviour = () => {
             id="languageAdaptation"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="4"
-            placeholder="Ej. Hablar de forma cercana pero profesional, usar un lenguaje claro y directo, evitar tecnicismos..."
+            value={formData.AIBehaviour.languageAdaptation}
+            placeholder={`Ej. ${AIBehaviourInitialValues.languageAdaptation}...`}
             onChange={handleInputChange}
           />
         </div>
@@ -96,7 +92,8 @@ export const AIBehaviour = () => {
             id="advisorGreeting"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="3"
-            placeholder="Ej. Entiendo tu consulta, voy a conectarte con uno de nuestros asesores especializados para brindarte la mejor atención..."
+            value={formData.AIBehaviour.advisorGreeting}
+            placeholder={`Ej. ${AIBehaviourInitialValues.advisorGreeting}...`}
             onChange={handleInputChange}
           />
         </div>
@@ -112,7 +109,8 @@ export const AIBehaviour = () => {
             id="cancellationPrevention"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="5"
-            placeholder="Ej. Mostrar empatía, identificar la razón específica de cancelación, ofrecer alternativas como cambio de producto o fecha de entrega, destacar beneficios únicos..."
+            value={formData.AIBehaviour.cancellationPrevention}
+            placeholder={`Ej. ${AIBehaviourInitialValues.cancellationPrevention}...`}
             onChange={handleInputChange}
           />
         </div>
@@ -135,7 +133,8 @@ export const AIBehaviour = () => {
             id="generalRestrictions"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="6"
-            placeholder="Ej. Nunca proporcionar información personal de otros clientes, no hacer promesas que no pueda cumplir, mantener siempre un tono respetuoso, no insistir más de 3 veces en la misma propuesta..."
+            value={formData.AIBehaviour.generalRestrictions}
+            placeholder={`Ej. ${AIBehaviourInitialValues.generalRestrictions}...`}
             onChange={handleInputChange}
           />
         </div>
