@@ -1,16 +1,8 @@
 import { useState } from "react";
+import { useCarritos } from "../../../../context/CarritosContext";
 
 const RecoveryMessagesSection = () => {
-  const [formData, setFormData] = useState({
-    imagePosition: 1,
-    reminder1Time: 5,
-    reminder1Unit: "minutos",
-    reminder2Time: 10,
-    reminder2Unit: "minutos",
-    thankYouMessage:
-      "Gracias por recuperar tu carrito. Próximamente te enviaremos el número de guía de tu pedido.",
-  });
-
+  const { carritoData, updateCarritoData } = useCarritos();
   const [showReinstallModal, setShowReinstallModal] = useState(false);
   const [showLoadingModal, setShowLoadingModal] = useState(false);
   const [loadingText, setLoadingText] = useState("Reinstalando...");
@@ -23,8 +15,32 @@ const RecoveryMessagesSection = () => {
   ];
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    updateCarritoData("mensajes_recuperacion", {
+      [field]: value,
+    });
   };
+
+  const handleTimeChange = (reminderNum, timeValue, unit) => {
+    const timeString = `${timeValue} ${unit}`;
+    const field = `tiempo_recordatorio_${reminderNum}`;
+    handleInputChange(field, timeString);
+  };
+
+  const parseTimeString = (timeString) => {
+    if (!timeString) return { time: "", unit: "minutos" };
+    const match = timeString.match(/^(\d+)\s*(\w+)$/);
+    if (match) {
+      return { time: match[1], unit: match[2] };
+    }
+    return { time: "", unit: "minutos" };
+  };
+
+  const reminder1Data = parseTimeString(
+    carritoData.mensajes_recuperacion?.tiempo_recordatorio_1 || "5 minutos"
+  );
+  const reminder2Data = parseTimeString(
+    carritoData.mensajes_recuperacion?.tiempo_recordatorio_2 || "10 minutos"
+  );
 
   const Tooltip = ({ content }) => (
     <div className="relative inline-block group">
@@ -78,13 +94,11 @@ const RecoveryMessagesSection = () => {
           Mensajes de recuperación
         </h1>
 
-        {/* 1. Mensajes de recuperación */}
         <div className="mb-8 sm:mb-10 md:mb-12 p-4 sm:p-6 md:p-8 border border-slate-200 rounded-2xl bg-white shadow-lg">
           <h3 className="text-xl sm:text-2xl font-bold text-sky-500 mb-6 sm:mb-8 tracking-tight">
             1. Mensajes de recuperación
           </h3>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
-            {/* Paso 1: Posición de la imagen */}
             <div className="bg-slate-50 hover:bg-white border border-slate-200 hover:border-sky-500 rounded-2xl p-4 sm:p-6 flex flex-col items-center gap-4 transition-all duration-200 hover:-translate-y-1 shadow-sm hover:shadow-lg">
               <div className="w-8 h-8 bg-transparent text-slate-500 border-2 border-slate-300 rounded-full flex items-center justify-center text-sm font-bold">
                 1
@@ -101,17 +115,16 @@ const RecoveryMessagesSection = () => {
                 min="1"
                 max="10"
                 placeholder="1"
-                value={formData.imagePosition}
+                value={carritoData.mensajes_recuperacion?.posicion_imagen || ""}
                 onChange={(e) =>
                   handleInputChange(
-                    "imagePosition",
+                    "posicion_imagen",
                     parseInt(e.target.value) || 1
                   )
                 }
               />
             </div>
 
-            {/* Paso 2: Editar plantillas */}
             <div className="bg-slate-50 hover:bg-white border border-slate-200 hover:border-sky-500 rounded-2xl p-4 sm:p-6 flex flex-col items-center gap-4 transition-all duration-200 hover:-translate-y-1 shadow-sm hover:shadow-lg">
               <div className="w-8 h-8 bg-transparent text-slate-500 border-2 border-slate-300 rounded-full flex items-center justify-center text-sm font-bold">
                 2
@@ -130,7 +143,6 @@ const RecoveryMessagesSection = () => {
               </button>
             </div>
 
-            {/* Paso 3: Mapear plantillas */}
             <div className="bg-slate-50 hover:bg-white border border-slate-200 hover:border-sky-500 rounded-2xl p-4 sm:p-6 flex flex-col items-center gap-4 transition-all duration-200 hover:-translate-y-1 shadow-sm hover:shadow-lg">
               <div className="w-8 h-8 bg-transparent text-slate-500 border-2 border-slate-300 rounded-full flex items-center justify-center text-sm font-bold">
                 3
@@ -151,7 +163,6 @@ const RecoveryMessagesSection = () => {
           </div>
         </div>
 
-        {/* 2. Recordatorios */}
         <div className="mb-8 sm:mb-10 md:mb-12 p-4 sm:p-6 md:p-8 border border-slate-200 rounded-2xl bg-white shadow-lg">
           <h3 className="text-xl sm:text-2xl font-bold text-sky-500 mb-6 sm:mb-8 tracking-tight">
             2. Recordatorios
@@ -171,19 +182,20 @@ const RecoveryMessagesSection = () => {
                   className="flex-1 p-3 sm:p-4 border-2 border-slate-200 border-r-0 rounded-l-xl text-sm sm:text-base text-center bg-white text-slate-700 min-w-0 focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10"
                   min="1"
                   placeholder="5"
-                  value={formData.reminder1Time}
+                  value={reminder1Data.time}
                   onChange={(e) =>
-                    handleInputChange(
-                      "reminder1Time",
-                      parseInt(e.target.value) || 1
+                    handleTimeChange(
+                      1,
+                      parseInt(e.target.value) || 1,
+                      reminder1Data.unit
                     )
                   }
                 />
                 <select
                   className="flex-1 p-3 sm:p-4 border-2 border-slate-200 rounded-r-xl text-sm sm:text-base bg-white text-slate-700 cursor-pointer min-w-0 focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10"
-                  value={formData.reminder1Unit}
+                  value={reminder1Data.unit}
                   onChange={(e) =>
-                    handleInputChange("reminder1Unit", e.target.value)
+                    handleTimeChange(1, reminder1Data.time, e.target.value)
                   }
                 >
                   {timeUnits.map((unit) => (
@@ -208,19 +220,20 @@ const RecoveryMessagesSection = () => {
                   className="flex-1 p-3 sm:p-4 border-2 border-slate-200 border-r-0 rounded-l-xl text-sm sm:text-base text-center bg-white text-slate-700 min-w-0 focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10"
                   min="1"
                   placeholder="10"
-                  value={formData.reminder2Time}
+                  value={reminder2Data.time}
                   onChange={(e) =>
-                    handleInputChange(
-                      "reminder2Time",
-                      parseInt(e.target.value) || 1
+                    handleTimeChange(
+                      2,
+                      parseInt(e.target.value) || 1,
+                      reminder2Data.unit
                     )
                   }
                 />
                 <select
                   className="flex-1 p-3 sm:p-4 border-2 border-slate-200 rounded-r-xl text-sm sm:text-base bg-white text-slate-700 cursor-pointer min-w-0 focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10"
-                  value={formData.reminder2Unit}
+                  value={reminder2Data.unit}
                   onChange={(e) =>
-                    handleInputChange("reminder2Unit", e.target.value)
+                    handleTimeChange(2, reminder2Data.time, e.target.value)
                   }
                 >
                   {timeUnits.map((unit) => (
@@ -234,7 +247,6 @@ const RecoveryMessagesSection = () => {
           </div>
         </div>
 
-        {/* 3. Mensaje de agradecimiento */}
         <div className="mb-8 sm:mb-10 md:mb-12 p-4 sm:p-6 md:p-8 border border-slate-200 rounded-2xl bg-white shadow-lg">
           <h3 className="text-xl sm:text-2xl font-bold text-sky-500 mb-6 sm:mb-8 tracking-tight">
             3. Mensaje de agradecimiento
@@ -250,16 +262,17 @@ const RecoveryMessagesSection = () => {
               className="w-full p-3 sm:p-4 border-2 border-slate-200 rounded-xl text-sm sm:text-base transition-all duration-200 bg-white text-slate-700 font-inherit resize-vertical min-h-24 sm:min-h-32 leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10 placeholder-slate-400"
               rows="4"
               placeholder="Gracias por recuperar tu carrito. Próximamente te enviaremos el número de guía de tu pedido."
-              value={formData.thankYouMessage}
+              value={
+                carritoData.mensajes_recuperacion?.mensaje_agradecimiento || ""
+              }
               onChange={(e) =>
-                handleInputChange("thankYouMessage", e.target.value)
+                handleInputChange("mensaje_agradecimiento", e.target.value)
               }
             />
           </div>
         </div>
       </div>
 
-      {/* Contenedor separado para reinstalación de plantillas */}
       <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-xl border border-slate-200 w-full mt-8 sm:mt-12">
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:p-6 md:p-8 text-center">
           <h3 className="text-lg sm:text-xl font-bold text-slate-500 mb-2 text-center">
@@ -282,7 +295,6 @@ const RecoveryMessagesSection = () => {
         </div>
       </div>
 
-      {/* Modal de advertencia para reinstalación */}
       {showReinstallModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
           <div className="bg-white rounded-2xl p-4 sm:p-6 md:p-8 max-w-md sm:max-w-lg md:max-w-2xl w-full shadow-2xl transform transition-transform duration-300 scale-100">
@@ -315,7 +327,6 @@ const RecoveryMessagesSection = () => {
         </div>
       )}
 
-      {/* Loading Modal */}
       {showLoadingModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
           <div className="bg-white rounded-2xl p-8 sm:p-12 text-center shadow-2xl transform transition-transform duration-300 scale-100">

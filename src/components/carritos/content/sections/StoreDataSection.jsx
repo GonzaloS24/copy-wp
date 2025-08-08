@@ -1,17 +1,8 @@
-import { useState } from "react";
+import { useCarritos } from "../../../../context/CarritosContext";
 import Tooltip from "./Tooltip";
 
 const StoreDataSection = () => {
-  const [formData, setFormData] = useState({
-    storeName: "",
-    storeLocation:
-      "somos una tienda virtual de la más alta calidad con cobertura nacional",
-    country: "",
-    discountEnabled: true,
-    discountPercentage: 10,
-    discountMessage:
-      "Espera... nuestro gerente nos acaba de recordar que podrías ser nuestro cliente número 1000 😍.",
-  });
+  const { carritoData, updateCarritoData } = useCarritos();
 
   const countries = [
     { value: "", label: "Selecciona un país" },
@@ -25,7 +16,9 @@ const StoreDataSection = () => {
   ];
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    updateCarritoData("datos_tienda", {
+      [field]: value,
+    });
   };
 
   const ToggleSwitch = ({ checked, onChange }) => (
@@ -51,6 +44,10 @@ const StoreDataSection = () => {
     </div>
   );
 
+  const discountEnabled =
+    carritoData.datos_tienda?.ofrecer_descuento === "si" ||
+    carritoData.datos_tienda?.ofrecer_descuento === true;
+
   return (
     <div className="bg-white rounded-2xl p-4 sm:p-6 md:p-8 lg:p-10 shadow-xl border border-slate-200 w-full relative z-5">
       <h1 className="text-2xl sm:text-3xl md:text-4xl mb-8 sm:mb-10 md:mb-12 text-sky-500 font-bold tracking-tight">
@@ -68,8 +65,8 @@ const StoreDataSection = () => {
           type="text"
           className="w-full p-3 sm:p-4 border-2 border-slate-200 rounded-xl text-sm sm:text-base transition-all duration-200 bg-white text-slate-700 font-inherit focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10 placeholder-slate-400"
           placeholder="Ingresa el nombre de la tienda"
-          value={formData.storeName}
-          onChange={(e) => handleInputChange("storeName", e.target.value)}
+          value={carritoData.datos_tienda?.nombre_tienda || ""}
+          onChange={(e) => handleInputChange("nombre_tienda", e.target.value)}
         />
       </div>
 
@@ -84,8 +81,10 @@ const StoreDataSection = () => {
           type="text"
           className="w-full p-3 sm:p-4 border-2 border-slate-200 rounded-xl text-sm sm:text-base transition-all duration-200 bg-white text-slate-700 font-inherit focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10 placeholder-slate-400"
           placeholder="somos una tienda virtual de la más alta calidad con cobertura nacional"
-          value={formData.storeLocation}
-          onChange={(e) => handleInputChange("storeLocation", e.target.value)}
+          value={carritoData.datos_tienda?.ubicacion_tienda || ""}
+          onChange={(e) =>
+            handleInputChange("ubicacion_tienda", e.target.value)
+          }
         />
       </div>
 
@@ -98,8 +97,8 @@ const StoreDataSection = () => {
         </div>
         <select
           className="w-full p-3 sm:p-4 border-2 border-slate-200 rounded-xl text-sm sm:text-base transition-all duration-200 bg-white text-slate-700 font-inherit focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10"
-          value={formData.country}
-          onChange={(e) => handleInputChange("country", e.target.value)}
+          value={carritoData.datos_tienda?.pais || ""}
+          onChange={(e) => handleInputChange("pais", e.target.value)}
         >
           {countries.map((country) => (
             <option key={country.value} value={country.value}>
@@ -116,7 +115,6 @@ const StoreDataSection = () => {
           </label>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 p-4 sm:p-6 lg:p-8 bg-white border border-slate-200 rounded-2xl items-start shadow-lg mt-4">
-          {/* Toggle de activación */}
           <div className="flex flex-col">
             <div className="flex items-center gap-3 mb-2">
               <label className="block font-semibold text-slate-700 text-sm tracking-tight">
@@ -124,14 +122,16 @@ const StoreDataSection = () => {
               </label>
             </div>
             <ToggleSwitch
-              checked={formData.discountEnabled}
+              checked={discountEnabled}
               onChange={(e) =>
-                handleInputChange("discountEnabled", e.target.checked)
+                handleInputChange(
+                  "ofrecer_descuento",
+                  e.target.checked ? "si" : "no"
+                )
               }
             />
           </div>
 
-          {/* Campo de porcentaje */}
           <div className="flex flex-col">
             <div className="flex items-center gap-3 mb-2">
               <label className="block font-semibold text-slate-700 text-sm tracking-tight">
@@ -141,9 +141,7 @@ const StoreDataSection = () => {
             </div>
             <div
               className={`flex items-center relative max-w-35 ${
-                !formData.discountEnabled
-                  ? "opacity-50 pointer-events-none"
-                  : ""
+                !discountEnabled ? "opacity-50 pointer-events-none" : ""
               }`}
             >
               <input
@@ -151,10 +149,10 @@ const StoreDataSection = () => {
                 className="w-20 sm:w-25 p-3 sm:p-4 border-2 border-slate-200 border-r-0 rounded-l-xl text-center font-semibold text-sm sm:text-base bg-white text-slate-700 focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10"
                 min="0"
                 max="100"
-                value={formData.discountPercentage}
+                value={carritoData.datos_tienda?.descuento_maximo || ""}
                 onChange={(e) =>
                   handleInputChange(
-                    "discountPercentage",
+                    "descuento_maximo",
                     parseInt(e.target.value) || 0
                   )
                 }
@@ -165,7 +163,6 @@ const StoreDataSection = () => {
             </div>
           </div>
 
-          {/* Mensaje de descuento */}
           <div className="flex flex-col lg:col-span-1 col-span-1">
             <div className="flex items-center gap-3 mb-2">
               <label className="block font-semibold text-slate-700 text-sm tracking-tight">
@@ -175,18 +172,16 @@ const StoreDataSection = () => {
             </div>
             <div
               className={`mt-2 border-2 border-slate-200 rounded-xl overflow-hidden bg-white ${
-                !formData.discountEnabled
-                  ? "opacity-50 pointer-events-none"
-                  : ""
+                !discountEnabled ? "opacity-50 pointer-events-none" : ""
               }`}
             >
               <textarea
                 className="w-full p-3 sm:p-4 border-none resize-vertical min-h-15 text-xs sm:text-sm font-inherit bg-white focus:outline-none focus:bg-amber-50"
                 rows="2"
                 placeholder="Espera... nuestro gerente nos acaba de recordar que podrías ser nuestro cliente número 1000 😍."
-                value={formData.discountMessage}
+                value={carritoData.datos_tienda?.mensaje_descuento || ""}
                 onChange={(e) =>
-                  handleInputChange("discountMessage", e.target.value)
+                  handleInputChange("mensaje_descuento", e.target.value)
                 }
               />
               <div className="p-3 sm:p-4 bg-slate-100 text-slate-500 text-xs sm:text-sm leading-relaxed border-t border-dashed border-slate-300 italic">

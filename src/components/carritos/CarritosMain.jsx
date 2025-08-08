@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import CarritosInstaller from "./content/CarritosInstaller";
 import CarritosSidebar from "./CarritosSidebar";
 import IdentitySection from "./content/sections/IdentitySection";
@@ -8,8 +8,10 @@ import RecoveryMessagesSection from "./content/sections/RecoveryMessagesSection"
 import EmailSection from "./content/sections/EmailSection";
 import SpecialActionsSection from "./content/sections/SpecialActionsSection";
 import TestAssistantSection from "./content/sections/TestAssistantSection";
+import { CarritosProvider } from "../../context/CarritosContext";
+import { CarritosButtons } from "./CarritosButtons";
 
-const CarritosMain = () => {
+const CarritosMainInner = () => {
   const [isInstalled, setIsInstalled] = useState(false);
   const [activeSection, setActiveSection] = useState("identidad-asistente");
 
@@ -60,7 +62,16 @@ const CarritosMain = () => {
       <main className="ml-72 flex-1 p-8 overflow-y-auto bg-slate-50 min-w-0">
         {renderActiveSection()}
       </main>
+      <CarritosButtons />
     </div>
+  );
+};
+
+const CarritosMain = () => {
+  return (
+    <CarritosProvider>
+      <CarritosMainInner />
+    </CarritosProvider>
   );
 };
 
