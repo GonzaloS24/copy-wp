@@ -3,6 +3,10 @@ import { useCarritos } from "../../context/CarritosContext";
 import { CarritoService } from "../../services/carritoService";
 import { mapCarritoDataToApiFormat } from "../../utils/carritoDataMapper";
 import { SaveButton } from "../buttons/SaveButton";
+import {
+  showSuccessToast,
+  showErrorToast,
+} from "../../utils/toastNotifications";
 
 export const CarritosButtons = () => {
   const { carritoData } = useCarritos();
@@ -15,10 +19,10 @@ export const CarritosButtons = () => {
       const mappedData = mapCarritoDataToApiFormat(carritoData);
       await CarritoService.saveConfiguration(mappedData);
 
-      alert("¡Configuración de carritos guardada exitosamente!");
+      showSuccessToast("¡Configuración de carritos guardada exitosamente!");
     } catch (error) {
       console.error("Error al guardar configuración:", error);
-      alert(`Error al guardar la configuración: ${error.message}`);
+      showErrorToast(`Error al guardar: ${error.message}`);
     } finally {
       setIsLoading(false);
     }

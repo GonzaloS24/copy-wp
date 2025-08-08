@@ -14,16 +14,12 @@ export class CarritoService {
         data: [
           {
             name: "[Carritos] Configuracion",
-            value: JSON.stringify(configData, null, 2),
+            value: JSON.stringify(configData),
           },
         ],
       };
 
       console.log("📦 Guardando configuración de carritos:", payload);
-      console.log(
-        "🔍 Estructura JSON completa:",
-        JSON.stringify(configData, null, 2)
-      );
 
       // Simular guardado
       await new Promise((resolve) => setTimeout(resolve, 1000));

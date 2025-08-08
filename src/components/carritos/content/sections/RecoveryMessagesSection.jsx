@@ -1,5 +1,9 @@
 import { useState } from "react";
 import { useCarritos } from "../../../../context/CarritosContext";
+import {
+  showInfoToast,
+  showSuccessToast,
+} from "../../../../utils/toastNotifications";
 
 const RecoveryMessagesSection = () => {
   const { carritoData, updateCarritoData } = useCarritos();
@@ -55,13 +59,13 @@ const RecoveryMessagesSection = () => {
   );
 
   const editarPlantillas = () => {
-    alert(
+    showInfoToast(
       "Redirigiendo a la sección de plantillas de mensaje para editar las plantillas del asistente de carritos..."
     );
   };
 
   const mapearPlantillas = () => {
-    alert(
+    showInfoToast(
       "Redirigiendo al flujo de configuración final para insertar las plantillas de mensaje dentro del flujo..."
     );
   };
@@ -83,6 +87,7 @@ const RecoveryMessagesSection = () => {
       setLoadingText("Plantilla reinstalada");
       setTimeout(() => {
         setShowLoadingModal(false);
+        showSuccessToast("Plantillas reinstaladas correctamente");
       }, 2000);
     }, 3000);
   };
@@ -94,11 +99,13 @@ const RecoveryMessagesSection = () => {
           Mensajes de recuperación
         </h1>
 
+        {/* 1. Mensajes de recuperación */}
         <div className="mb-8 sm:mb-10 md:mb-12 p-4 sm:p-6 md:p-8 border border-slate-200 rounded-2xl bg-white shadow-lg">
           <h3 className="text-xl sm:text-2xl font-bold text-sky-500 mb-6 sm:mb-8 tracking-tight">
             1. Mensajes de recuperación
           </h3>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 items-start">
+            {/* Paso 1: Posición de la imagen */}
             <div className="bg-slate-50 hover:bg-white border border-slate-200 hover:border-sky-500 rounded-2xl p-4 sm:p-6 flex flex-col items-center gap-4 transition-all duration-200 hover:-translate-y-1 shadow-sm hover:shadow-lg">
               <div className="w-8 h-8 bg-transparent text-slate-500 border-2 border-slate-300 rounded-full flex items-center justify-center text-sm font-bold">
                 1
@@ -125,6 +132,7 @@ const RecoveryMessagesSection = () => {
               />
             </div>
 
+            {/* Paso 2: Editar plantillas */}
             <div className="bg-slate-50 hover:bg-white border border-slate-200 hover:border-sky-500 rounded-2xl p-4 sm:p-6 flex flex-col items-center gap-4 transition-all duration-200 hover:-translate-y-1 shadow-sm hover:shadow-lg">
               <div className="w-8 h-8 bg-transparent text-slate-500 border-2 border-slate-300 rounded-full flex items-center justify-center text-sm font-bold">
                 2
@@ -143,6 +151,7 @@ const RecoveryMessagesSection = () => {
               </button>
             </div>
 
+            {/* Paso 3: Mapear plantillas */}
             <div className="bg-slate-50 hover:bg-white border border-slate-200 hover:border-sky-500 rounded-2xl p-4 sm:p-6 flex flex-col items-center gap-4 transition-all duration-200 hover:-translate-y-1 shadow-sm hover:shadow-lg">
               <div className="w-8 h-8 bg-transparent text-slate-500 border-2 border-slate-300 rounded-full flex items-center justify-center text-sm font-bold">
                 3
@@ -163,6 +172,7 @@ const RecoveryMessagesSection = () => {
           </div>
         </div>
 
+        {/* 2. Recordatorios */}
         <div className="mb-8 sm:mb-10 md:mb-12 p-4 sm:p-6 md:p-8 border border-slate-200 rounded-2xl bg-white shadow-lg">
           <h3 className="text-xl sm:text-2xl font-bold text-sky-500 mb-6 sm:mb-8 tracking-tight">
             2. Recordatorios
@@ -247,6 +257,7 @@ const RecoveryMessagesSection = () => {
           </div>
         </div>
 
+        {/* 3. Mensaje de agradecimiento */}
         <div className="mb-8 sm:mb-10 md:mb-12 p-4 sm:p-6 md:p-8 border border-slate-200 rounded-2xl bg-white shadow-lg">
           <h3 className="text-xl sm:text-2xl font-bold text-sky-500 mb-6 sm:mb-8 tracking-tight">
             3. Mensaje de agradecimiento
@@ -273,6 +284,7 @@ const RecoveryMessagesSection = () => {
         </div>
       </div>
 
+      {/* Contenedor separado para reinstalación de plantillas */}
       <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-xl border border-slate-200 w-full mt-8 sm:mt-12">
         <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:p-6 md:p-8 text-center">
           <h3 className="text-lg sm:text-xl font-bold text-slate-500 mb-2 text-center">
@@ -295,6 +307,7 @@ const RecoveryMessagesSection = () => {
         </div>
       </div>
 
+      {/* Modal de advertencia para reinstalación */}
       {showReinstallModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
           <div className="bg-white rounded-2xl p-4 sm:p-6 md:p-8 max-w-md sm:max-w-lg md:max-w-2xl w-full shadow-2xl transform transition-transform duration-300 scale-100">
@@ -327,6 +340,7 @@ const RecoveryMessagesSection = () => {
         </div>
       )}
 
+      {/* Loading Modal */}
       {showLoadingModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
           <div className="bg-white rounded-2xl p-8 sm:p-12 text-center shadow-2xl transform transition-transform duration-300 scale-100">
