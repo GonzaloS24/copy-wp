@@ -9,55 +9,167 @@ export const IntegrationsPlatform = () => {
 
   const integrations = [
     {
-      id: 'dropi',
-      name: 'Dropi',
-      description: 'Conecta con la plataforma logística para gestión de pedidos',
-      icon: '📦',
+      id: "dropi",
+      name: "Dropi",
+      description:
+        "Conecta con la plataforma logística para gestión de pedidos",
+      icon: "📦",
       connected: false,
-      iconBg: 'bg-blue-50',
-      iconColor: 'text-blue-500',
-      iconBorder: 'border-blue-300'
+      type: "form",
+      iconBg: "bg-blue-50",
+      iconColor: "text-blue-500",
+      iconBorder: "border-blue-300",
     },
     {
-      id: 'openai',
-      name: 'OpenAI',
-      description: 'Potencia tus asistentes con inteligencia artificial avanzada',
-      icon: '🤖',
+      id: "openai",
+      name: "OpenAI",
+      description:
+        "Potencia tus asistentes con inteligencia artificial avanzada",
+      icon: "🤖",
       connected: true,
-      iconBg: 'bg-green-50',
-      iconColor: 'text-green-500',
-      iconBorder: 'border-green-300'
+      type: "form",
+      iconBg: "bg-green-50",
+      iconColor: "text-green-500",
+      iconBorder: "border-green-300",
     },
     {
-      id: 'shopify',
-      name: 'Shopify',
-      description: 'Sincroniza tu tienda online con los asistentes de venta',
-      icon: '🛒',
+      id: "shopify",
+      name: "Shopify",
+      description: "Sincroniza tu tienda online con los asistentes de venta",
+      icon: "🛒",
       connected: false,
-      iconBg: 'bg-yellow-50',
-      iconColor: 'text-yellow-500',
-      iconBorder: 'border-yellow-300'
+      type: "form",
+      iconBg: "bg-yellow-50",
+      iconColor: "text-yellow-500",
+      iconBorder: "border-yellow-300",
     },
     {
-      id: 'googlesheets',
-      name: 'Google Sheets',
-      description: 'Exporta y gestiona datos de tus asistentes en hojas de cálculo',
-      icon: '📄',
+      id: "googlesheets",
+      name: "Google Sheets",
+      description:
+        "Exporta y gestiona datos de tus asistentes en hojas de cálculo",
+      icon: "📄",
       connected: false,
-      iconBg: 'bg-red-50',
-      iconColor: 'text-red-500',
-      iconBorder: 'border-red-300'
+      type: "guide",
+      iconBg: "bg-red-50",
+      iconColor: "text-red-500",
+      iconBorder: "border-red-300",
     },
     {
-      id: 'backblaze',
-      name: 'Backblaze B2',
-      description: 'Almacenamiento en la nube para archivos y respaldos de conversaciones',
-      icon: '☁️',
+      id: "backblaze",
+      name: "Backblaze B2",
+      description:
+        "Almacenamiento en la nube para archivos y respaldos de conversaciones",
+      icon: "☁️",
       connected: true,
-      iconBg: 'bg-purple-50',
-      iconColor: 'text-purple-500',
-      iconBorder: 'border-purple-300'
-    }
+      type: "form",
+      iconBg: "bg-purple-50",
+      iconColor: "text-purple-500",
+      iconBorder: "border-purple-300",
+    },
+    {
+      id: "metaConversionsApi",
+      name: "Meta Conversions API",
+      description:
+        "Optimiza tus campañas publicitarias con datos de conversión precisos",
+      icon: (
+        <svg
+          width="35"
+          height="35"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+          <path d="M2 17l10 5 10-5"></path>
+          <path d="M2 12l10 5 10-5"></path>
+        </svg>
+      ),
+      connected: false,
+      type: "form",
+      iconBg: "bg-blue-50",
+      iconColor: "text-blue-500",
+      iconBorder: "border-blue-300",
+    },
+    {
+      id: "metaAudience",
+      name: "Audiencias de Meta",
+      description:
+        "Sincroniza y gestiona audiencias personalizadas para tus campañas",
+      icon: (
+        <svg
+          width="35"
+          height="35"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      ),
+      connected: false,
+      type: "guide",
+      iconBg: "bg-blue-50",
+      iconColor: "text-blue-500",
+      iconBorder: "border-blue-300",
+    },
+    {
+      id: "facebook",
+      name: "Facebook e Instagram",
+      description: "Conecta tus páginas de Facebook e Instagram con tus bots",
+      icon: (
+        <svg
+          width="48"
+          height="48"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+        </svg>
+      ),
+      connected: false,
+      type: "guide",
+      iconBg: "bg-blue-50",
+      iconColor: "text-blue-500",
+      iconBorder: "border-blue-300",
+    },
+    {
+      id: "whatsappApi",
+      name: "WhatsApp API",
+      description: "Integra WhatsApp Business API con tus asistentes virtuales",
+      icon: (
+        <svg
+          width="35"
+          height="35"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+        </svg>
+      ),
+      connected: false,
+      type: "guide",
+      iconBg: "bg-green-50",
+      iconColor: "text-green-500",
+      iconBorder: "border-green-300",
+    },
   ];
 
   const integrationsWithStatus = integrations.map(integration => ({
