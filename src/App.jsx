@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { PrivateRoute } from "./privateRoutes/PrivateRoute";
 import { HomePage } from "./pages/HomePage";
 import { ConfigureAsistent } from "./pages/ConfigureAsistent";
@@ -8,7 +8,6 @@ import CarritosPage from "./pages/CarritosPage";
 import { LogistAssistantPage } from "./pages/LogistAssistantPage";
 import { useEffect, useState } from "react";
 import { shouldShowWelcomeWizard } from "./components/welcome/services/welcomeService";
-import { getAuthToken } from "./utils/authCookies";
 import WelcomeWizard from "./components/welcome/WelcomeWizard";
 
 export default function App() {
@@ -18,15 +17,15 @@ export default function App() {
   useEffect(() => {
     const checkWelcomeStatus = async () => {
       try {
-        // Primero verificar si hay token válido
-        const hasToken = !!getAuthToken();
+        console.log("[App] Verificando estado del wizard...");
 
-        // Si no hay token O si el wizard no se ha completado, mostrar wizard
-        const shouldShow = !hasToken || (await shouldShowWelcomeWizard());
+        const shouldShow = await shouldShowWelcomeWizard();
+        console.log("[App] ¿Mostrar wizard?", shouldShow);
+
         setShowWelcome(shouldShow);
       } catch (error) {
-        console.error("Error checking welcome status:", error);
-        setShowWelcome(true); // Por defecto mostrar wizard si hay error
+        console.error("[App] Error checking welcome status:", error);
+        setShowWelcome(true);
       } finally {
         setIsCheckingWelcome(false);
       }
@@ -36,6 +35,7 @@ export default function App() {
   }, []);
 
   const handleWelcomeComplete = () => {
+    console.log("[App] Wizard completado, ocultando...");
     setShowWelcome(false);
   };
 
@@ -77,6 +77,9 @@ export default function App() {
             element={<LogistAssistantPage />}
           />
         </Route>
+
+        {/* Capturar todas las rutas no válidas y redirigir a home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );

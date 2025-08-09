@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { saveWelcomeAnswers } from "../services/welcomeService";
+import { setWorkspaceToken } from "../../../utils/workspaceStorage";
 
 export const useWelcomeWizard = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -137,7 +138,11 @@ export const useWelcomeWizard = () => {
       const tokenResult = await saveTokenToDatabase(token);
       console.log("✅ Token guardado en base de datos:", tokenResult);
 
-      // 5. Marcar como completado SOLO si todo fue exitoso
+      // 5. Establecer token para el workspace
+      console.log("🌐 Guardando token...");
+      setWorkspaceToken(token);
+
+      // 6. Marcar como completado SOLO si todo fue exitoso
       localStorage.setItem("welcomeWizardCompleted", "true");
       localStorage.setItem(
         "welcomeWizardCompletedAt",
@@ -193,7 +198,7 @@ export const useWelcomeWizard = () => {
       },
     };
 
-    // TODO: endpoint real
+    // TODO: Reemplazar con endpoint real cuando esté disponible
     /*
     const response = await fetch('/api/auth/save-token', {
       method: 'POST',

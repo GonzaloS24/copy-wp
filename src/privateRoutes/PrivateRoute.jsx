@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, Navigate, Outlet } from "react-router-dom";
-import { getAuthToken } from "../utils/authCookies";
+import { getWorkspaceToken } from "../utils/workspaceStorage";
 import { validateToken } from "../utils/validateToken";
 
 export const PrivateRoute = () => {
@@ -9,25 +9,27 @@ export const PrivateRoute = () => {
 
   useEffect(() => {
     const verifyToken = async () => {
-      console.group("[Auth] Verificando autenticación");
-      const token = getAuthToken();
+      console.log("[Auth] Verificando autenticación");
+
+      const token = getWorkspaceToken();
 
       if (token) {
-        const isValid = await validateToken(token);
+        console.log("[Auth] Token encontrado para workspace");
+        const isValid = validateToken(token);
 
         if (isValid) {
-          console.log("Token válido. Acceso concedido");
+          console.log("[Auth] Token válido. Acceso concedido");
         } else {
-          console.warn("Token inválido. Redirigiendo al wizard...");
+          console.warn("[Auth] Token inválido. Redirigiendo al wizard...");
         }
 
         setIsAuthenticated(isValid);
       } else {
-        console.warn("No se encontró token. Redirigiendo al wizard...");
+        console.warn(
+          "[Auth] No hay token para el workspace. Redirigiendo al wizard..."
+        );
         setIsAuthenticated(false);
       }
-
-      console.groupEnd();
     };
 
     verifyToken();

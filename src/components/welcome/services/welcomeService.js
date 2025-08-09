@@ -1,9 +1,12 @@
+import { getWorkspaceIdFromUrl } from "../../../utils/workspaceUtils";
+import { setCurrentWorkspace, getCurrentWorkspace, setWorkspaceToken } from "../../../utils/workspaceStorage";
+
 // URL del webhook de Google Apps Script
 const GOOGLE_APPS_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbyVoOL1g_5uTkB3s1vABHDns6ICIJlTz9WU79rOR-7bHvhTReglX4pNbdBKwxIivkiB/exec";
 
-const FORCE_SHOW_WELCOME = true;
-const SKIP_COMPLETED_CHECK = false;
+// URL del servicio de configuración del workspace
+const WORKSPACE_CONFIG_URL = "https://workspace-wizard-config-service-26551171030.us-east1.run.app/api/workspace/token";
 
 // Mapeo de respuestas a texto completo
 const RESPONSE_MAPPINGS = {
@@ -32,37 +35,89 @@ const RESPONSE_MAPPINGS = {
   },
 };
 
+/**
+ * Función principal para determinar si mostrar el wizard
+ */
+export const shouldShowWelcomeWizard = async () => {
+  try {
+    console.log("[Welcome] Verificando si mostrar wizard...");
+    
+    // 1. Obtener workspaceId de la URL o de cookies
+    let workspaceId = getWorkspaceIdFromUrl();
+    
+    if (!workspaceId) {
+      // Si no está en URL, intentar obtener de cookies
+      workspaceId = getCurrentWorkspace();
+      console.log(`[Welcome] WorkspaceId desde cookies: ${workspaceId}`);
+    }
+    
+    if (!workspaceId) {
+      console.warn("[Welcome] No se encontró workspaceId - mostrar wizard");
+      return true;
+    }
+    
+    // 2. Guardar workspaceId en cookies
+    setCurrentWorkspace(workspaceId);
+    
+    // 3. Consultar endpoint siempre
+    console.log(`[Welcome] Consultando endpoint para workspace: ${workspaceId}`);
+    
+    const response = await fetch(`${WORKSPACE_CONFIG_URL}/${workspaceId}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json, text/plain, */*'
+      }
+    });
+    
+    if (response.status === 200) {
+      // Workspace configurado - obtener y guardar el token
+      const responseText = await response.text();
+      console.log("[Welcome] Token recibido del servidor");
+      
+      let token = responseText.trim();
+      
+      // parsearlo
+      if (token.startsWith('{') || token.startsWith('[')) {
+        try {
+          const data = JSON.parse(token);
+          token = data.token || data.data?.token || data;
+        } catch (jsonError) {
+          // Es texto plano, usar directamente
+        }
+      }
+      
+      // Guardar token si es válido
+      if (token && token.length >= 32) {
+        setWorkspaceToken(token);
+        console.log("[Welcome] Token guardado exitosamente");
+      }
+      
+      console.log("[Welcome] Workspace configurado - NO mostrar wizard");
+      return false;
+    } else if (response.status === 404) {
+      console.log("[Welcome] Workspace sin configurar - SÍ mostrar wizard");
+      return true;
+    } else {
+      console.error(`[Welcome] Error ${response.status} - mostrar wizard por seguridad`);
+      return true;
+    }
+    
+  } catch (error) {
+    console.error("[Welcome] Error al consultar endpoint:", error);
+    return true; // Por seguridad, mostrar wizard si hay error
+  }
+};
+
 // Función para convertir respuestas abreviadas a texto completo
 const getFullResponseText = (category, value) => {
   if (!value) return "";
   return RESPONSE_MAPPINGS[category]?.[value] || value;
 };
 
-// Función para formatear el número de WhatsApp (solo el número, sin código de país)
+// Función para formatear el número de WhatsApp
 const formatWhatsAppNumber = (countryCode, number) => {
   if (!number) return "";
   return number.trim();
-};
-
-// Simulación del endpoint que verificará si se debe mostrar la encuesta
-export const shouldShowWelcomeWizard = async () => {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-
-  // Para pruebas: forzar mostrar/ocultar encuesta
-  if (FORCE_SHOW_WELCOME) {
-    if (SKIP_COMPLETED_CHECK) {
-      return true;
-    }
-  }
-
-  // Verificar si ya se completó localmente
-  const completed = localStorage.getItem("welcomeWizardCompleted");
-  if (completed === "true") {
-    return false;
-  }
-
-  // Retornar configuración de testing o lógica real
-  return FORCE_SHOW_WELCOME;
 };
 
 export const saveWelcomeAnswers = async (answers) => {
