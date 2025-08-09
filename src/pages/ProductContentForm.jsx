@@ -102,10 +102,6 @@ const parseTimeAndUnit = (timeString) => {
           };
         }
 
-        console.log('🎯 Tipo de prompt:', tipoPrompt);
-        console.log('📝 Texto del prompt (libre):', tipoPrompt === 'libre' ? promptText : 'N/A');
-        console.log('📋 Datos del prompt guiado:', tipoPrompt === 'guiado' ? guidePromptData : 'N/A');
-
         const activadoresData = apiData.activadores_del_flujo || {};
         console.log('🎯 Datos de activadores del flujo:', activadoresData);
 
@@ -143,6 +139,66 @@ const parseTimeAndUnit = (timeString) => {
         const remarketingData = apiData.remarketing || {};
         const remarketing1Data = parseTimeAndUnit(remarketingData.tiempo_1);
         const remarketing2Data = parseTimeAndUnit(remarketingData.tiempo_2);
+        
+        const getFileType = (url) => {
+            if (!url || typeof url !== 'string') return 'document';
+            
+            const fileExtension = url.split('.').pop().toLowerCase();
+            
+            if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(fileExtension)) {
+              return 'image';
+            } else if (['mp4', 'avi', 'mov', 'webm', 'mkv', 'flv'].includes(fileExtension)) {
+              return 'video';
+            } else if (['mp3', 'wav', 'ogg', 'm4a', 'aac', 'flac'].includes(fileExtension)) {
+              return 'audio';
+            } else {
+              return 'document';
+            }
+          };
+
+          const getFileIcon = (type) => {
+            const icons = {
+              image: '🖼️',
+              video: '▶️',
+              audio: '🔊',
+              document: '📄'
+            };
+            return icons[type] || '📄';
+          };
+
+          const multimediaData = embudoVentas.multimedia || {};
+          const mediaItems = [];
+
+          Object.entries(multimediaData).forEach(([key, url], index) => {
+            if (url && typeof url === 'string' && url.trim() !== '') {
+              const fileType = getFileType(url);
+              const mediaItem = {
+                id: index + 1,
+                type: fileType,
+                icon: getFileIcon(fileType),
+                filled: true,
+                url: url.trim(),
+                key: key,
+                fileName: url.split('/').pop() || `archivo_${index + 1}` // Extraer nombre del archivo
+              };
+              
+              mediaItems.push(mediaItem);
+              console.log(`📁 Archivo ${index + 1} procesado:`, {
+                key,
+                type: fileType,
+                url: url.substring(0, 50) + '...',
+                fileName: mediaItem.fileName
+              });
+            }
+          });
+
+          if (mediaItems.length === 0) {
+            mediaItems.push(
+              { id: 1, type: 'image', icon: '🖼️', filled: false, url: '' },
+              { id: 2, type: 'video', icon: '▶️', filled: false, url: '' },
+              { id: 3, type: 'audio', icon: '🔊', filled: false, url: '' }
+            );
+          }
 
         const mappedData = {
           info: {
@@ -158,16 +214,13 @@ const parseTimeAndUnit = (timeString) => {
             isActive: infoProducto.estado === 'activo' || infoProducto.estado_producto === 'activo'
           },
           messageWel: {
-            formData: {
-              initialMessage: embudoVentas.mensaje_inicial || '¡Hola! Soy Laura, bienvenida a Master Shop.',
-              entryQuestion: embudoVentas.pregunta_de_entrada || 'Gracias por interesarte en nuestro producto. Cuéntanos, ¿desde qué ciudad nos escribes?'
+              formData: {
+                initialMessage: embudoVentas.mensaje_inicial || '¡Hola! Soy Laura, bienvenida a Master Shop.',
+                entryQuestion: embudoVentas.pregunta_de_entrada || 'Gracias por interesarte en nuestro producto. Cuéntanos, ¿desde qué ciudad nos escribes?'
+              },
+              mediaItems: mediaItems, // Estructura completamente dinámica
+              totalFiles: mediaItems.filter(item => item.filled).length // Contador útil
             },
-            mediaItems: [
-              { id: 1, type: 'image', icon: '🖼️', filled: !!embudoVentas.imagen_1 },
-              { id: 2, type: 'video', icon: '▶️', filled: false },
-              { id: 3, type: 'audio', icon: '🔊', filled: false }
-            ]
-          },
           freePrompt: {
             promptText: tipoPrompt === 'libre' ? promptText : undefined, 
             promptType: tipoPrompt,

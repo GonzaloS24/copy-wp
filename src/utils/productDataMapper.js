@@ -1,7 +1,40 @@
 export const mapProductDataToServiceFormat = (productData, isInactive = false) => {
   const guideData = productData.freePrompt?.guidePromptData || {};
 
-  return {
+  const mapMediaItems = (mediaItems) => {
+    console.log('🔍 Procesando mediaItems:', mediaItems);
+    
+    if (!mediaItems || !Array.isArray(mediaItems)) {
+      console.log('⚠️ MediaItems no es un array válido, retornando c1 vacío');
+      return { c1: '' };
+    }
+
+    const multimedia = {};
+    let counter = 1;
+
+    mediaItems.forEach((item, index) => {
+      console.log(`📋 Procesando item ${index}:`, item);
+      
+      if (item.filled && item.url) {
+        multimedia[`c${counter}`] = item.url;
+        console.log(`✅ Asignado c${counter}: ${item.url}`);
+        counter++;
+      } else {
+        console.log(`❌ Item ${index} omitido - filled: ${item.filled}, url: ${item.url}`);
+      }
+    });
+
+    // Asegurar que c1 siempre exista, aunque sea vacío
+    if (!multimedia.c1) {
+      multimedia.c1 = '';
+      console.log('🔧 c1 no encontrado, asignando string vacío');
+    }
+
+    console.log('📦 Multimedia final:', multimedia);
+    return multimedia;
+  };
+
+  const mappedData = {
     informacion_de_producto: {
       nombre_del_producto: productData.info?.formData?.name || '',
       precio_del_producto: productData.info?.formData?.price || '', 
@@ -12,9 +45,7 @@ export const mapProductDataToServiceFormat = (productData, isInactive = false) =
     },
     embudo_de_ventas: {
       mensaje_inicial: productData.messageWel?.formData?.initialMessage || '',
-      multimedia: { 
-        c1: productData.messageWel?.formData?.image1 || ''
-      },
+      multimedia: mapMediaItems(productData.messageWel?.mediaItems),
       pregunta_de_entrada: productData.messageWel?.formData?.entryQuestion || ''
     },
     prompt: {
@@ -53,10 +84,15 @@ export const mapProductDataToServiceFormat = (productData, isInactive = false) =
       plantilla_remarketing_2: productData.remarketing?.remarketing2?.template || '' 
     },
     activadores_del_flujo: {
-      palabras_clave: productData.activators?.keywords || [], 
-      ids_de_anuncio: productData.activators?.adIds || [] 
+      palabras_clave: productData.triggers?.keywords || productData.activators?.keywords || '', // Corregido: usar triggers en lugar de activators
+      ids_de_anuncio: productData.triggers?.adIds || productData.activators?.adIds || '' // Corregido: usar triggers en lugar de activators
     }
   };
+
+  console.log('🎯 Datos mapeados completos:', mappedData);
+  console.log('📱 Multimedia en datos mapeados:', mappedData.embudo_de_ventas.multimedia);
+  
+  return mappedData;
 };
 
 const getPromptText = (freePrompt) => {

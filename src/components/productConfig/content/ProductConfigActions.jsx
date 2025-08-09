@@ -1,27 +1,26 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useConfig } from '../../../context/ConfigContext';
 
 export const ProductConfigActions = () => {
-  const [autoUpload, setAutoUpload] = useState(true);
+  const { actionsConfig, updateActionsConfig } = useConfig();
   
-  const [validateDeliveries, setValidateDeliveries] = useState(true);
-  const [validateFreight, setValidateFreight] = useState(true);
-  const [minOrdersQuantity, setMinOrdersQuantity] = useState(0);
-  const [minDeliveryPercentage, setMinDeliveryPercentage] = useState(0);
-  const [freightCriterion, setFreightCriterion] = useState('valor');
-  const [freightValue, setFreightValue] = useState(0);
-
   const handleQuantityChange = (increment) => {
-    setMinOrdersQuantity(prev => Math.max(0, prev + increment));
+    const minValue = actionsConfig.validateDeliveries ? 1 : 0;
+    updateActionsConfig({
+      minOrdersQuantity: Math.max(minValue, actionsConfig.minOrdersQuantity + increment)
+    });
   };
 
   const handlePercentageChange = (e) => {
-    const value = Math.min(100, Math.max(0, parseInt(e.target.value) || 0));
-    setMinDeliveryPercentage(value);
+    const minValue = actionsConfig.validateDeliveries ? 1 : 0;
+    const value = Math.min(100, Math.max(minValue, parseInt(e.target.value) || minValue));
+    updateActionsConfig({ minDeliveryPercentage: value });
   };
 
   const handleFreightValueChange = (e) => {
-    const value = Math.max(0, parseInt(e.target.value) || 0);
-    setFreightValue(value);
+    const minValue = actionsConfig.validateFreight ? 1 : 0;
+    const value = Math.max(minValue, parseInt(e.target.value) || 0);
+    updateActionsConfig({ freightValue: value });
   };
 
   const TooltipComponent = ({ text }) => (
@@ -79,13 +78,13 @@ export const ProductConfigActions = () => {
               
               <div className="flex flex-col gap-4">
                 <RadioButton
-                  checked={autoUpload}
-                  onClick={() => setAutoUpload(true)}
+                  checked={actionsConfig.autoUpload}
+                  onClick={() => updateActionsConfig({ autoUpload: true })}
                   label="Sí"
                 />
                 <RadioButton
-                  checked={!autoUpload}
-                  onClick={() => setAutoUpload(false)}
+                  checked={!actionsConfig.autoUpload}
+                  onClick={() => updateActionsConfig({ autoUpload: false })}
                   label="No"
                 />
               </div>
@@ -108,20 +107,31 @@ export const ProductConfigActions = () => {
               
               <div className="flex flex-col gap-4 mb-4">
                 <RadioButton
-                  checked={validateDeliveries}
-                  onClick={() => setValidateDeliveries(true)}
+                  checked={actionsConfig.validateDeliveries}
+                  onClick={() => {
+                    updateActionsConfig({ 
+                      validateDeliveries: true,
+                      minOrdersQuantity: Math.max(1, actionsConfig.minOrdersQuantity),
+                      minDeliveryPercentage: Math.max(1, actionsConfig.minDeliveryPercentage)
+                    });
+                  }}
                   label="Sí"
                 />
                 <RadioButton
-                  checked={!validateDeliveries}
-                  onClick={() => setValidateDeliveries(false)}
+                  checked={!actionsConfig.validateDeliveries}
+                  onClick={() => {
+                    updateActionsConfig({ 
+                      validateDeliveries: false,
+                      minOrdersQuantity: 0,
+                      minDeliveryPercentage: 0
+                    });
+                  }}
                   label="No"
                 />
               </div>
             </div>
 
-            <div className={`transition-opacity duration-300 ${validateDeliveries ? 'opacity-100' : 'opacity-50 pointer-events-none'}`}>
-
+            <div className={`transition-opacity duration-300 ${actionsConfig.validateDeliveries ? 'opacity-100' : 'opacity-50 pointer-events-none'}`}>
               <div className="mb-4">
                 <div className="flex items-center gap-3 mb-3">
                   <label className="block text-sm font-medium text-gray-700 flex-1">
@@ -134,22 +144,27 @@ export const ProductConfigActions = () => {
                   <button
                     className="w-8 h-8 border border-gray-300 bg-white rounded flex items-center justify-center cursor-pointer text-gray-500 hover:border-sky-500 hover:text-sky-500 transition-all duration-200"
                     onClick={() => handleQuantityChange(-1)}
-                    disabled={!validateDeliveries}
+                    disabled={!actionsConfig.validateDeliveries}
                   >
                     −
                   </button>
                   <input
                     type="number"
                     className="w-16 text-center p-2 border border-gray-300 rounded font-semibold"
-                    value={minOrdersQuantity}
-                    onChange={(e) => setMinOrdersQuantity(Math.max(0, parseInt(e.target.value) || 0))}
-                    min="0"
-                    disabled={!validateDeliveries}
+                    value={actionsConfig.minOrdersQuantity}
+                    onChange={(e) => {
+                      const minValue = actionsConfig.validateDeliveries ? 1 : 0;
+                      updateActionsConfig({ 
+                        minOrdersQuantity: Math.max(minValue, parseInt(e.target.value) || minValue)
+                      });
+                    }}
+                    min={actionsConfig.validateDeliveries ? "1" : "0"}
+                    disabled={!actionsConfig.validateDeliveries}
                   />
                   <button
                     className="w-8 h-8 border border-gray-300 bg-white rounded flex items-center justify-center cursor-pointer text-gray-500 hover:border-sky-500 hover:text-sky-500 transition-all duration-200"
                     onClick={() => handleQuantityChange(1)}
-                    disabled={!validateDeliveries}
+                    disabled={!actionsConfig.validateDeliveries}
                   >
                     +
                   </button>
@@ -168,11 +183,11 @@ export const ProductConfigActions = () => {
                   <input
                     type="number"
                     className="w-20 p-2 border border-gray-300 rounded-l border-r-0 text-center font-semibold"
-                    value={minDeliveryPercentage}
+                    value={actionsConfig.minDeliveryPercentage}
                     onChange={handlePercentageChange}
-                    min="0"
+                    min={actionsConfig.validateDeliveries ? "1" : "0"}
                     max="100"
-                    disabled={!validateDeliveries}
+                    disabled={!actionsConfig.validateDeliveries}
                   />
                   <span className="bg-slate-100 border border-gray-300 border-l-0 px-3 py-2 rounded-r text-gray-500 font-semibold">
                     %
@@ -192,19 +207,29 @@ export const ProductConfigActions = () => {
               
               <div className="flex flex-col gap-4 mb-4">
                 <RadioButton
-                  checked={validateFreight}
-                  onClick={() => setValidateFreight(true)}
+                  checked={actionsConfig.validateFreight}
+                  onClick={() => {
+                    updateActionsConfig({ 
+                      validateFreight: true,
+                      freightValue: Math.max(3, actionsConfig.freightValue)
+                    });
+                  }}
                   label="Sí"
                 />
                 <RadioButton
-                  checked={!validateFreight}
-                  onClick={() => setValidateFreight(false)}
+                  checked={!actionsConfig.validateFreight}
+                  onClick={() => {
+                    updateActionsConfig({ 
+                      validateFreight: false,
+                      freightValue: 0
+                    });
+                  }}
                   label="No"
                 />
               </div>
             </div>
 
-            <div className={`transition-opacity duration-300 ${validateFreight ? 'opacity-100' : 'opacity-50 pointer-events-none'}`}>
+            <div className={`transition-opacity duration-300 ${actionsConfig.validateFreight ? 'opacity-100' : 'opacity-50 pointer-events-none'}`}>
               <div className="mb-4">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
                   Indica tu criterio
@@ -213,9 +238,9 @@ export const ProductConfigActions = () => {
                 <div className="flex items-center gap-2">
                   <select
                     className="p-2 border border-gray-300 rounded bg-white text-sm min-w-20"
-                    value={freightCriterion}
-                    onChange={(e) => setFreightCriterion(e.target.value)}
-                    disabled={!validateFreight}
+                    value={actionsConfig.freightCriterion}
+                    onChange={(e) => updateActionsConfig({ freightCriterion: e.target.value })}
+                    disabled={!actionsConfig.validateFreight}
                   >
                     <option value="valor">Valor</option>
                     <option value="peso">Peso</option>
@@ -226,10 +251,10 @@ export const ProductConfigActions = () => {
                     <input
                       type="number"
                       className="w-20 p-2 border border-gray-300 rounded-l border-r-0 text-center font-semibold"
-                      value={freightValue}
+                      value={actionsConfig.freightValue}
                       onChange={handleFreightValueChange}
-                      min="0"
-                      disabled={!validateFreight}
+                      min={actionsConfig.validateFreight ? "1" : "0"}
+                      disabled={!actionsConfig.validateFreight}
                     />
                     <span className="bg-slate-100 border border-gray-300 border-l-0 px-3 py-2 rounded-r text-gray-500 font-semibold">
                       $

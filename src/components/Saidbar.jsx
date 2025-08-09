@@ -14,7 +14,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
       title: "Integraciones",
       description:
         "Conecta Chatea PRO con Shopify, Open IA, Google Sheets y más",
-      href: "#",
+      href: "/integraciones",
     },
     {
       icon: FiBookOpen,

@@ -208,6 +208,9 @@ export class ProductService {
     const remarketing = productData.remarketing || {};
     const activadores = productData.activadores_del_flujo || {};
 
+    const multimediaData = embudo.multimedia || {};
+    console.log('🔧 [NORMALIZE] Multimedia extraída:', multimediaData);
+
     return {
       informacion_de_producto: {
         id: info.id || info.id_del_producto_en_dropi || "",
@@ -222,9 +225,7 @@ export class ProductService {
       },
       embudo_de_ventas: {
         mensaje_inicial: embudo.mensaje_inicial || "",
-        multimedia: {
-          c1: embudo.multimedia?.c1 || ""
-        },
+        multimedia: multimediaData,
         pregunta_de_entrada: embudo.pregunta_de_entrada || "",
         imagen_1: embudo.imagen_1 || ""
       },

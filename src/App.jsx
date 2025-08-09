@@ -6,6 +6,7 @@ import { ProductConfigPage } from './pages/ProductConfigPage';
 import { ProductContentForm } from './pages/ProductContentForm';
 import CarritosPage from './pages/CarritosPage';
 import { LogistAssistantPage } from "./pages/LogistAssistantPage";
+import { IntegrationsView } from './pages/IntegrationsView';
 
 export default function App() {
   return (
@@ -25,7 +26,11 @@ export default function App() {
             path="/asistente-logistico"
             element={<LogistAssistantPage />}
           />
-        </Route>
+          <Route
+            path="/integraciones"
+            element={<IntegrationsView />}
+          />
+        </Route>        
       </Routes>
     </BrowserRouter>
   );

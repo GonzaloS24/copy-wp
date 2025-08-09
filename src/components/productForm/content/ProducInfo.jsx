@@ -1,6 +1,6 @@
-// ProductInfo.js
 import React, { useState } from 'react';
 import { useProduct } from '../../../context/ProductContext';
+import { uploadImage } from '../../../services/uploadImageService'; 
 
 export const ProductInfo = () => {
   const { 
@@ -11,6 +11,8 @@ export const ProductInfo = () => {
   } = useProduct();
   
   const [showTooltip, setShowTooltip] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState(null);
 
   const touchedFields = validationState.info?.touchedFields || {
     name: false,
@@ -42,15 +44,29 @@ export const ProductInfo = () => {
     });
   };
 
-  const handleImageUpload = () => {
+const handleImageUpload = () => {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
-    input.onchange = (e) => {
+    input.onchange = async (e) => {
       const file = e.target.files[0];
       if (file) {
         setTouchedField('image');
-        handleInputChange('image', file);
+        setIsUploading(true);
+        setUploadError(null);
+        try {
+          const result = await uploadImage.uploadFile(file, file.name);
+          
+          handleInputChange('image', result.data.url); 
+          
+          console.log('Imagen subida con éxito:', result);
+        } catch (error) {
+          console.error('Error al subir la imagen:', error);
+          setUploadError(error.message);
+          handleInputChange('image', null); 
+        } finally {
+          setIsUploading(false);
+        }
       }
     };
     input.click();
@@ -81,6 +97,7 @@ export const ProductInfo = () => {
     { value: 'PYG', label: 'PYG' },
     { value: 'VES', label: 'VES' }
   ];
+
 
   return (
     <div className="block">
@@ -280,22 +297,33 @@ export const ProductInfo = () => {
           </label>
           <div
             className={`flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-xl bg-slate-50 cursor-pointer transition-all hover:bg-cyan-50 ${
+              isUploading ? 'cursor-not-allowed' : ''
+            } ${
               !isFieldValid('image') 
                 ? 'border-red-500 hover:border-red-500' 
                 : 'border-slate-300 hover:border-sky-500'
             }`}
-            onClick={handleImageUpload}
+            onClick={!isUploading ? handleImageUpload : undefined}
           >
-            <div className="text-3xl text-sky-500 mb-3">+</div>
-            <div className={`text-base text-center ${
-              !isFieldValid('image') ? 'text-red-500' : 'text-slate-700'
-            }`}>
-              {productData.info.formData.image 
-                ? productData.info.formData.image.name 
-                : 'Haz clic para subir una imagen'}
-            </div>
+            {isUploading ? (
+              <div className="text-base text-slate-700">Subiendo imagen...</div>
+            ) : (
+              <>
+                <div className="text-3xl text-sky-500 mb-3">+</div>
+                <div className={`text-base text-center ${
+                  !isFieldValid('image') ? 'text-red-500' : 'text-slate-700'
+                }`}>
+                  {productData.info.formData.image 
+                    ? `Imagen cargada: ${productData.info.formData.image.split('/').pop()}`
+                    : 'Haz clic para subir una imagen'}
+                </div>
+              </>
+            )}
           </div>
-          {!isFieldValid('image') && (
+          {uploadError && (
+            <span className="text-red-500 text-sm mt-1">{uploadError}</span>
+          )}
+          {!isFieldValid('image') && !uploadError && (
             <span className="text-red-500 text-sm mt-1">Este campo es obligatorio</span>
           )}
         </div>
