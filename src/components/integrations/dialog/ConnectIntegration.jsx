@@ -31,6 +31,15 @@ export const ConnectIntegration = ({
         required: true,
       },
     ],
+    openai: [
+      {
+        name: "apiKey",
+        label: "API Key de OpenAI",
+        type: "text",
+        placeholder: "sk-...",
+        required: true,
+      },
+    ],
     shopify: [
       {
         name: "shopUrl",
@@ -44,6 +53,13 @@ export const ConnectIntegration = ({
         label: "Access Token",
         type: "password",
         placeholder: "Ingresa tu Access Token",
+        required: true,
+      },
+      {
+        name: "apiKey",
+        label: "API Key",
+        type: "text",
+        placeholder: "Ingresa tu API Key de Shopify",
         required: true,
       },
     ],
