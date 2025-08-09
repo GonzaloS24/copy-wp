@@ -1,13 +1,14 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { PrivateRoute } from './privateRoutes/PrivateRoute';
-import { HomePage } from './pages/HomePage';
-import { ConfigureAsistent } from './pages/ConfigureAsistent';
-import { ProductConfigPage } from './pages/ProductConfigPage';
-import { ProductContentForm } from './pages/ProductContentForm';
-import CarritosPage from './pages/CarritosPage';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { PrivateRoute } from "./privateRoutes/PrivateRoute";
+import { HomePage } from "./pages/HomePage";
+import { ConfigureAsistent } from "./pages/ConfigureAsistent";
+import { ProductConfigPage } from "./pages/ProductConfigPage";
+import { ProductContentForm } from "./pages/ProductContentForm";
+import CarritosPage from "./pages/CarritosPage";
 import { LogistAssistantPage } from "./pages/LogistAssistantPage";
 import { useEffect, useState } from "react";
 import { shouldShowWelcomeWizard } from "./components/welcome/services/welcomeService";
+import { getAuthToken } from "./utils/authCookies";
 import WelcomeWizard from "./components/welcome/WelcomeWizard";
 
 export default function App() {
@@ -17,11 +18,15 @@ export default function App() {
   useEffect(() => {
     const checkWelcomeStatus = async () => {
       try {
-        const shouldShow = await shouldShowWelcomeWizard();
+        // Primero verificar si hay token válido
+        const hasToken = !!getAuthToken();
+
+        // Si no hay token O si el wizard no se ha completado, mostrar wizard
+        const shouldShow = !hasToken || (await shouldShowWelcomeWizard());
         setShowWelcome(shouldShow);
       } catch (error) {
         console.error("Error checking welcome status:", error);
-        setShowWelcome(false);
+        setShowWelcome(true); // Por defecto mostrar wizard si hay error
       } finally {
         setIsCheckingWelcome(false);
       }
@@ -62,7 +67,10 @@ export default function App() {
           />
           <Route path="/productos-config" element={<ProductConfigPage />} />
           <Route path="/agregando" element={<ProductContentForm />} />
-          <Route path="/producto/:productName" element={<ProductContentForm />} />
+          <Route
+            path="/producto/:productName"
+            element={<ProductContentForm />}
+          />
           <Route path="/asistente-carritos" element={<CarritosPage />} />
           <Route
             path="/asistente-logistico"

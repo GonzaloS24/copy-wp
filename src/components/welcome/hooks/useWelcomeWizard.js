@@ -11,15 +11,21 @@ export const useWelcomeWizard = () => {
     fullName: "",
     whatsappNumber: "",
     countryCode: "+57",
+    token: "",
   });
   const [isSaving, setIsSaving] = useState(false);
   const [saveError, setSaveError] = useState(null);
 
-  const totalSteps = 7;
+  // Estados para validación de token
+  const [isValidatingToken, setIsValidatingToken] = useState(false);
+  const [tokenValidationError, setTokenValidationError] = useState(null);
+
+  const totalSteps = 8;
 
   const updateAnswer = (key, value) => {
     setAnswers((prev) => ({ ...prev, [key]: value }));
     if (saveError) setSaveError(null);
+    if (key === "token" && tokenValidationError) setTokenValidationError(null);
   };
 
   const nextStep = () => {
@@ -52,21 +58,187 @@ export const useWelcomeWizard = () => {
         return !!answers.goals;
       case 5:
         return !!(answers.fullName && answers.whatsappNumber);
+      case 6:
+        return !!(
+          answers.token &&
+          answers.token.length >= 32 &&
+          /^[A-Za-z0-9]+$/.test(answers.token)
+        );
       default:
         return true;
     }
   };
 
   const getProgress = () => {
-    if (currentStep === 0 || currentStep === 6) return 0;
-    return (currentStep / 5) * 100;
+    if (currentStep === 0 || currentStep === 7) return 0;
+    return (currentStep / 6) * 100;
   };
 
   const canProceed = () => {
-    if (currentStep === 0 || currentStep === 6) return true;
+    if (currentStep === 0 || currentStep === 7) return true;
     return isStepValid(currentStep);
   };
 
+  // Función unificada: valida token y guarda todo si es válido
+  const validateTokenAndSaveAll = async () => {
+    setIsValidatingToken(true);
+    setSaveError(null);
+    setTokenValidationError(null);
+
+    try {
+      const token = answers.token;
+
+      // 1. Validar formato del token
+      if (!token || token.trim() === "") {
+        throw new Error("Por favor ingresa un token válido");
+      }
+
+      if (token.length < 32 || !/^[A-Za-z0-9]+$/.test(token)) {
+        throw new Error(
+          "Token inválido. Debe tener al menos 32 caracteres alfanuméricos"
+        );
+      }
+
+      // 2. Validar que los datos de la encuesta estén completos
+      if (
+        !answers.salesChannel ||
+        !answers.experience ||
+        !answers.volume ||
+        !answers.goals
+      ) {
+        throw new Error("Faltan respuestas requeridas en la encuesta");
+      }
+
+      if (!answers.fullName || !answers.whatsappNumber) {
+        throw new Error("Faltan datos de contacto requeridos");
+      }
+
+      console.log("✅ Token válido, procediendo a guardar todo...");
+
+      // 3. Guardar respuestas en Google Sheets
+      const surveyAnswers = {
+        salesChannel: answers.salesChannel,
+        experience: answers.experience,
+        volume: answers.volume,
+        goals: answers.goals,
+        fullName: answers.fullName,
+        whatsappNumber: answers.whatsappNumber,
+        countryCode: answers.countryCode,
+      };
+
+      console.log("📝 Guardando respuestas en Google Sheets...");
+      console.log("📄 Datos a enviar:", surveyAnswers);
+
+      const surveyResult = await saveWelcomeAnswers(surveyAnswers);
+      console.log("✅ Respuestas guardadas en Google Sheets:", surveyResult);
+
+      // 4. Guardar token en base de datos
+      console.log("🔐 Guardando token en base de datos...");
+      const tokenResult = await saveTokenToDatabase(token);
+      console.log("✅ Token guardado en base de datos:", tokenResult);
+
+      // 5. Marcar como completado SOLO si todo fue exitoso
+      localStorage.setItem("welcomeWizardCompleted", "true");
+      localStorage.setItem(
+        "welcomeWizardCompletedAt",
+        new Date().toISOString()
+      );
+      localStorage.removeItem("welcomeWizardBackups");
+
+      console.log("🎉 Proceso completo exitoso");
+
+      return {
+        surveyResult,
+        tokenResult,
+        success: true,
+        token: token,
+      };
+    } catch (error) {
+      console.error("❌ Error en proceso unificado:", error);
+
+      // Determinar tipo de error
+      if (
+        error.message.includes("Token inválido") ||
+        error.message.includes("token válido")
+      ) {
+        setTokenValidationError(error.message);
+      } else {
+        setSaveError(error.message);
+      }
+
+      throw error;
+    } finally {
+      setIsValidatingToken(false);
+    }
+  };
+
+  // Función para guardar token en base de datos
+  const saveTokenToDatabase = async (token) => {
+    // Simulación de consulta al backend
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    // Simulación de respuesta exitosa
+    const mockResponse = {
+      success: true,
+      message: "Token guardado exitosamente en la base de datos",
+      data: {
+        tokenId: Math.random().toString(36).substr(2, 9),
+        userId: Math.random().toString(36).substr(2, 9),
+        savedAt: new Date().toISOString(),
+        userInfo: {
+          name: answers.fullName,
+          phone: answers.whatsappNumber,
+          country: answers.countryCode,
+        },
+      },
+    };
+
+    // TODO: endpoint real
+    /*
+    const response = await fetch('/api/auth/save-token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        token: token,
+        userData: {
+          fullName: answers.fullName,
+          whatsappNumber: answers.whatsappNumber,
+          countryCode: answers.countryCode
+        },
+        surveyData: {
+          salesChannel: answers.salesChannel,
+          experience: answers.experience,
+          volume: answers.volume,
+          goals: answers.goals
+        },
+        metadata: {
+          completedAt: new Date().toISOString(),
+          userAgent: navigator.userAgent,
+          timestamp: Date.now()
+        }
+      })
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    
+    if (!result.success) {
+      throw new Error(result.message || 'Error al guardar token en la base de datos');
+    }
+
+    return result;
+    */
+
+    return mockResponse;
+  };
+
+  // Función simple para guardar solo encuesta (ya no se usa en el flujo principal)
   const finishWizard = async () => {
     setIsSaving(true);
     setSaveError(null);
@@ -85,24 +257,21 @@ export const useWelcomeWizard = () => {
         throw new Error("Faltan datos de contacto requeridos");
       }
 
-      // Guardar las respuestas en Google Sheets
-      const result = await saveWelcomeAnswers(answers);
+      const surveyAnswers = {
+        salesChannel: answers.salesChannel,
+        experience: answers.experience,
+        volume: answers.volume,
+        goals: answers.goals,
+        fullName: answers.fullName,
+        whatsappNumber: answers.whatsappNumber,
+        countryCode: answers.countryCode,
+      };
 
-      console.log("✅ Respuestas guardadas exitosamente:", result);
-
-      // Marcar como completado solo si se guardó exitosamente
-      localStorage.setItem("welcomeWizardCompleted", "true");
-      localStorage.setItem(
-        "welcomeWizardCompletedAt",
-        new Date().toISOString()
-      );
-
-      // Limpiar respaldos locales si existían
-      localStorage.removeItem("welcomeWizardBackups");
-
+      const result = await saveWelcomeAnswers(surveyAnswers);
+      console.log("✅ Solo encuesta guardada:", result);
       return result;
     } catch (error) {
-      console.error("❌ Error al finalizar wizard:", error);
+      console.error("❌ Error al guardar encuesta:", error);
       setSaveError(error.message);
       throw error;
     } finally {
@@ -131,7 +300,8 @@ export const useWelcomeWizard = () => {
         isStepValid(2) &&
         isStepValid(3) &&
         isStepValid(4) &&
-        isStepValid(5),
+        isStepValid(5) &&
+        isStepValid(6),
     };
   };
 
@@ -141,6 +311,8 @@ export const useWelcomeWizard = () => {
     totalSteps,
     isSaving,
     saveError,
+    isValidatingToken,
+    tokenValidationError,
     updateAnswer,
     nextStep,
     previousStep,
@@ -151,5 +323,8 @@ export const useWelcomeWizard = () => {
     finishWizard,
     retryFinish,
     getSummary,
+    setIsValidatingToken,
+    setTokenValidationError,
+    validateTokenAndSaveAll,
   };
 };

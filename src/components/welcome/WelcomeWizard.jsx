@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useWelcomeWizard } from "./hooks/useWelcomeWizard";
+import { setAuthToken } from "../../utils/authCookies";
 import ProgressBar from "./components/ProgressBar";
 import Step0Welcome from "./steps/Step0Welcome";
 import Step1SalesChannel from "./steps/Step1SalesChannel";
@@ -7,22 +8,32 @@ import Step2Experience from "./steps/Step2Experience";
 import Step3Volume from "./steps/Step3Volume";
 import Step4Goals from "./steps/Step4Goals";
 import Step5Contact from "./steps/Step5Contact";
+import Step6Token from "./steps/Step6Token";
 import "./styles/animations.css";
 
 const WelcomeWizard = ({ onComplete }) => {
+  const handlePrevious = () => {
+    animatedPreviousStep();
+  };
+
+  const handleFinish = () => {
+    console.log("🚀 Finalizando wizard y redirigiendo...");
+    onComplete();
+  };
   const {
     currentStep,
     answers,
     totalSteps,
     isSaving,
     saveError,
+    isValidatingToken,
+    tokenValidationError,
     updateAnswer,
     nextStep,
     previousStep,
     getProgress,
     canProceed,
-    finishWizard,
-    retryFinish,
+    validateTokenAndSaveAll,
   } = useWelcomeWizard();
 
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -48,41 +59,33 @@ const WelcomeWizard = ({ onComplete }) => {
   };
 
   const handleNext = async () => {
-    if (currentStep === totalSteps - 2) {
-      try {
-        await finishWizard();
-        animatedNextStep();
-      } catch (error) {
-        console.error("No se pudo guardar, no avanzando al siguiente paso");
-      }
-    } else {
+    if (currentStep !== 6) {
       animatedNextStep();
     }
   };
 
-  const handlePrevious = () => {
-    animatedPreviousStep();
-  };
-
-  const handleFinish = async () => {
+  // Función para manejar el guardado unificado en Step6
+  const handleSaveAll = async () => {
+    console.log("🔄 Iniciando proceso de guardado unificado...");
     try {
-      if (saveError) {
-        // Si hubo un error previo, reintentar
-        await retryFinish();
+      const result = await validateTokenAndSaveAll();
+      console.log("✅ Resultado del proceso:", result);
+
+      // Si todo fue exitoso, establecer token en cookies
+      if (result.success && answers.token) {
+        setAuthToken(answers.token);
+        console.log("✅ Token establecido en cookies:", answers.token);
       }
-      onComplete();
-    } catch (error) {
-      console.error("Error al finalizar:", error);
-    }
-  };
 
-  const handleRetry = async () => {
-    try {
-      await retryFinish();
+      console.log("➡️ Avanzando al paso final...");
       animatedNextStep();
     } catch (error) {
-      console.error("Error en reintento:", error);
+      console.error("❌ Error en proceso unificado:", error);
     }
+  };
+
+  const handleTokenRetry = async () => {
+    await handleSaveAll();
   };
 
   const renderStep = () => {
@@ -146,13 +149,28 @@ const WelcomeWizard = ({ onComplete }) => {
             onNext={handleNext}
             onPrevious={handlePrevious}
             canProceed={canProceed()}
-            isSaving={isSaving}
-            saveError={saveError}
-            onRetry={handleRetry}
+            isSaving={false}
+            saveError={null}
+            onRetry={null}
           />
         );
 
       case 6:
+        return (
+          <Step6Token
+            token={answers.token}
+            onTokenChange={(value) => updateAnswer("token", value)}
+            onSave={handleSaveAll}
+            onPrevious={handlePrevious}
+            canProceed={canProceed()}
+            isValidating={isValidatingToken}
+            validationError={tokenValidationError}
+            saveError={saveError}
+            onRetry={handleTokenRetry}
+          />
+        );
+
+      case 7:
         return (
           <div className="text-center max-w-2xl mx-auto px-8 animate-fade-in">
             <div className="w-32 h-32 mx-auto mb-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-full flex items-center justify-center shadow-2xl relative overflow-hidden animate-scale-in">
@@ -172,56 +190,21 @@ const WelcomeWizard = ({ onComplete }) => {
             </div>
 
             <h1 className="text-4xl font-bold text-emerald-600 mb-4 tracking-tight animate-slide-up-1">
-              ¡Gracias!
+              ¡Perfecto!
             </h1>
             <h2 className="text-2xl font-semibold text-slate-700 mb-6 leading-tight animate-slide-up-2">
-              Respuestas guardadas exitosamente
+              Configuración completada exitosamente
             </h2>
             <p className="text-lg text-slate-600 mb-10 leading-relaxed max-w-xl mx-auto animate-slide-up-3">
-              Hemos configurado Chatea PRO según tus necesidades y guardado tus
-              respuestas. Ahora verás recomendaciones y asistentes más
-              relevantes para tu negocio.
+              Hemos guardado tu información y validado tu acceso. Ya puedes
+              comenzar a usar Chatea PRO con todas sus funcionalidades.
             </p>
-
-            {saveError && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl shadow-sm animate-slide-up-3">
-                <div className="flex items-start space-x-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-red-100 rounded-full flex items-center justify-center">
-                    <svg
-                      className="w-4 h-4 text-red-500"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-red-700 font-semibold mb-1">
-                      Hubo un problema al guardar
-                    </p>
-                    <p className="text-red-600 text-sm mb-4">{saveError}</p>
-                    <button
-                      onClick={handleRetry}
-                      disabled={isSaving}
-                      className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 disabled:opacity-50 font-medium transition-all duration-200 hover:shadow-md"
-                    >
-                      {isSaving ? "Reintentando..." : "Reintentar guardado"}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            )}
 
             <button
               onClick={handleFinish}
-              disabled={isSaving}
-              className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-12 py-4 rounded-2xl text-xl font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-xl animate-slide-up-4 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-gradient-to-r from-emerald-500 to-emerald-600 text-white px-12 py-4 rounded-2xl text-xl font-semibold hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 hover:-translate-y-1 shadow-lg hover:shadow-xl animate-slide-up-4 hover:scale-105 active:scale-95"
             >
-              {isSaving ? "Guardando..." : "Continuar a la plataforma"}
+              Ingresar a la plataforma
             </button>
           </div>
         );
@@ -243,7 +226,7 @@ const WelcomeWizard = ({ onComplete }) => {
         <div className="flex items-center justify-center min-h-full p-4 sm:p-0">
           <div
             className={`w-full max-w-6xl transition-all duration-500 ease-in-out ${
-              currentStep === 0 || currentStep === 6 ? "mt-0" : "mt-16 sm:mt-16"
+              currentStep === 0 || currentStep === 7 ? "mt-0" : "mt-16 sm:mt-16"
             }`}
           >
             <div

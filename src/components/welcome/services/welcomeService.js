@@ -66,11 +66,35 @@ export const shouldShowWelcomeWizard = async () => {
 };
 
 export const saveWelcomeAnswers = async (answers) => {
+  console.log("📤 Iniciando guardado de respuestas:", answers);
+
   try {
     // Verificar la URL del webhook
     if (!GOOGLE_APPS_SCRIPT_URL) {
       throw new Error("URL del webhook de Google Apps Script no configurada");
     }
+
+    // Validar que answers tenga los campos requeridos
+    if (!answers || typeof answers !== "object") {
+      throw new Error("Respuestas inválidas o vacías");
+    }
+
+    // Verificar campos requeridos
+    const requiredFields = [
+      "salesChannel",
+      "experience",
+      "volume",
+      "goals",
+      "fullName",
+      "whatsappNumber",
+    ];
+    const missingFields = requiredFields.filter((field) => !answers[field]);
+
+    if (missingFields.length > 0) {
+      throw new Error(`Faltan campos requeridos: ${missingFields.join(", ")}`);
+    }
+
+    console.log("✅ Validación de campos exitosa");
 
     // Preparar los datos con las respuestas completas
     const formData = new FormData();
@@ -93,32 +117,48 @@ export const saveWelcomeAnswers = async (answers) => {
     );
     formData.append("countryCode", answers.countryCode || "");
 
-    // Realizar la petición al webhook
+    console.log("📋 Datos preparados para envío");
+    console.log("🌐 Enviando petición a Google Apps Script...");
+
     const response = await fetch(GOOGLE_APPS_SCRIPT_URL, {
       method: "POST",
       body: formData,
     });
+
+    console.log("📡 Respuesta recibida, status:", response.status);
 
     if (!response.ok) {
       throw new Error(`Error HTTP: ${response.status} ${response.statusText}`);
     }
 
     const result = await response.json();
+    console.log("📄 Resultado parseado:", result);
 
     if (!result.success) {
       throw new Error(result.error || "Error desconocido al guardar");
     }
 
+    console.log("✅ Respuestas guardadas exitosamente en Google Sheets");
     return result;
   } catch (error) {
-    console.error("Error al guardar respuestas:", error);
+    console.error("❌ Error al guardar respuestas:", error);
+
+    // Manejar diferentes tipos de errores
+    let errorMessage = error.message;
+    if (!navigator.onLine) {
+      errorMessage =
+        "Sin conexión a internet. Verifica tu conexión y vuelve a intentar.";
+    } else if (error.message.includes("Failed to fetch")) {
+      errorMessage = "Error de conexión. Verifica tu conexión a internet.";
+    }
 
     // Guardar en localStorage como respaldo
     try {
       const backupData = {
         timestamp: new Date().toISOString(),
         answers: answers,
-        error: error.message,
+        error: errorMessage,
+        originalError: error.message,
       };
 
       let backups = JSON.parse(
@@ -132,10 +172,13 @@ export const saveWelcomeAnswers = async (answers) => {
       }
 
       localStorage.setItem("welcomeWizardBackups", JSON.stringify(backups));
+      console.log("💾 Respaldo guardado en localStorage");
     } catch (backupError) {
       console.error("❌ Error al crear respaldo local:", backupError);
     }
 
-    throw error;
+    const enhancedError = new Error(errorMessage);
+    enhancedError.originalError = error;
+    throw enhancedError;
   }
 };

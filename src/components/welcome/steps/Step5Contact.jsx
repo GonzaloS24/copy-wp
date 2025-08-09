@@ -304,7 +304,7 @@ const Step5Contact = ({
         canProceed={actualCanProceed}
         onNext={onNext}
         onPrevious={onPrevious}
-        isLastStep={true}
+        isLastStep={false}
       />
     </div>
   );
