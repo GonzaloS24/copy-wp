@@ -50,7 +50,7 @@ export const IntegrationsPlatform = () => {
         "Exporta y gestiona datos de tus asistentes en hojas de cálculo",
       icon: "📄",
       connected: false,
-      type: "guide",
+      type: "form",
       iconBg: "bg-red-50",
       iconColor: "text-red-500",
       iconBorder: "border-red-300",
