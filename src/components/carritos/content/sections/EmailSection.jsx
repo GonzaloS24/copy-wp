@@ -1,14 +1,9 @@
 import React, { useState } from "react";
+import { useCarritos } from "../../../../context/CarritosContext";
 import Tooltip from "./Tooltip";
 
 const EmailSection = () => {
-  const [formData, setFormData] = useState({
-    emailEnabled: false,
-    subject: "Recupera tu carrito",
-    content:
-      "Hola Prueba, Notamos que dejaste algunos productos en tu carrito. ¡Aún estás a tiempo de completar tu compra antes de que se agoten! Haz clic abajo para retomarla fácilmente:",
-  });
-
+  const { carritoData, updateCarritoData } = useCarritos();
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   const variables = [
@@ -28,16 +23,20 @@ const EmailSection = () => {
   ];
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    updateCarritoData("envio_correos", {
+      [field]: value,
+    });
   };
 
   const toggleVariables = (fieldId) => {
-    if (!formData.emailEnabled) return;
+    const emailEnabled = carritoData.envio_correos?.activar_envio === "si";
+    if (!emailEnabled) return;
     setActiveDropdown(activeDropdown === fieldId ? null : fieldId);
   };
 
   const insertVariable = (fieldId, variable) => {
-    if (!formData.emailEnabled) return;
+    const emailEnabled = carritoData.envio_correos?.activar_envio === "si";
+    if (!emailEnabled) return;
 
     const field = document.getElementById(fieldId);
     const cursorPos = field.selectionStart;
@@ -45,10 +44,8 @@ const EmailSection = () => {
     const textAfter = field.value.substring(cursorPos);
 
     const newValue = textBefore + variable + textAfter;
-    handleInputChange(
-      fieldId === "asunto-correo" ? "subject" : "content",
-      newValue
-    );
+    const updateField = fieldId === "asunto-correo" ? "asunto" : "contenido";
+    handleInputChange(updateField, newValue);
 
     setActiveDropdown(null);
 
@@ -86,7 +83,7 @@ const EmailSection = () => {
     <div className="relative">
       <div
         className={`w-12 h-full bg-slate-50 border-2 border-slate-200 border-l-0 rounded-r-xl flex items-center justify-center cursor-pointer transition-all duration-200 relative ${
-          formData.emailEnabled
+          emailEnabled
             ? "hover:bg-blue-50 hover:border-sky-500 opacity-100"
             : "opacity-60 cursor-not-allowed"
         }`}
@@ -94,7 +91,7 @@ const EmailSection = () => {
       >
         <svg
           className={`w-5 h-5 transition-all duration-200 ${
-            formData.emailEnabled
+            emailEnabled
               ? "text-slate-500 hover:text-sky-500"
               : "text-slate-400"
           }`}
@@ -109,7 +106,7 @@ const EmailSection = () => {
         </svg>
       </div>
 
-      {activeDropdown === fieldId && formData.emailEnabled && (
+      {activeDropdown === fieldId && emailEnabled && (
         <div className="absolute top-full right-0 bg-white border border-slate-200 rounded-xl shadow-xl z-50 mt-1 w-64 sm:w-72 overflow-hidden">
           <div className="py-2 max-h-64 overflow-y-auto">
             {variables.map((variable) => (
@@ -130,6 +127,8 @@ const EmailSection = () => {
     </div>
   );
 
+  const emailEnabled = carritoData.envio_correos?.activar_envio === "si";
+
   // Cerrar dropdown al hacer clic fuera
   React.useEffect(() => {
     const handleClickOutside = (event) => {
@@ -148,7 +147,6 @@ const EmailSection = () => {
         Envío de correos
       </h1>
 
-      {/* Toggle para activar/desactivar correos */}
       <div className="mb-6 sm:mb-8">
         <div className="flex items-center gap-3 mb-3">
           <label className="block font-semibold text-slate-700 text-sm sm:text-base tracking-tight">
@@ -157,15 +155,16 @@ const EmailSection = () => {
           <Tooltip content="Si habilitas este campo, shopify le enviará un correo a tu cliente para que retome la compra, indicándole el asunto, el contenido, el enlace de la página y las fotos de los productos que abandonó en tu carrito. Independiente de que habilites o no esta opción, el mensaje por whatsapp se seguirá mandando normalmente" />
         </div>
         <ToggleSwitch
-          checked={formData.emailEnabled}
-          onChange={(e) => handleInputChange("emailEnabled", e.target.checked)}
+          checked={emailEnabled}
+          onChange={(e) =>
+            handleInputChange("activar_envio", e.target.checked ? "si" : "no")
+          }
         />
       </div>
 
-      {/* Campos de correo */}
       <div
         className={`transition-all duration-300 ${
-          !formData.emailEnabled
+          !emailEnabled
             ? "opacity-50 pointer-events-none"
             : "opacity-100 pointer-events-auto"
         }`}
@@ -181,14 +180,14 @@ const EmailSection = () => {
             <input
               type="text"
               className={`flex-1 p-3 sm:p-4 border-2 border-slate-200 border-r-0 rounded-l-xl text-sm sm:text-base transition-all duration-200 bg-white font-inherit focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10 placeholder-slate-400 ${
-                !formData.emailEnabled
+                !emailEnabled
                   ? "text-slate-400 bg-slate-100 border-slate-300 cursor-not-allowed"
                   : "text-slate-700"
               }`}
               id="asunto-correo"
-              value={formData.subject}
-              onChange={(e) => handleInputChange("subject", e.target.value)}
-              disabled={!formData.emailEnabled}
+              value={carritoData.envio_correos?.asunto || ""}
+              onChange={(e) => handleInputChange("asunto", e.target.value)}
+              disabled={!emailEnabled}
             />
             <VariablesSelector fieldId="asunto-correo" />
           </div>
@@ -204,15 +203,15 @@ const EmailSection = () => {
           <div className="flex items-stretch relative">
             <textarea
               className={`flex-1 p-3 sm:p-4 border-2 border-slate-200 border-r-0 rounded-l-xl text-sm sm:text-base transition-all duration-200 bg-white font-inherit resize-vertical min-h-24 sm:min-h-32 leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10 placeholder-slate-400 ${
-                !formData.emailEnabled
+                !emailEnabled
                   ? "text-slate-400 bg-slate-100 border-slate-300 cursor-not-allowed"
                   : "text-slate-700"
               }`}
               id="contenido-correo"
               rows="6"
-              value={formData.content}
-              onChange={(e) => handleInputChange("content", e.target.value)}
-              disabled={!formData.emailEnabled}
+              value={carritoData.envio_correos?.contenido || ""}
+              onChange={(e) => handleInputChange("contenido", e.target.value)}
+              disabled={!emailEnabled}
             />
             <VariablesSelector fieldId="contenido-correo" />
           </div>

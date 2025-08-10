@@ -1,15 +1,13 @@
-import { useState } from "react";
+import { useCarritos } from "../../../../context/CarritosContext";
 import Tooltip from "./Tooltip";
 
 const IdentitySection = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    languageStyle: "",
-    persuasionStyle: "",
-  });
+  const { carritoData, updateCarritoData } = useCarritos();
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    updateCarritoData("identidad_asistente", {
+      [field]: value,
+    });
   };
 
   return (
@@ -29,8 +27,8 @@ const IdentitySection = () => {
           type="text"
           className="w-full p-4 border-2 border-slate-200 rounded-xl text-base transition-all duration-200 bg-white text-slate-700 font-inherit focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10 placeholder-slate-400"
           placeholder="Ingresa el nombre del asesor"
-          value={formData.name}
-          onChange={(e) => handleInputChange("name", e.target.value)}
+          value={carritoData.identidad_asistente?.nombre_asesor || ""}
+          onChange={(e) => handleInputChange("nombre_asesor", e.target.value)}
         />
       </div>
 
@@ -45,8 +43,10 @@ const IdentitySection = () => {
           className="w-full p-4 border-2 border-slate-200 rounded-xl text-base transition-all duration-200 bg-white text-slate-700 font-inherit resize-vertical min-h-32 leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10 placeholder-slate-400"
           rows="4"
           placeholder="Describe el estilo de lenguaje que debe usar el asistente"
-          value={formData.languageStyle}
-          onChange={(e) => handleInputChange("languageStyle", e.target.value)}
+          value={carritoData.identidad_asistente?.adaptacion_lenguaje || ""}
+          onChange={(e) =>
+            handleInputChange("adaptacion_lenguaje", e.target.value)
+          }
         />
       </div>
 
@@ -61,8 +61,10 @@ const IdentitySection = () => {
           className="w-full p-4 border-2 border-slate-200 rounded-xl text-base transition-all duration-200 bg-white text-slate-700 font-inherit resize-vertical min-h-32 leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10 placeholder-slate-400"
           rows="4"
           placeholder="Describe el estilo de persuasión para recuperar ventas"
-          value={formData.persuasionStyle}
-          onChange={(e) => handleInputChange("persuasionStyle", e.target.value)}
+          value={carritoData.identidad_asistente?.metodo_anticancelacion || ""}
+          onChange={(e) =>
+            handleInputChange("metodo_anticancelacion", e.target.value)
+          }
         />
       </div>
     </div>
