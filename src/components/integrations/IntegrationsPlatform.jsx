@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { ConnectIntegration } from './dialog/ConnectIntegration';
+import * as deleteIntegrations from "../../services/integrations/deleteIntegrations";
 //import { uploadImage } from './uploadImageService';
 
 export const IntegrationsPlatform = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedIntegration, setSelectedIntegration] = useState(null);
-  const [connectedIntegrations, setConnectedIntegrations] = useState(['openai']);
+  const [connectedIntegrations, setConnectedIntegrations] = useState([
+    "openai",
+  ]);
 
   const integrations = [
     {
@@ -172,9 +175,9 @@ export const IntegrationsPlatform = () => {
     },
   ];
 
-  const integrationsWithStatus = integrations.map(integration => ({
+  const integrationsWithStatus = integrations.map((integration) => ({
     ...integration,
-    connected: connectedIntegrations.includes(integration.id)
+    connected: connectedIntegrations.includes(integration.id),
   }));
 
   const handleConnectClick = (integration) => {
@@ -188,14 +191,27 @@ export const IntegrationsPlatform = () => {
   };
 
   const handleConnect = (integrationId, formData) => {
-    setConnectedIntegrations(prev => [...prev, integrationId]);
+    setConnectedIntegrations((prev) => [...prev, integrationId]);
     console.log(`Integración ${integrationId} conectada con datos:`, formData);
- 
   };
 
-  const handleDisconnect = (integrationId) => {
-    setConnectedIntegrations(prev => prev.filter(id => id !== integrationId));
-    console.log(`Integración ${integrationId} desconectada`);
+  const handleDisconnect = async (integrationId) => {
+    try {
+      const response = await deleteIntegrations[
+        `${integrationId}DeleteIntegration`
+      ]();
+
+      if (response !== "ok") {
+        throw new Error("Error al intentar desconectar la integración.");
+      }
+
+      setConnectedIntegrations((prev) =>
+        prev.filter((id) => id !== integrationId)
+      );
+      console.log(`Integración ${integrationId} desconectada`);
+    } catch (error) {
+      console.error("Error disconnecting integration:", error);
+    }
   };
 
   return (
@@ -205,7 +221,7 @@ export const IntegrationsPlatform = () => {
           <h2 className="text-4xl font-bold text-sky-500 mb-12 text-center">
             Integraciones de Chatea PRO
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {integrationsWithStatus.map((integration) => (
               <div
@@ -213,34 +229,42 @@ export const IntegrationsPlatform = () => {
                 className={`
                   bg-white rounded-3xl border-2 shadow-lg transition-all duration-300 
                   hover:-translate-y-1 hover:shadow-xl flex flex-col overflow-hidden relative
-                  ${integration.connected 
-                    ? 'border-green-500 bg-green-50' 
-                    : 'border-slate-200'
+                  ${
+                    integration.connected
+                      ? "border-green-500 bg-green-50"
+                      : "border-slate-200"
                   }
                 `}
               >
                 {/* Status Badge */}
-                <div className={`
+                <div
+                  className={`
                   absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full text-xs font-semibold 
                   flex items-center gap-1.5
-                  ${integration.connected 
-                    ? 'bg-green-100 text-green-600' 
-                    : 'bg-gray-100 text-gray-500'
+                  ${
+                    integration.connected
+                      ? "bg-green-100 text-green-600"
+                      : "bg-gray-100 text-gray-500"
                   }
-                `}>
-                  <span className={`
+                `}
+                >
+                  <span
+                    className={`
                     w-2 h-2 rounded-full
-                    ${integration.connected ? 'bg-green-600' : 'bg-gray-500'}
-                  `}></span>
-                  {integration.connected ? 'Conectado' : 'Desconectado'}
+                    ${integration.connected ? "bg-green-600" : "bg-gray-500"}
+                  `}
+                  ></span>
+                  {integration.connected ? "Conectado" : "Desconectado"}
                 </div>
 
                 {/* Header with Icon */}
                 <div className="h-36 flex justify-center items-center">
-                  <div className={`
+                  <div
+                    className={`
                     w-16 h-16 rounded-2xl border-2 flex items-center justify-center text-2xl
                     ${integration.iconBg} ${integration.iconColor} ${integration.iconBorder}
-                  `}>
+                  `}
+                  >
                     {integration.icon}
                   </div>
                 </div>
@@ -257,7 +281,7 @@ export const IntegrationsPlatform = () => {
                   {/* Buttons */}
                   {integration.connected ? (
                     <div className="flex justify-center gap-4">
-                      <button 
+                      <button
                         onClick={() => handleConnectClick(integration)}
                         className="
                           bg-green-500 hover:bg-green-600 text-white px-5 py-2.5 
@@ -267,7 +291,7 @@ export const IntegrationsPlatform = () => {
                       >
                         Configurar
                       </button>
-                      <button 
+                      <button
                         onClick={() => handleDisconnect(integration.id)}
                         className="
                           bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 
@@ -279,7 +303,7 @@ export const IntegrationsPlatform = () => {
                       </button>
                     </div>
                   ) : (
-                    <button 
+                    <button
                       onClick={() => handleConnectClick(integration)}
                       className="
                         bg-gradient-to-r from-sky-500 to-blue-600 hover:from-blue-600 hover:to-blue-700

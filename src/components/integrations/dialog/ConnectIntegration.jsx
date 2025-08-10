@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { uploadImage } from "../../../services/uploadImageService";
 import { DialogForm } from "./form";
 import { DialogGuide } from "./guide";
+import * as getIntegrations from "../../../services/integrations/getIntegrations";
+import * as createIntegrations from "../../../services/integrations/createIntegrations";
 
 export const ConnectIntegration = ({
   isOpen,
@@ -42,14 +44,14 @@ export const ConnectIntegration = ({
     ],
     shopify: [
       {
-        name: "shopUrl",
+        name: "url",
         label: "URL de la tienda",
         type: "url",
         placeholder: "https://tu-tienda.myshopify.com",
         required: true,
       },
       {
-        name: "accessToken",
+        name: "token",
         label: "Access Token",
         type: "password",
         placeholder: "Ingresa tu Access Token",
@@ -81,7 +83,7 @@ export const ConnectIntegration = ({
     ],
     metaConversionsApi: [
       {
-        name: "accessToken",
+        name: "token",
         label: "Token de acceso",
         type: "textarea",
         placeholder: "Ingresa tu token de acceso de Meta",
@@ -208,7 +210,15 @@ export const ConnectIntegration = ({
           formData.applicationKey
         );
       } else {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        const createFunction =
+          createIntegrations[`${integration.id}CreateIntegrations`];
+        const response = await createFunction(formData);
+
+        if (response.status !== "ok") {
+          throw new Error(
+            "Error al conectar la integración. Por favor, revisa tus credentiales."
+          );
+        }
         result = { success: true, message: "Conexión exitosa" };
       }
 
