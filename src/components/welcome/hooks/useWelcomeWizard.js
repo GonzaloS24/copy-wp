@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { saveWelcomeAnswers } from "../services/welcomeService";
-import { setWorkspaceToken } from "../../../utils/workspaceStorage";
+import {
+  setWorkspaceToken,
+  getCurrentWorkspace,
+} from "../../../utils/workspaceStorage";
+import {
+  saveWorkspaceToken,
+  validateTokenFormat,
+} from "../../../services/workspaceService";
 
 export const useWelcomeWizard = () => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -60,11 +67,7 @@ export const useWelcomeWizard = () => {
       case 5:
         return !!(answers.fullName && answers.whatsappNumber);
       case 6:
-        return !!(
-          answers.token &&
-          answers.token.length >= 32 &&
-          /^[A-Za-z0-9]+$/.test(answers.token)
-        );
+        return !!(answers.token && validateTokenFormat(answers.token));
       default:
         return true;
     }
@@ -94,7 +97,7 @@ export const useWelcomeWizard = () => {
         throw new Error("Por favor ingresa un token válido");
       }
 
-      if (token.length < 32 || !/^[A-Za-z0-9]+$/.test(token)) {
+      if (!validateTokenFormat(token)) {
         throw new Error(
           "Token inválido. Debe tener al menos 32 caracteres alfanuméricos"
         );
@@ -133,14 +136,23 @@ export const useWelcomeWizard = () => {
       const surveyResult = await saveWelcomeAnswers(surveyAnswers);
       console.log("✅ Respuestas guardadas en Google Sheets:", surveyResult);
 
-      // 4. Guardar token en base de datos
+      // 4. Guardar token en la base de datos
       console.log("🔐 Guardando token en base de datos...");
-      const tokenResult = await saveTokenToDatabase(token);
+      const workspaceId = getCurrentWorkspace();
+      if (!workspaceId) {
+        throw new Error("No se encontró workspaceId actual");
+      }
+
+      const tokenResult = await saveWorkspaceToken(workspaceId, token);
+      if (!tokenResult.success) {
+        throw new Error(tokenResult.error || "Error al guardar token");
+      }
+
       console.log("✅ Token guardado en base de datos:", tokenResult);
 
       // 5. Establecer token para el workspace
-      console.log("🌐 Guardando token...");
-      setWorkspaceToken(token);
+      console.log("🌐 Guardando token localmente...");
+      setWorkspaceToken(tokenResult.token);
 
       // 6. Marcar como completado SOLO si todo fue exitoso
       localStorage.setItem("welcomeWizardCompleted", "true");
@@ -156,7 +168,7 @@ export const useWelcomeWizard = () => {
         surveyResult,
         tokenResult,
         success: true,
-        token: token,
+        token: tokenResult.token,
       };
     } catch (error) {
       console.error("❌ Error en proceso unificado:", error);
@@ -164,7 +176,8 @@ export const useWelcomeWizard = () => {
       // Determinar tipo de error
       if (
         error.message.includes("Token inválido") ||
-        error.message.includes("token válido")
+        error.message.includes("token válido") ||
+        error.message.includes("no existen")
       ) {
         setTokenValidationError(error.message);
       } else {
@@ -175,72 +188,6 @@ export const useWelcomeWizard = () => {
     } finally {
       setIsValidatingToken(false);
     }
-  };
-
-  // Función para guardar token en base de datos
-  const saveTokenToDatabase = async (token) => {
-    // Simulación de consulta al backend
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    // Simulación de respuesta exitosa
-    const mockResponse = {
-      success: true,
-      message: "Token guardado exitosamente en la base de datos",
-      data: {
-        tokenId: Math.random().toString(36).substr(2, 9),
-        userId: Math.random().toString(36).substr(2, 9),
-        savedAt: new Date().toISOString(),
-        userInfo: {
-          name: answers.fullName,
-          phone: answers.whatsappNumber,
-          country: answers.countryCode,
-        },
-      },
-    };
-
-    // TODO: Reemplazar con endpoint real cuando esté disponible
-    /*
-    const response = await fetch('/api/auth/save-token', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        token: token,
-        userData: {
-          fullName: answers.fullName,
-          whatsappNumber: answers.whatsappNumber,
-          countryCode: answers.countryCode
-        },
-        surveyData: {
-          salesChannel: answers.salesChannel,
-          experience: answers.experience,
-          volume: answers.volume,
-          goals: answers.goals
-        },
-        metadata: {
-          completedAt: new Date().toISOString(),
-          userAgent: navigator.userAgent,
-          timestamp: Date.now()
-        }
-      })
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
-    }
-
-    const result = await response.json();
-    
-    if (!result.success) {
-      throw new Error(result.message || 'Error al guardar token en la base de datos');
-    }
-
-    return result;
-    */
-
-    return mockResponse;
   };
 
   // Función simple para guardar solo encuesta (ya no se usa en el flujo principal)

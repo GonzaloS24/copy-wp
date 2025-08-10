@@ -1,12 +1,14 @@
 import { getWorkspaceIdFromUrl } from "../../../utils/workspaceUtils";
-import { setCurrentWorkspace, getCurrentWorkspace, setWorkspaceToken } from "../../../utils/workspaceStorage";
+import {
+  setCurrentWorkspace,
+  getCurrentWorkspace,
+  setWorkspaceToken,
+} from "../../../utils/workspaceStorage";
+import { checkWorkspaceToken } from "../../../services/workspaceService";
 
 // URL del webhook de Google Apps Script
 const GOOGLE_APPS_SCRIPT_URL =
   "https://script.google.com/macros/s/AKfycbyVoOL1g_5uTkB3s1vABHDns6ICIJlTz9WU79rOR-7bHvhTReglX4pNbdBKwxIivkiB/exec";
-
-// URL del servicio de configuración del workspace
-const WORKSPACE_CONFIG_URL = "https://workspace-wizard-config-service-26551171030.us-east1.run.app/api/workspace/token";
 
 // Mapeo de respuestas a texto completo
 const RESPONSE_MAPPINGS = {
@@ -41,67 +43,43 @@ const RESPONSE_MAPPINGS = {
 export const shouldShowWelcomeWizard = async () => {
   try {
     console.log("[Welcome] Verificando si mostrar wizard...");
-    
+
     // 1. Obtener workspaceId de la URL o de cookies
     let workspaceId = getWorkspaceIdFromUrl();
-    
+
     if (!workspaceId) {
       // Si no está en URL, intentar obtener de cookies
       workspaceId = getCurrentWorkspace();
       console.log(`[Welcome] WorkspaceId desde cookies: ${workspaceId}`);
     }
-    
+
     if (!workspaceId) {
       console.warn("[Welcome] No se encontró workspaceId - mostrar wizard");
       return true;
     }
-    
+
     // 2. Guardar workspaceId en cookies
     setCurrentWorkspace(workspaceId);
-    
-    // 3. Consultar endpoint siempre
-    console.log(`[Welcome] Consultando endpoint para workspace: ${workspaceId}`);
-    
-    const response = await fetch(`${WORKSPACE_CONFIG_URL}/${workspaceId}`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json, text/plain, */*'
-      }
-    });
-    
-    if (response.status === 200) {
-      // Workspace configurado - obtener y guardar el token
-      const responseText = await response.text();
-      console.log("[Welcome] Token recibido del servidor");
-      
-      let token = responseText.trim();
-      
-      // parsearlo
-      if (token.startsWith('{') || token.startsWith('[')) {
-        try {
-          const data = JSON.parse(token);
-          token = data.token || data.data?.token || data;
-        } catch (jsonError) {
-          // Es texto plano, usar directamente
-        }
-      }
-      
-      // Guardar token si es válido
-      if (token && token.length >= 32) {
-        setWorkspaceToken(token);
-        console.log("[Welcome] Token guardado exitosamente");
-      }
-      
+
+    // 3. Consultar endpoint usando el nuevo servicio
+    console.log(
+      `[Welcome] Consultando endpoint para workspace: ${workspaceId}`
+    );
+
+    const result = await checkWorkspaceToken(workspaceId);
+
+    if (result.success && result.hasToken) {
+      // Workspace configurado - guardar token
+      setWorkspaceToken(result.token);
       console.log("[Welcome] Workspace configurado - NO mostrar wizard");
       return false;
-    } else if (response.status === 404) {
+    } else if (result.success && !result.hasToken) {
       console.log("[Welcome] Workspace sin configurar - SÍ mostrar wizard");
       return true;
     } else {
-      console.error(`[Welcome] Error ${response.status} - mostrar wizard por seguridad`);
-      return true;
+      console.error("[Welcome] Error al consultar workspace:", result.error);
+      return true; // Por seguridad, mostrar wizard si hay error
     }
-    
   } catch (error) {
     console.error("[Welcome] Error al consultar endpoint:", error);
     return true; // Por seguridad, mostrar wizard si hay error
