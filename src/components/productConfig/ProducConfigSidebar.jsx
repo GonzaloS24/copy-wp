@@ -14,7 +14,7 @@ export const ProducConfigSidebar = ({
   };
 
   return (
-    <div className="flex flex-col flex-1 overflow-y-auto p-6">
+    <div className="flex flex-col h-full p-6">
       <div className="flex flex-col gap-2">
         {sidebarItems.map((item) => (
           <div

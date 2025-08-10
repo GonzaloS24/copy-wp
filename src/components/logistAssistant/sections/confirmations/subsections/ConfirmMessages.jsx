@@ -1,26 +1,32 @@
-import { useState } from "react";
 import { Card } from "../../../generalComponents/Card";
 import { TemplateReinstallation } from "../../../generalComponents/TemplateReinstallation";
 import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
+import { confirmMessagesInitialValues } from "../../../../../utils/logistAssistant/initialValues/confirmations";
+import { setBotFieldData } from "../../../../../services/logistAssistant";
 
-export const ConfirmMessages = () => {
-  const [formData, setFormData] = useState({
-    imagePosition: undefined,
-    reminder1Time: undefined,
-    reminder1Unit: "minutos",
-    reminder2Time: undefined,
-    reminder2Unit: "horas",
-    thanksMessage: "",
-  });
-
+export const ConfirmMessages = ({ formData, setFormData }) => {
   const handleInputChange = ({ target }) => {
     setFormData((prev) => ({
       ...prev,
-      [target.id]: target.value,
+      confirmMessages: {
+        ...prev.confirmMessages,
+        [target.id]: target.value,
+      },
+    }));
+  };
+
+  const handleIntInputChange = ({ target }) => {
+    setFormData((prev) => ({
+      ...prev,
+      confirmMessages: {
+        ...prev.confirmMessages,
+        [target.id]: parseInt(target.value) || 1,
+      },
     }));
   };
 
   const handleEditTemplates = () => {
+    setBotFieldData();
     alert("Editar plantillas");
   };
 
@@ -58,9 +64,10 @@ export const ConfirmMessages = () => {
                 id="imagePosition"
                 type="number"
                 className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 text-center mt-2 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-                placeholder="1"
+                value={formData.confirmMessages.imagePosition}
+                placeholder={confirmMessagesInitialValues.imagePosition}
                 min="1"
-                onChange={handleInputChange}
+                onChange={handleIntInputChange}
               />
             </div>
           </div>
@@ -133,14 +140,15 @@ export const ConfirmMessages = () => {
               <input
                 id="reminder1Time"
                 type="number"
-                placeholder="5"
+                value={formData.confirmMessages.reminder1Time}
+                placeholder={confirmMessagesInitialValues.reminder1Time}
                 className="w-30 p-3.5 border border-gray-300 rounded-l-lg border-r-0 text-center text-sm bg-white focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-                onChange={handleInputChange}
+                onChange={handleIntInputChange}
               />
               <select
                 id="reminder1Unit"
                 className="flex-1 p-3.5 border border-gray-300 rounded-r-lg text-sm bg-white cursor-pointer min-w-36 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-                value={"minutos"}
+                value={formData.confirmMessages.reminder1Unit}
                 onChange={handleInputChange}
               >
                 <option value="minutos">minutos</option>
@@ -164,14 +172,15 @@ export const ConfirmMessages = () => {
               <input
                 id="reminder2Time"
                 type="number"
-                placeholder="24"
+                placeholder={confirmMessagesInitialValues.reminder2Time}
+                value={formData.confirmMessages.reminder2Time}
                 className="w-30 p-3.5 border border-gray-300 rounded-l-lg border-r-0 text-center text-sm bg-white focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-                onChange={handleInputChange}
+                onChange={handleIntInputChange}
               />
               <select
                 id="reminder2Unit"
                 className="flex-1 p-3.5 border border-gray-300 rounded-r-lg text-sm bg-white cursor-pointer min-w-36 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-                value={"horas"}
+                value={formData.confirmMessages.reminder2Unit}
                 onChange={handleInputChange}
               >
                 <option value="minutos">minutos</option>
@@ -206,7 +215,8 @@ export const ConfirmMessages = () => {
             id="thanksMessage"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="4"
-            placeholder="Ej. ¡Gracias por confirmar tu pedido! Estamos procesando tu solicitud y pronto recibirás actualizaciones sobre el estado de tu envío..."
+            value={formData.confirmMessages.thanksMessage}
+            placeholder={`Ej. ${confirmMessagesInitialValues.thanksMessage}...`}
             onChange={handleInputChange}
           />
         </div>

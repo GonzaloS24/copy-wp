@@ -13,7 +13,7 @@ export const ProductProvider = ({ children }) => {
         currency: 'COP',
         description: '',
         id: '',
-        image: null
+        image: ''
       }
     },
     messageWel: {
@@ -22,9 +22,6 @@ export const ProductProvider = ({ children }) => {
         entryQuestion: 'Gracias por interesarte en nuestro producto. Cuéntanos, ¿desde qué ciudad nos escribes?'
       },
       mediaItems: [
-        { id: 1, type: 'image', icon: '🖼️', filled: true },
-        { id: 2, type: 'video', icon: '▶️', filled: true },
-        { id: 3, type: 'audio', icon: '🔊', filled: true }
       ]
     },
     freePrompt: {

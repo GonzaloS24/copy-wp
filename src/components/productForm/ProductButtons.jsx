@@ -129,68 +129,77 @@ export const ProductButtons = () => {
     return missing;
   };
 
-  const saveAssistant = async (forceInactive = false) => {
-    const missingRequiredFields = validateRequiredFields();
-    const hasMissingFields = missingRequiredFields.length > 0;
+const saveAssistant = async (forceInactive = false) => {
+  const missingRequiredFields = validateRequiredFields();
+  const hasMissingFields = missingRequiredFields.length > 0;
+  
+  const isMissingName = missingRequiredFields.includes('Nombre del producto');
+  
+  if (isMissingName) {
+    setShowNameRequiredDialog(true);
+    return;
+  }
+  
+  const isInactive = forceInactive || hasMissingFields;
+  
+  if (hasMissingFields && !forceInactive) {
+    setMissingFields(missingRequiredFields);
+    setIsSecondAttempt(true);
+    setShowValidationDialog(true);
+    return;
+  }
+
+  setIsLoading(true);
+  
+  try {
+    console.log('🎯 MediaItems antes del mapeo:', productData.messageWel?.mediaItems);
     
-    const isMissingName = missingRequiredFields.includes('Nombre del producto');
+    const mappedData = mapProductDataToServiceFormat(productData, isInactive);
+    const productNameFromData = productData.info?.formData?.name?.trim() || '';
     
-    if (isMissingName) {
-      setShowNameRequiredDialog(true);
-      return;
+    console.log('📊 Datos completos mapeados:', mappedData);
+    
+    const validationErrors = validateProductData(mappedData);
+    if (validationErrors.length > 0) {
+      throw new Error(`Datos inválidos: ${validationErrors.join(', ')}`);
     }
     
-    const isInactive = forceInactive || hasMissingFields;
-    
-    if (hasMissingFields && !forceInactive) {
-      setMissingFields(missingRequiredFields);
-      setIsSecondAttempt(true);
-      setShowValidationDialog(true);
-      return;
-    }
+    if (isEditMode()) {
+      console.log('🔄 Modo edición - actualizando producto:', productName);
+      console.log('📝 Datos a enviar para actualización:', mappedData);
 
-    setIsLoading(true);
-    
-    try {
-      const mappedData = mapProductDataToServiceFormat(productData, isInactive);
-      const productNameFromData = productData.info?.formData?.name?.trim() || '';
-      
-      const validationErrors = validateProductData(mappedData);
-      if (validationErrors.length > 0) {
-        throw new Error(`Datos inválidos: ${validationErrors.join(', ')}`);
-      }
-      
-      if (isEditMode()) {
-        console.log('Modo edición - actualizando producto:', productName);
+      const response = await ProductService.updateProduct(productName, mappedData);
+      console.log('✅ Respuesta de actualización:', response);
 
-        const response = await ProductService.updateProduct(productName, mappedData);
-
-        
-         if (response && (response.status === 'ok' || response.message || response.data)) {
+      if (response && (response.status === 'ok' || response.message || response.data)) {
         alert(`¡Producto "${productName || 'nuevo'}" actualizado exitosamente!`);
         navigate('/productos-config'); 
-        } else {
-          throw new Error('Error al actualizar el producto');
-        }
       } else {
-        console.log('Modo creación - creando nuevo producto');
-        navigate('/productos-config')
-        const response = await ProductService.createProduct(mappedData);
-
-        if (response && (response.status === 'ok' || response.message || response.data)) {
-          alert(`¡Asistente "${productNameFromData}" guardado exitosamente como ${isInactive ? 'inactivo' : 'activo'}!`);
-        } else {
-          throw new Error('Error al guardar el asistente');
-        }
+        throw new Error('Error al actualizar el producto - respuesta inválida');
       }
-    } catch (error) {
-      console.error('Error al guardar el asistente:', error);
-      alert(`Error al ${isEditMode() ? 'actualizar' : 'guardar'} el asistente: ${error.message}`);
-    } finally {
-      setIsLoading(false);
-      setIsSecondAttempt(false);
+    } else {
+      console.log('🆕 Modo creación - creando nuevo producto');
+      console.log('📝 Datos a enviar para creación:', mappedData);
+      
+      const response = await ProductService.createProduct(mappedData);
+      console.log('✅ Respuesta de creación:', response);
+
+      if (response && (response.status === 'ok' || response.message || response.data)) {
+        alert(`¡Asistente "${productNameFromData}" guardado exitosamente como ${isInactive ? 'inactivo' : 'activo'}!`);
+        navigate('/productos-config'); 
+      } else {
+        throw new Error('Error al guardar el asistente - respuesta inválida');
+      }
     }
-  };
+  } catch (error) {
+    console.error('❌ Error al guardar el asistente:', error);
+    console.error('📊 Datos que causaron el error:', productData);
+    alert(`Error al ${isEditMode() ? 'actualizar' : 'guardar'} el asistente: ${error.message}`);
+  } finally {
+    setIsLoading(false);
+    setIsSecondAttempt(false);
+  }
+};
 
   const handleValidationDialogClose = () => {
     setShowValidationDialog(false);

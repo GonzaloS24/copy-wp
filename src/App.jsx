@@ -9,6 +9,7 @@ import { LogistAssistantPage } from "./pages/LogistAssistantPage";
 import { useEffect, useState } from "react";
 import { shouldShowWelcomeWizard } from "./components/welcome/services/welcomeService";
 import WelcomeWizard from "./components/welcome/WelcomeWizard";
+import { IntegrationsView } from './pages/IntegrationsView';
 
 export default function App() {
   const [showWelcome, setShowWelcome] = useState(null);
@@ -76,10 +77,15 @@ export default function App() {
             path="/asistente-logistico"
             element={<LogistAssistantPage />}
           />
-        </Route>
+          <Route
+            path="/integraciones"
+            element={<IntegrationsView />}
+          />
 
-        {/* Capturar todas las rutas no válidas y redirigir a home */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+          {/* Capturar todas las rutas no válidas y redirigir a home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+
+        </Route>
       </Routes>
     </BrowserRouter>
   );
