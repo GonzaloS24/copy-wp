@@ -1,18 +1,31 @@
-import { useState } from "react";
+import { useCarritos } from "../../../../context/CarritosContext";
 import Tooltip from "./Tooltip";
 
 const LogisticsSection = () => {
-  const [formData, setFormData] = useState({
-    shippingTime:
-      "de 2 a 5 días hábiles para ciudades principales y de 5 a 7 días para ciudades no principales",
-    cashOnDelivery: false,
-    advancePayment: false,
-    advancePaymentDetails: "",
-    carriers: "envia, servientrega, interrapidísimo, etc",
-  });
+  const { carritoData, updateCarritoData } = useCarritos();
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    updateCarritoData("datos_logisticos", {
+      [field]: value,
+    });
+  };
+
+  const handlePaymentMethodChange = (field, value) => {
+    updateCarritoData("datos_logisticos", {
+      metodo_pago: {
+        ...carritoData.datos_logisticos?.metodo_pago,
+        [field]: value ? "si" : "no",
+      },
+    });
+  };
+
+  const handleAdvancePaymentDetailsChange = (value) => {
+    updateCarritoData("datos_logisticos", {
+      metodo_pago: {
+        ...carritoData.datos_logisticos?.metodo_pago,
+        datos_pago_anticipado: value,
+      },
+    });
   };
 
   const CustomCheckbox = ({ id, checked, onChange, label }) => (
@@ -57,6 +70,11 @@ const LogisticsSection = () => {
     </div>
   );
 
+  const cashOnDelivery =
+    carritoData.datos_logisticos?.metodo_pago?.contraentrega === "si";
+  const advancePayment =
+    carritoData.datos_logisticos?.metodo_pago?.anticipado === "si";
+
   return (
     <div className="bg-white rounded-2xl p-4 sm:p-6 md:p-8 lg:p-10 shadow-xl border border-slate-200 w-full relative z-5">
       <h1 className="text-2xl sm:text-3xl md:text-4xl mb-8 sm:mb-10 md:mb-12 text-sky-500 font-bold tracking-tight">
@@ -74,7 +92,8 @@ const LogisticsSection = () => {
           type="text"
           className="w-full p-3 sm:p-4 border-2 border-slate-200 rounded-xl text-sm sm:text-base transition-all duration-200 bg-white text-slate-700 font-inherit focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10 placeholder-slate-400"
           placeholder="de 2 a 5 días hábiles para ciudades principales y de 5 a 7 días para ciudades no principales"
-          onChange={(e) => handleInputChange("shippingTime", e.target.value)}
+          value={carritoData.datos_logisticos?.tiempos_envio || ""}
+          onChange={(e) => handleInputChange("tiempos_envio", e.target.value)}
         />
       </div>
 
@@ -89,24 +108,23 @@ const LogisticsSection = () => {
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-10">
             <CustomCheckbox
               id="pago-contraentrega"
-              checked={formData.cashOnDelivery}
+              checked={cashOnDelivery}
               onChange={(e) =>
-                handleInputChange("cashOnDelivery", e.target.checked)
+                handlePaymentMethodChange("contraentrega", e.target.checked)
               }
               label="Pago contraentrega"
             />
             <CustomCheckbox
               id="pago-anticipado"
-              checked={formData.advancePayment}
+              checked={advancePayment}
               onChange={(e) =>
-                handleInputChange("advancePayment", e.target.checked)
+                handlePaymentMethodChange("anticipado", e.target.checked)
               }
               label="Pago anticipado"
             />
           </div>
 
-          {/* Textarea que aparece cuando se marca pago anticipado */}
-          {formData.advancePayment && (
+          {advancePayment && (
             <div className="mt-2 p-4 sm:p-6 bg-slate-50 border border-slate-200 rounded-xl transition-all duration-300">
               <div className="flex items-center gap-3 mb-3">
                 <label className="block font-semibold text-slate-700 text-base tracking-tight">
@@ -118,9 +136,12 @@ const LogisticsSection = () => {
                 className="w-full p-3 sm:p-4 border-2 border-slate-200 rounded-xl text-sm sm:text-base transition-all duration-200 bg-white text-slate-700 font-inherit resize-vertical min-h-20 sm:min-h-24 leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10 placeholder-slate-400"
                 rows="3"
                 placeholder="Banco, número de cuenta, etc"
-                value={formData.advancePaymentDetails}
+                value={
+                  carritoData.datos_logisticos?.metodo_pago
+                    ?.datos_pago_anticipado || ""
+                }
                 onChange={(e) =>
-                  handleInputChange("advancePaymentDetails", e.target.value)
+                  handleAdvancePaymentDetailsChange(e.target.value)
                 }
               />
             </div>
@@ -139,7 +160,12 @@ const LogisticsSection = () => {
           type="text"
           className="w-full p-3 sm:p-4 border-2 border-slate-200 rounded-xl text-sm sm:text-base transition-all duration-200 bg-white text-slate-700 font-inherit focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10 placeholder-slate-400"
           placeholder="envia, servientrega, interrapidísimo, etc"
-          onChange={(e) => handleInputChange("carriers", e.target.value)}
+          value={
+            carritoData.datos_logisticos?.transportadoras_disponibles || ""
+          }
+          onChange={(e) =>
+            handleInputChange("transportadoras_disponibles", e.target.value)
+          }
         />
       </div>
     </div>

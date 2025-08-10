@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import CarritosInstaller from "./content/CarritosInstaller";
 import CarritosSidebar from "./CarritosSidebar";
 import IdentitySection from "./content/sections/IdentitySection";
@@ -8,8 +10,10 @@ import RecoveryMessagesSection from "./content/sections/RecoveryMessagesSection"
 import EmailSection from "./content/sections/EmailSection";
 import SpecialActionsSection from "./content/sections/SpecialActionsSection";
 import TestAssistantSection from "./content/sections/TestAssistantSection";
+import { CarritosProvider } from "../../context/CarritosContext";
+import { CarritosButtons } from "./CarritosButtons";
 
-const CarritosMain = () => {
+const CarritosMainInner = () => {
   const [isInstalled, setIsInstalled] = useState(false);
   const [activeSection, setActiveSection] = useState("identidad-asistente");
 
@@ -51,16 +55,46 @@ const CarritosMain = () => {
   }
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
-      <CarritosSidebar
-        activeSection={activeSection}
-        onSectionChange={handleSectionChange}
-        onBackToProducts={handleBackToProducts}
+    <>
+      <div className="flex min-h-screen bg-slate-50">
+        <CarritosSidebar
+          activeSection={activeSection}
+          onSectionChange={handleSectionChange}
+          onBackToProducts={handleBackToProducts}
+        />
+        <main className="ml-72 flex-1 p-8 overflow-y-auto bg-slate-50 min-w-0">
+          {renderActiveSection()}
+        </main>
+        <CarritosButtons />
+      </div>
+
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        progressStyle={{
+          backgroundColor: "#e5e7eb",
+        }}
+        closeButtonStyle={{
+          color: "#6b7280",
+        }}
       />
-      <main className="ml-72 flex-1 p-8 overflow-y-auto bg-slate-50 min-w-0">
-        {renderActiveSection()}
-      </main>
-    </div>
+    </>
+  );
+};
+
+const CarritosMain = () => {
+  return (
+    <CarritosProvider>
+      <CarritosMainInner />
+    </CarritosProvider>
   );
 };
 
