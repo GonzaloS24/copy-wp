@@ -1,7 +1,7 @@
 import apiClient from "../../config/api";
 
 const CARRITO_ENDPOINTS = {
-  SAVE_CONFIGURATION: "/api/flow/set-bot-fields-by-name",
+  SAVE_CONFIGURATION: "/api/assistants/set-info",
 };
 
 export class CarritoService {
@@ -12,17 +12,12 @@ export class CarritoService {
       }
 
       const payload = {
-        data: [
-          {
-            name: "[Carritos] Configuracion",
-            value: JSON.stringify(configData),
-          },
-        ],
+        name: "[Carritos] Configuracion General",
+        value: JSON.stringify(configData),
       };
 
-      console.log("📦 Guardando configuración de carritos:", payload);
+      console.log("🔍 JSON generado:", payload);
 
-      // Usar apiClient en lugar de fetch
       const response = await apiClient.put(
         CARRITO_ENDPOINTS.SAVE_CONFIGURATION,
         payload
