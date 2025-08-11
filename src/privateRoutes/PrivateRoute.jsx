@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, Navigate, Outlet } from "react-router-dom";
-import { getWorkspaceToken } from "../utils/workspaceStorage";
+import { getWorkspaceToken } from "../utils/workspace";
 import { validateToken } from "../utils/validateToken";
 
 export const PrivateRoute = () => {

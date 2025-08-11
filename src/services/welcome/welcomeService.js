@@ -1,14 +1,11 @@
-import { getWorkspaceIdFromUrl } from "../../../utils/workspaceUtils";
+import { GOOGLE_APPS_SCRIPT_URL } from "../../utils/backendUrl";
+import { getWorkspaceIdFromUrl } from "../../utils/workspace";
 import {
   setCurrentWorkspace,
   getCurrentWorkspace,
   setWorkspaceToken,
-} from "../../../utils/workspaceStorage";
-import { checkWorkspaceToken } from "../../../services/workspaceService";
-
-// URL del webhook de Google Apps Script
-const GOOGLE_APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbyVoOL1g_5uTkB3s1vABHDns6ICIJlTz9WU79rOR-7bHvhTReglX4pNbdBKwxIivkiB/exec";
+} from "../../utils/workspace";
+import { checkWorkspaceToken } from "../workspace/workspaceService";
 
 // Mapeo de respuestas a texto completo
 const RESPONSE_MAPPINGS = {
@@ -60,11 +57,6 @@ export const shouldShowWelcomeWizard = async () => {
 
     // 2. Guardar workspaceId en cookies
     setCurrentWorkspace(workspaceId);
-
-    // 3. Consultar endpoint usando el nuevo servicio
-    console.log(
-      `[Welcome] Consultando endpoint para workspace: ${workspaceId}`
-    );
 
     const result = await checkWorkspaceToken(workspaceId);
 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchInstalledAgents, installTemplate } from '../services/asistentService';
-import { fetchFlowSummary, fetchTeamInfo } from '../services/workspaceService';
+import { fetchFlowSummary, fetchTeamInfo } from '../services/workspace';
 import { baseAsistentes, updateAsistentesStatus } from '../utils/asistentUtils';
 import { useNavigate } from 'react-router-dom';
 
