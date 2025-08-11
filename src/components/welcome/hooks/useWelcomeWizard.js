@@ -1,13 +1,12 @@
 import { useState } from "react";
-import { saveWelcomeAnswers } from "../services/welcomeService";
+import { saveWelcomeAnswers } from "../../../services/welcome";
 import {
   setWorkspaceToken,
   getCurrentWorkspace,
-} from "../../../utils/workspaceStorage";
-import {
-  saveWorkspaceToken,
   validateTokenFormat,
-} from "../../../services/workspaceService";
+} from "../../../utils/workspace";
+
+import { saveWorkspaceToken } from "../../../services/workspace";
 
 export const useWelcomeWizard = () => {
   const [currentStep, setCurrentStep] = useState(0);

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useCarritos } from "../../context/CarritosContext";
-import { CarritoService } from "../../services/carritoService";
-import { mapCarritoDataToApiFormat } from "../../utils/carritoDataMapper";
+import { CarritoService } from "../../services/carritos";
+import { mapCarritoDataToApiFormat } from "../../utils/carritos/carritoDataMapper";
 import { SaveButton } from "../buttons/SaveButton";
 import {
   showSuccessToast,

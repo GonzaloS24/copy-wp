@@ -7,7 +7,7 @@ import { ProductContentForm } from "./pages/ProductContentForm";
 import CarritosPage from "./pages/CarritosPage";
 import { LogistAssistantPage } from "./pages/LogistAssistantPage";
 import { useEffect, useState } from "react";
-import { shouldShowWelcomeWizard } from "./components/welcome/services/welcomeService";
+import { shouldShowWelcomeWizard } from "./services/welcome";
 import WelcomeWizard from "./components/welcome/WelcomeWizard";
 import { IntegrationsView } from './pages/IntegrationsView';
 
