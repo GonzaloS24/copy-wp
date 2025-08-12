@@ -38,14 +38,10 @@ export const Asistent = () => {
     setInstallError(null);
     
     try {
-      const workspaceId = await fetchTeamInfo();
+      const workspaceId = getCurrentWorkspace();
       if (!workspaceId) throw new Error('No se pudo obtener el workspaceId');
       
-      const flow_ns = await fetchFlowSummary();
-      if (!flow_ns) throw new Error('No se pudo obtener el flow_ns');
-      
       const payload = {
-        flow_ns,
         template_ns: asistente.template_ns
       };
       
@@ -71,8 +67,20 @@ export const Asistent = () => {
     }
   };
 
-  const handleButtonClick = (action, asistente) => {
-    if (action === 'configure') {
+  // const handleButtonClick = (action, asistente) => {
+  //   if (action === 'configure') {
+  //     navigate(`/configurar/${asistente.template_ns}`);
+  //   } else if (action === 'install') {
+  //     handleInstall(asistente);
+  //   }
+  // };
+
+    const handleButtonClick = (action, asistente) => {
+    if (asistente.template_ns === "zkyasze0q8tquwio0fnirvbdgcp0luva") {
+      navigate(`/asistente-logistico`);
+    } else if (asistente.template_ns === "mjvisba1ugmhdttuqnbpvjtocbllluea") {
+      navigate(`/asistente-carritos`);
+    } else if (action === 'configure') {
       navigate(`/configurar/${asistente.template_ns}`);
     } else if (action === 'install') {
       handleInstall(asistente);

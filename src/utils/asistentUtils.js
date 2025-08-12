@@ -5,9 +5,9 @@ export const baseAsistentes = [
     title: "Asistente logístico",
     description: "Confirmación, seguimiento de guías y solución de novedades",
     icon: "📦",
-    status: "no-instalado",
-    buttonText: "Instalar",
-    buttonAction: "install"
+    status: "instalado",
+    buttonText: "Configurar",
+    buttonAction: "configure"
   },
   {
     id: 2,
@@ -15,9 +15,9 @@ export const baseAsistentes = [
     title: "Asistente de carritos",
     description: "Recupera hasta el 50% de tus carritos abandonados",
     icon: "🛒",
-    status: "no-instalado",
-    buttonText: "Instalar",
-    buttonAction: "install"
+    status: "special",
+    buttonText: "Configurar",
+    buttonAction: "configure"
   },
   {
     id: 3,
@@ -60,8 +60,15 @@ export const baseAsistentes = [
     buttonAction: "coming-soon"
   }
 ];
+
 export const updateAsistentesStatus = (baseAsistentes, installedTemplates) => {
   return baseAsistentes.map(asistente => {
+    // Mantener estado especial para logístico y carritos
+    if (asistente.template_ns === "zkyasze0q8tquwio0fnirvbdgcp0luva" || 
+        asistente.template_ns === "mjvisba1ugmhdttuqnbpvjtocbllluea") {
+      return asistente;
+    }
+    
     const isInstalled = installedTemplates.includes(asistente.template_ns);
     
     return {

@@ -1,43 +1,57 @@
-
-import tokenPadre from '../secret/tokenPadre';
+import apiClient from "../config/api";
+import tokenPadre from "../secret/tokenPadre";
 
 export const fetchInstalledAgents = async () => {
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
+  await new Promise((resolve) => setTimeout(resolve, 800));
+
   const mockResponse = {
     data: [
       {
         id: 41979,
         template_ns: "zkyasze0q8tquwio0fnirvbdgcp0luva",
-        name: "Asistente logístico de Chile 🚚"
+        name: "Asistente logístico de Chile 🚚",
       },
       {
         id: 41980,
         template_ns: "6oaa4zwoupsuuhmsdregbas919fhocgh",
-        name: "Asistente de Ventas WhatsApp"
-      }
+        name: "Asistente de Ventas WhatsApp",
+      },
     ],
-    status: "ok"
+    status: "ok",
   };
 
-  return mockResponse.data.map(t => t.template_ns);
+  return mockResponse.data.map((t) => t.template_ns);
 };
 
 export const installTemplate = async (workspaceId, payload) => {
-  await new Promise(resolve => setTimeout(resolve, 800));
-  
-  const mockResponse = {
-    data: {
-      workspace_id: workspaceId,
-      flow_ns: payload.flow_ns,
-      template_ns: payload.template_ns,
-      status: "installed",
-      installed_at: new Date().toISOString()
-    },
-    status: "ok"
-  };
+  try {
+    const { template_ns } = payload;
 
-  return mockResponse.data;
+    const response = await apiClient.post(
+      `/api/assistants/${workspaceId}/install-assistant`,
+      {
+        template_ns: template_ns,
+      }
+    );
+
+    if (response.data.status === "ok") {
+      return {
+        workspace_id: workspaceId,
+        template_ns: template_ns,
+        status: "installed",
+        installed_at: new Date().toISOString(),
+      };
+    } else {
+      throw new Error("Error en la instalación del asistente");
+    }
+  } catch (error) {
+    console.error("Error en installTemplate:", error);
+    throw new Error(
+      error.response?.data?.message ||
+        error.message ||
+        "Error al instalar el asistente"
+    );
+  }
 };
 
 // Versión real de los métodos
