@@ -4,6 +4,7 @@ import { DialogForm } from "./form";
 import { DialogGuide } from "./guide";
 import * as getIntegrations from "../../../services/integrations/getIntegrations";
 import * as createIntegrations from "../../../services/integrations/createIntegrations";
+import { dropiGetWebhook } from "../../../services/integrations/dropi";
 
 export const ConnectIntegration = ({
   isOpen,
@@ -31,6 +32,39 @@ export const ConnectIntegration = ({
         type: "password",
         placeholder: "Ingresa tu Application Key",
         required: true,
+      },
+    ],
+    dropi: [
+      {
+        name: "webhook",
+        label: "Webhook",
+        type: "copyText",
+        description:
+          'Copia este webhook y pégalo dentro de tu cuenta de dropi en la sección de "mis integraciones" para obtener tu apikey.',
+        getTextFunction: dropiGetWebhook,
+      },
+      {
+        name: "apiKey",
+        label: "API Key de Dropi",
+        type: "text",
+        placeholder: "Ingresa tu API Key de Dropi",
+        required: true,
+      },
+      {
+        name: "url",
+        label: "País",
+        placeholder: "Selecciona un país",
+        required: true,
+        type: "select",
+        options: [
+          { key: "https://api.dropi.co", value: "Colombia" },
+          { key: "https://api.dropi.cl", value: "Chile" },
+          { key: "https://api.dropi.mx", value: "México" },
+          { key: "https://api.dropi.ec", value: "Ecuador" },
+          { key: "https://api.dropi.pe", value: "Perú" },
+          { key: "https://api.dropi.py", value: "Paraguay" },
+          { key: "https://api.dropi.pa", value: "Panamá" },
+        ],
       },
     ],
     openai: [
@@ -276,7 +310,6 @@ export const ConnectIntegration = ({
             <button
               onClick={handleClose}
               className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-colors"
-              disabled={isLoading}
             >
               <svg
                 className="w-5 h-5"

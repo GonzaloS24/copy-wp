@@ -1,3 +1,5 @@
+import { CopyTextDialog } from "./CopyTextDialog";
+
 export const DialogForm = ({
   fields,
   formData,
@@ -26,6 +28,23 @@ export const DialogForm = ({
                 disabled={isLoading}
                 className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all resize-none disabled:bg-gray-50 disabled:cursor-not-allowed"
               />
+            ) : field.type === "select" ? (
+              <select
+                className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
+                value={formData[field.name] || ""}
+                required={field.required}
+                disabled={isLoading}
+                onChange={(e) => handleInputChange(field.name, e.target.value)}
+              >
+                <option value="">{field.placeholder}</option>
+                {field.options.map((option) => (
+                  <option key={option.key} value={option.key}>
+                    {option.value}
+                  </option>
+                ))}
+              </select>
+            ) : field.type === "copyText" ? (
+              <CopyTextDialog field={field} getText={field.getTextFunction} />
             ) : (
               <input
                 type={field.type}
@@ -53,7 +72,6 @@ export const DialogForm = ({
         </button>
         <button
           type="submit"
-          disabled={isLoading}
           className="flex-1 px-4 py-3 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           {isLoading ? (
