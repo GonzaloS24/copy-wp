@@ -3,6 +3,34 @@ import { cleanToken, isValidTokenFormat } from "../../utils/workspace";
 
 const WORKSPACE_ENDPOINTS = {
   TOKEN: (workspaceId) => `/api/workspace/token/${workspaceId}`,
+  PREPARE: (workspaceId) => `/api/workspace/prepare/${workspaceId}`,
+};
+
+// preparacion del espacio de trabajo
+export const workspacePrepare = async (workspaceId) => {
+  try {
+    if (!workspaceId) {
+      console.error("[WorkspaceService] WorkspaceId es requerido");
+      return null;
+    }
+
+    const response = await apiClient.post(
+      WORKSPACE_ENDPOINTS.PREPARE(workspaceId)
+    );
+
+    console.log(
+      `[WorkspaceService] Workspace preparado exitosamente: ${workspaceId}`
+    );
+    console.log(`[WorkspaceService] Flow NS: ${response.data.flow_ns}`);
+
+    return response.data;
+  } catch (error) {
+    console.error(
+      "[WorkspaceService] Error preparando workspace:",
+      error.message
+    );
+    return null;
+  }
 };
 
 /**

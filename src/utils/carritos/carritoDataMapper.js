@@ -1,9 +1,4 @@
 export const mapCarritoDataToApiFormat = (carritoData) => {
-  const formatTimeString = (time, unit) => {
-    if (!time || !unit) return "";
-    return `${time} ${unit}`;
-  };
-
   const formatBoolean = (value) => {
     if (typeof value === "boolean") {
       return value ? "si" : "no";
@@ -12,6 +7,15 @@ export const mapCarritoDataToApiFormat = (carritoData) => {
       return value === "true" || value === "si" ? "si" : "no";
     }
     return "no";
+  };
+
+  // Helper para números
+  const formatNumber = (value, defaultValue = 0) => {
+    if (value === null || value === undefined || value === "") {
+      return defaultValue;
+    }
+    const num = Number(value);
+    return isNaN(num) ? defaultValue : num;
   };
 
   return {
@@ -29,7 +33,10 @@ export const mapCarritoDataToApiFormat = (carritoData) => {
       ofrecer_descuento: formatBoolean(
         carritoData.datos_tienda?.ofrecer_descuento
       ),
-      descuento_maximo: carritoData.datos_tienda?.descuento_maximo || "",
+      descuento_maximo: formatNumber(
+        carritoData.datos_tienda?.descuento_maximo,
+        0
+      ),
       mensaje_descuento: carritoData.datos_tienda?.mensaje_descuento || "",
     },
     datos_logisticos: {
@@ -49,7 +56,10 @@ export const mapCarritoDataToApiFormat = (carritoData) => {
         carritoData.datos_logisticos?.transportadoras_disponibles || "",
     },
     mensajes_recuperacion: {
-      posicion_imagen: carritoData.mensajes_recuperacion?.posicion_imagen || "",
+      posicion_imagen: formatNumber(
+        carritoData.mensajes_recuperacion?.posicion_imagen,
+        1
+      ),
       tiempo_recordatorio_1:
         carritoData.mensajes_recuperacion?.tiempo_recordatorio_1 || "",
       tiempo_recordatorio_2:
@@ -63,9 +73,10 @@ export const mapCarritoDataToApiFormat = (carritoData) => {
       contenido: carritoData.envio_correos?.contenido || "",
     },
     acciones_especiales: {
-      subida_automatica: formatBoolean(
-        carritoData.acciones_especiales?.subida_automatica
-      ),
+      // Solo convierte a boolean si no es string vacío
+      subida_automatica: carritoData.acciones_especiales?.subida_automatica
+        ? formatBoolean(carritoData.acciones_especiales.subida_automatica)
+        : "no",
       origen_datos: carritoData.acciones_especiales?.origen_datos || "",
     },
   };
