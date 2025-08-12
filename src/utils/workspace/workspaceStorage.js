@@ -1,7 +1,7 @@
 import Cookies from "js-cookie";
 
 const WORKSPACE_ID_KEY = "current_workspace_id";
-const WORKSPACE_TOKEN_KEY = "workspace_token";
+const WORKSPACE_TOKEN_KEY = "auth_token";
 
 /**
  * Guarda el ID del workspace en las cookies del navegador
