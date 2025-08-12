@@ -5,6 +5,7 @@ import { DialogGuide } from "./guide";
 import * as getIntegrations from "../../../services/integrations/getIntegrations";
 import * as createIntegrations from "../../../services/integrations/createIntegrations";
 import { dropiGetWebhook } from "../../../services/integrations/dropi";
+import { getCurrentWorkspace } from "../../../utils/workspace/workspaceStorage";
 
 export const ConnectIntegration = ({
   isOpen,
@@ -133,6 +134,8 @@ export const ConnectIntegration = ({
     ],
   };
 
+  const workspaceId = getCurrentWorkspace();
+
   const integrationGuide = {
     metaAudience: {
       video: {
@@ -142,7 +145,7 @@ export const ConnectIntegration = ({
         {
           title: 'Ingresa a la integración de "facebook ads"',
           button: {
-            href: "/integraciones/#",
+            href: `https://chateapro.app/settings/accounts/${workspaceId}#/integration/facebook-ads`,
             text: "Ir a Facebook Ads",
           },
         },
@@ -162,7 +165,7 @@ export const ConnectIntegration = ({
         {
           title: 'Ingresa a la integración de "facebook"',
           button: {
-            href: "/integraciones/#",
+            href: `https://chateapro.app/settings/accounts/${workspaceId}#/facebook`,
             text: "Ir a Facebook",
           },
         },
@@ -182,7 +185,7 @@ export const ConnectIntegration = ({
         {
           title: 'Ingresa a la integración de "facebook"',
           button: {
-            href: "/integraciones/#",
+            href: `https://chateapro.app/settings/accounts/${workspaceId}#/whatsapp-cloud`,
             text: "Ir a Facebook",
           },
         },
