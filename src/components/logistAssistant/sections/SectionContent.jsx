@@ -1,3 +1,4 @@
+import { ToastContainer } from "react-toastify";
 import { tabsData } from "../tabs/tabsData";
 import { SectionContainer } from "./Container";
 
@@ -21,6 +22,25 @@ export const SectionContent = ({ activeTab }) => {
             />
           </div>
         ))}
+
+        <ToastContainer
+          position="bottom-right"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="light"
+          progressStyle={{
+            backgroundColor: "#e5e7eb",
+          }}
+          closeButtonStyle={{
+            color: "#6b7280",
+          }}
+        />
       </div>
     </div>
   );

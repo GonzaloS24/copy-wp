@@ -1,7 +1,7 @@
 import axios from "axios";
 import { getAuthToken } from "../../utils/authCookies";
 import { BACK_BASE_URL } from "../../utils/backendUrl";
-import { getWorkspaceIdFromUrl } from "../../utils/workspace/workspaceUtils";
+import { getCurrentWorkspace } from "../../utils/workspace/workspaceStorage";
 
 export const getFlowNs = async () => {
   const auth = getAuthToken();
@@ -12,7 +12,13 @@ export const getFlowNs = async () => {
     });
   }
 
-  const workspaceId = getWorkspaceIdFromUrl();
+  const workspaceId = getCurrentWorkspace();
+
+  if (!workspaceId) {
+    throw new Error("No se encontró el id del espacio de trabajo", {
+      cause: "setBotFieldWorkspace",
+    });
+  }
 
   const response = await axios.get(`${BACK_BASE_URL}/api/flow/${workspaceId}`, {
     headers: {
@@ -28,11 +34,17 @@ export const getSublowNs = async (subflowName) => {
 
   if (!auth) {
     throw new Error("No se encontró el token de autorización", {
-      cause: "setBotFieldAuth",
+      cause: "getBotFieldAuth",
     });
   }
 
-  const workspaceId = getWorkspaceIdFromUrl();
+  const workspaceId = getCurrentWorkspace();
+
+  if (!workspaceId) {
+    throw new Error("No se encontró el id del espacio de trabajo", {
+      cause: "getBotFieldWorkspace",
+    });
+  }
 
   const response = await axios.get(
     `${BACK_BASE_URL}/api/flow/${workspaceId}/subflow/${subflowName}`,

@@ -1,9 +1,13 @@
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
-const TOKEN_KEY = 'auth_token';
+const TOKEN_KEY = "auth_token";
 
 export const setAuthToken = (token) => {
-  Cookies.set(TOKEN_KEY, token, { expires: 60, secure: true, sameSite: 'strict' });
+  Cookies.set(TOKEN_KEY, token, {
+    expires: 60,
+    secure: true,
+    sameSite: "strict",
+  });
   console.log(`[Auth] Token almacenado en cookies (expira en 60 días)`);
 };
 
