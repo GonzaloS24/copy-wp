@@ -1,36 +1,52 @@
 import { useState } from "react";
+import { installTemplate } from "../services/asistentService";
+import { getCurrentWorkspace } from "../utils/workspace";
+import { showSuccessToast, showErrorToast } from "../utils/toastNotifications";
 
-const CarritosInstaller = ({ onInstall }) => {
+const AssistantInstaller = ({
+  template_ns,
+  title,
+  benefits,
+  videoDescription,
+  onInstall,
+}) => {
   const [isInstalling, setIsInstalling] = useState(false);
 
   const handleInstall = async () => {
     setIsInstalling(true);
 
-    // Simular instalación
-    setTimeout(() => {
-      setIsInstalling(false);
-      onInstall();
-    }, 2000);
-  };
+    try {
+      // Obtener el workspaceId
+      const workspaceId = getCurrentWorkspace();
 
-  const benefits = [
-    {
-      title: "Recupera hasta un 20% de carritos abandonados",
-      emoji: "✓",
-    },
-    {
-      title: "Instalación rápida en segundos",
-      emoji: "⚡",
-    },
-    {
-      title: "Mensajes automáticos y personalizados",
-      emoji: "💬",
-    },
-    {
-      title: "Aumenta tus ventas sin esfuerzo adicional",
-      emoji: "📈",
-    },
-  ];
+      if (!workspaceId) {
+        throw new Error("No se pudo obtener el ID del workspace");
+      }
+
+      console.log(
+        `[AssistantInstaller] Instalando asistente ${template_ns} en workspace ${workspaceId}`
+      );
+
+      const result = await installTemplate(workspaceId, {
+        template_ns: template_ns,
+      });
+
+      console.log(`[AssistantInstaller] Instalación exitosa:`, result);
+
+      // Mostrar toast de éxito
+      showSuccessToast("¡Asistente instalado exitosamente!");
+
+      // Ejecutar callback de instalación completada
+      onInstall();
+    } catch (error) {
+      console.error(`[AssistantInstaller] Error en instalación:`, error);
+
+      // Mostrar toast de error
+      showErrorToast(`Error al instalar: ${error.message}`);
+    } finally {
+      setIsInstalling(false);
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-br from-slate-50 to-slate-200 items-center justify-center p-8">
@@ -39,17 +55,14 @@ const CarritosInstaller = ({ onInstall }) => {
           {/* Sección del Video */}
           <div className="lg:col-span-3 flex flex-col gap-6">
             <h2 className="text-3xl lg:text-2xl font-bold text-sky-500 leading-tight tracking-tight mb-2 text-left">
-              Descubre cómo este asistente puede ayudarte a recuperar ventas
-              automáticamente
+              {title}
             </h2>
 
             <div className="relative w-full h-80 bg-gradient-to-br from-sky-500 to-sky-600 rounded-2xl flex items-center justify-center shadow-xl overflow-hidden">
               <div className="text-white text-lg font-semibold text-center p-8">
                 🎥 Video explicativo del asistente
                 <br />
-                <small className="opacity-80">
-                  Próximamente: Video de YouTube embebido
-                </small>
+                <small className="opacity-80">{videoDescription}</small>
               </div>
             </div>
           </div>
@@ -67,10 +80,10 @@ const CarritosInstaller = ({ onInstall }) => {
                   className="flex items-center gap-3 p-3 bg-slate-50 hover:bg-blue-50 rounded-xl border border-slate-200 hover:border-sky-500 transition-all duration-200 hover:translate-x-1"
                 >
                   <div className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                    {benefit.emoji}
+                    ✓
                   </div>
                   <div className="text-sm font-medium text-slate-700 leading-tight">
-                    {benefit.title}
+                    {benefit}
                   </div>
                 </div>
               ))}
@@ -103,4 +116,4 @@ const CarritosInstaller = ({ onInstall }) => {
   );
 };
 
-export default CarritosInstaller;
+export default AssistantInstaller;

@@ -9,16 +9,13 @@ export const Asistent = () => {
   const [asistentes, setAsistentes] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedAsistente, setSelectedAsistente] = useState(null);
-  const [isInstalling, setIsInstalling] = useState(false);
-  const [installError, setInstallError] = useState(null);
 
   useEffect(() => {
     const loadAsistentes = async () => {
       try {
-        const installedTemplates = await fetchInstalledAgents();
-        const updatedAsistentes = updateAsistentesStatus(baseAsistentes, installedTemplates);
-        setAsistentes(updatedAsistentes);
+        setAsistentes(baseAsistentes);
+        console.log('[Asistent] Asistentes cargados:', baseAsistentes);
+        
       } catch (err) {
         console.error('Error al cargar asistentes:', err);
         setError(err.message);
@@ -31,51 +28,9 @@ export const Asistent = () => {
     loadAsistentes();
   }, []);
 
-  const handleInstall = async (asistente) => {
-    if (asistente.status === 'proximamente') return;
-    
-    setIsInstalling(true);
-    setInstallError(null);
-    
-    try {
-      const workspaceId = await fetchTeamInfo();
-      if (!workspaceId) throw new Error('No se pudo obtener el workspaceId');
-      
-      const flow_ns = await fetchFlowSummary();
-      if (!flow_ns) throw new Error('No se pudo obtener el flow_ns');
-      
-      const payload = {
-        flow_ns,
-        template_ns: asistente.template_ns
-      };
-      
-      const installedTemplate = await installTemplate(workspaceId, payload);
-      
-      const updatedAsistentes = asistentes.map(a => 
-        a.template_ns === installedTemplate.template_ns 
-          ? { 
-              ...a, 
-              status: 'instalado',
-              buttonText: 'Configurar',
-              buttonAction: 'configure'
-            } 
-          : a
-      );
-      
-      setAsistentes(updatedAsistentes);
-    } catch (err) {
-      console.error('Error al instalar el asistente:', err);
-      setInstallError(err.message || 'Ocurrió un error al instalar el asistente');
-    } finally {
-      setIsInstalling(false);
-    }
-  };
-
   const handleButtonClick = (action, asistente) => {
-    if (action === 'configure') {
+    if (action === 'configure' || action === 'install') {
       navigate(`/configurar/${asistente.template_ns}`);
-    } else if (action === 'install') {
-      handleInstall(asistente);
     }
   };
 
@@ -179,7 +134,7 @@ export const Asistent = () => {
       case 'instalado':
         return `${baseClasses} bg-white text-sky-500 border-2 border-sky-500 shadow-sky-100`;
       case 'proximamente':
-        return `${baseClasses} bg-gray-200 text-gray-700 px-8 py-3 rounded-full border border-gray-300`;
+        return `${baseClasses} bg-gray-200 text-gray-700 px-8 py-3 rounded-full border border-gray-300 cursor-not-allowed`;
       default:
         return `${baseClasses} bg-gradient-to-r from-sky-500 to-sky-600 text-white shadow-sky-200`;
     }
@@ -197,19 +152,6 @@ export const Asistent = () => {
         return 'No Instalado';
     }
   };
-
-  const handleClosePresentacion = () => {
-    setSelectedAsistente(null);
-  };
-  
-    if (selectedAsistente) {
-    return (
-      <PresentacionComponent 
-        asistente={selectedAsistente} 
-        onClose={handleClosePresentacion}
-      />
-    );
-  }
   
   if (isLoading) {
     return (
@@ -262,44 +204,6 @@ export const Asistent = () => {
     );
   }
 
-  if (isInstalling) {
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
-          <div className="flex flex-col items-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-sky-500 mb-4"></div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Instalando {selectedAsistente?.title || 'el asistente'}</h3>
-            <p className="text-gray-600 text-center">Por favor espera mientras configuramos todo para ti...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (installError) {
-    return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-xl p-6 max-w-md w-full mx-4">
-          <div className="flex flex-col items-center">
-            <div className="bg-red-100 rounded-full p-3 mb-4">
-              <svg className="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Error al instalar</h3>
-            <p className="text-gray-600 text-center mb-4">{installError}</p>
-            <button
-              onClick={() => setInstallError(null)}
-              className="bg-sky-500 hover:bg-sky-600 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
-            >
-              Entendido
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
    return (
     <section className="w-full py-16 px-8 bg-slate-50 min-h-screen flex flex-col items-center">
       <div className="w-full max-w-6xl text-center">
@@ -334,6 +238,7 @@ export const Asistent = () => {
               <button 
                 className={getButtonClasses(asistente.status, asistente.buttonAction)}
                 onClick={() => handleButtonClick(asistente.buttonAction, asistente)}
+                disabled={asistente.status === 'proximamente'}
               >
                 {asistente.buttonText}
               </button>

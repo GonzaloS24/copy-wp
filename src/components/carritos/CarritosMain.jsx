@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import CarritosInstaller from "./content/CarritosInstaller";
 import CarritosSidebar from "./CarritosSidebar";
 import IdentitySection from "./content/sections/IdentitySection";
 import StoreDataSection from "./content/sections/StoreDataSection";
@@ -14,12 +13,7 @@ import { CarritosProvider } from "../../context/CarritosContext";
 import { CarritosButtons } from "./CarritosButtons";
 
 const CarritosMainInner = () => {
-  const [isInstalled, setIsInstalled] = useState(false);
   const [activeSection, setActiveSection] = useState("identidad-asistente");
-
-  const handleInstall = () => {
-    setIsInstalled(true);
-  };
 
   const handleSectionChange = (sectionId) => {
     setActiveSection(sectionId);
@@ -49,10 +43,6 @@ const CarritosMainInner = () => {
         return <IdentitySection />;
     }
   };
-
-  if (!isInstalled) {
-    return <CarritosInstaller onInstall={handleInstall} />;
-  }
 
   return (
     <>
