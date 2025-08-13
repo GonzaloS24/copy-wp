@@ -33,11 +33,11 @@ const Step6Token = ({
 
   return (
     <div className="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 xl:gap-20 items-start">
+      <div className="flex content-center items-center justify-between py-6">
         {/* Columna izquierda - Formulario */}
-        <div className="w-full max-w-lg mx-auto lg:mx-0">
-          <div className="mb-6 sm:mb-8">
-            <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto lg:mx-0 mb-4 sm:mb-6 bg-gradient-to-br from-sky-500 to-sky-600 rounded-xl flex items-center justify-center shadow-xl relative overflow-hidden">
+        <div className="w-full max-w-lg mx-auto">
+          <div className="mb-6">
+            <div className="w-20 h-20 mx-auto mb-4 sm:mb-6 bg-gradient-to-br from-sky-500 to-sky-600 rounded-xl flex items-center justify-center shadow-xl relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent"></div>
               <svg
                 className="w-10 h-10 sm:w-12 sm:h-12 text-white relative z-10"
@@ -55,7 +55,7 @@ const Step6Token = ({
             </div>
           </div>
 
-          <div className="text-center lg:text-left">
+          <div className="text-center">
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-700 mb-3 sm:mb-4 tracking-tight">
               Token de autenticación
             </h2>
@@ -187,9 +187,8 @@ const Step6Token = ({
         </div>
 
         {/* Columna derecha - Video tutorial */}
-        <div className="w-full lg:sticky lg:top-8">
+        {/* <div className="w-full lg:sticky lg:top-8">
           <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-            {/* Header del video */}
             <div className="p-6 border-b border-gray-100">
               <div className="flex items-center space-x-3 mb-3">
                 <div className="w-10 h-10 bg-sky-500 rounded-xl flex items-center justify-center">
@@ -214,7 +213,6 @@ const Step6Token = ({
               </div>
             </div>
 
-            {/* Video container */}
             <div className="relative aspect-video bg-gray-900">
               <video
                 className="w-full h-full object-cover"
@@ -226,7 +224,6 @@ const Step6Token = ({
               </video>
             </div>
 
-            {/* Footer */}
             <div className="p-4 bg-gray-50 border-t border-gray-100">
               <div className="flex items-center justify-between text-sm text-gray-600">
                 <div className="flex items-center space-x-2">
@@ -258,7 +255,7 @@ const Step6Token = ({
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
