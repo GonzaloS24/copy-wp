@@ -35,7 +35,7 @@ export const DialogGuide = ({ steps, video, handleClose }) => {
       ))}
 
       {video && (
-        <div className="mt-8 pt-6 border-t border-slate-200 text-center">
+        <div className="border-t border-slate-200 text-center">
           <a
             href={video.href}
             className="text-sky-500 text-sm font-medium transition-colors duration-200 hover:text-sky-600 inline-flex items-center gap-2 cursor-pointer bg-none border-none"

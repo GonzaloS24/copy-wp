@@ -100,22 +100,6 @@ export const ConnectIntegration = ({
         required: true,
       },
     ],
-    googlesheets: [
-      {
-        name: "serviceAccountEmail",
-        label: "Service Account Email",
-        type: "email",
-        placeholder: "ejemplo@proyecto.iam.gserviceaccount.com",
-        required: true,
-      },
-      {
-        name: "privateKey",
-        label: "Private Key",
-        type: "textarea",
-        placeholder: "Pega aquí tu clave privada JSON",
-        required: true,
-      },
-    ],
     metaConversionsApi: [
       {
         name: "token",
@@ -137,13 +121,38 @@ export const ConnectIntegration = ({
   const workspaceId = getCurrentWorkspace();
 
   const integrationGuide = {
+    googleSheets: {
+      video: {
+        href: "/integraciones/#",
+      },
+      steps: [
+        {
+          title: 'Ingresa a la integración de "Google Sheets"',
+          button: {
+            href: `https://chateapro.app/settings/accounts/${workspaceId}#/integration/sheet`,
+            text: "Ir a Google Sheets",
+          },
+        },
+        {
+          title: 'Presiona "Conectar" y selecciona tu cuenta de Google',
+          description:
+            "Se abrirá una ventana para autenticarte con tu cuenta de Google",
+        },
+        {
+          title:
+            'Selecciona "Agregar hoja" y selecciona la sheet que deseas conectar',
+          description:
+            "Elige la hoja de cálculo específica que quieres vincular a Chatea PRO",
+        },
+      ],
+    },
     metaAudience: {
       video: {
         href: "/integraciones/#",
       },
       steps: [
         {
-          title: 'Ingresa a la integración de "facebook ads"',
+          title: 'Ingresa a la integración de "Facebook Ads"',
           button: {
             href: `https://chateapro.app/settings/accounts/${workspaceId}#/integration/facebook-ads`,
             text: "Ir a Facebook Ads",
@@ -163,7 +172,7 @@ export const ConnectIntegration = ({
       },
       steps: [
         {
-          title: 'Ingresa a la integración de "facebook"',
+          title: 'Ingresa a la integración de "Facebook"',
           button: {
             href: `https://chateapro.app/settings/accounts/${workspaceId}#/facebook`,
             text: "Ir a Facebook",
@@ -183,7 +192,7 @@ export const ConnectIntegration = ({
       },
       steps: [
         {
-          title: 'Ingresa a la integración de "facebook"',
+          title: 'Ingresa a la integración de "Facebook"',
           button: {
             href: `https://chateapro.app/settings/accounts/${workspaceId}#/whatsapp-cloud`,
             text: "Ir a Facebook",
@@ -194,6 +203,26 @@ export const ConnectIntegration = ({
         },
         {
           title: 'Presiona "sincronizar" y enlaza la página al bot que desees',
+        },
+      ],
+    },
+    googleMaps: {
+      video: {
+        href: "/integraciones/#",
+      },
+      steps: [
+        {
+          title: 'Ingresa a la integración de "Google Maps"',
+          button: {
+            href: `https://chateapro.app/settings/accounts/${workspaceId}#/google_map`,
+            text: "Ir a Google Maps",
+          },
+        },
+        {
+          title: 'Presiona "conectar" y selecciona la cuenta correspondiente',
+        },
+        {
+          title: 'Presiona "sincronizar"',
         },
       ],
     },
