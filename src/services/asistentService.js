@@ -54,6 +54,20 @@ export const installTemplate = async (workspaceId, payload) => {
   }
 };
 
+export const installedAssistants = async () => {
+  try {
+    const response = await apiClient.get(`/api/assistants`);
+    console.log("60  >>>>>>>>> ", response.data);
+  } catch (error) {
+    console.error("Error", error);
+    throw new Error(
+      error.response?.data?.message ||
+        error.message ||
+        "Error al cargar los asistentes instalados"
+    );
+  }
+};
+
 // Versión real de los métodos
 /*
 export const fetchInstalledAgents = async () => {
