@@ -7,8 +7,13 @@ export const subsectionsData = [
   {
     id: "confirmMessages",
     label: "Mensajes de confirmación",
-    component: (formData, setFormData) => (
-      <ConfirmMessages formData={formData} setFormData={setFormData} />
+    component: (formData, setFormData, flowsState, setFlowsState) => (
+      <ConfirmMessages
+        formData={formData}
+        setFormData={setFormData}
+        flowsState={flowsState}
+        setFlowsState={setFlowsState}
+      />
     ),
   },
   {

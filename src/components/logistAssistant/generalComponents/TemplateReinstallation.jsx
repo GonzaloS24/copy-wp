@@ -1,6 +1,25 @@
-export const TemplateReinstallation = () => {
+import { installTemplate } from "../../../services/template/installTemplate";
+import {
+  showErrorToast,
+  showSuccessToast,
+} from "../../../utils/toastNotifications";
+
+export const TemplateReinstallation = ({ templateNs }) => {
   const handleReinstallTemplates = () => {
-    alert("Función de reinstalación de plantillas");
+    installTemplate(templateNs)
+      .then((response) => {
+        if (response.status === "ok")
+          return showSuccessToast("Reinstalación de plantillas exitosa.");
+        showErrorToast(
+          "Ocurrió un error al intentar reinstalar las plantillas."
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+        showErrorToast(
+          "Ocurrió un error al intentar reinstalar las plantillas."
+        );
+      });
   };
 
   return (

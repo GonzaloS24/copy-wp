@@ -61,3 +61,24 @@ export const dropiDeleteIntegration = async () => {
 
   return response.data;
 };
+
+export const dropiGetWebhook = async () => {
+  const auth = getAuthToken();
+
+  if (!auth) {
+    throw new Error("No se encontró el token de autorización", {
+      cause: "setBotFieldAuth",
+    });
+  }
+
+  const response = await axios.get(
+    `${BACK_BASE_URL}/api/integrations/dropi/webhook`,
+    {
+      headers: {
+        Authorization: `Bearer ${auth}`,
+      },
+    }
+  );
+
+  return response.data[0].url;
+};

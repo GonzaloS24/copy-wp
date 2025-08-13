@@ -14,6 +14,7 @@ export const SectionContainer = ({
 }) => {
   const [modalData, setModalData] = useState({ open: false, type: "success" });
   const [formData, setFormData] = useState(initialValues);
+  const [flowsState, setFlowsState] = useState({});
   const [activeSubsection, setActiveSubsection] = useState(
     subsectionsData[0].id
   );
@@ -71,7 +72,12 @@ export const SectionContainer = ({
                     activeSubsection === subsection.id ? "block" : "hidden"
                   }
                 >
-                  {subsection.component(formData, setFormData)}
+                  {subsection.component(
+                    formData,
+                    setFormData,
+                    flowsState,
+                    setFlowsState
+                  )}
                 </div>
               ))}
             </Card>
