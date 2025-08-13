@@ -5,22 +5,45 @@ export const getWorkspaceIdFromUrl = () => {
   try {
     const url = new URL(window.location.href);
 
-    // Diferentes formas de encontrar el workspace en la URL
+    // Combinar pathname, search y hash para buscar en toda la URL
+    const fullUrl = url.pathname + url.search + url.hash;
+
+    // Diferentes patrones para encontrar el workspace ID
     const patterns = [
-      /workspaceId[=:](\d+)/, // workspaceId=123 o workspaceId:123
-      /workspace[=:](\d+)/, // workspace=123 o workspace:123
+      // Parámetros de query
+      /[?&]workspaceId[=:](\d+)/i, // ?workspaceId=123 o &workspaceId=123
+      /[?&]workspace[=:](\d+)/i, // ?workspace=123 o &workspace=123
+
+      // En el path
+      /\/accounts\/(\d+)/, // /accounts/123 (tu caso principal)
       /\/workspace\/(\d+)/, // /workspace/123
-      /\/(\d+)$/, // termina con /123
+      /\/workspaces\/(\d+)/, // /workspaces/123
+      /#(\d+)/, // #123
+
+      // Número al final del path (antes del hash o query)
+      /\/(\d+)(?:[#?]|$)/, // /123# o /123? o /123 al final
     ];
 
-    const fullUrl = url.pathname + url.search;
-
-    for (const pattern of patterns) {
+    for (let i = 0; i < patterns.length; i++) {
+      const pattern = patterns[i];
       const match = fullUrl.match(pattern);
+
       if (match && match[1]) {
-        console.log(`[Workspace] WorkspaceId encontrado: ${match[1]}`);
+        console.log(
+          `[Workspace] WorkspaceId encontrado con patrón ${i + 1}: ${match[1]}`
+        );
         return match[1];
       }
+    }
+
+    // Si no encuentra nada con los patrones, intenta extraer cualquier número de la URL
+    const allNumbers = fullUrl.match(/\d+/g);
+    if (allNumbers && allNumbers.length > 0) {
+      const lastNumber = allNumbers[allNumbers.length - 1];
+      console.log(
+        `[Workspace] WorkspaceId encontrado como último recurso: ${lastNumber}`
+      );
+      return lastNumber;
     }
 
     console.warn("[Workspace] No se encontró workspaceId en la URL:", url.href);
