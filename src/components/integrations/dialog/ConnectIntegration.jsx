@@ -4,6 +4,8 @@ import { DialogForm } from "./form";
 import { DialogGuide } from "./guide";
 import * as getIntegrations from "../../../services/integrations/getIntegrations";
 import * as createIntegrations from "../../../services/integrations/createIntegrations";
+import { dropiGetWebhook } from "../../../services/integrations/dropi";
+import { getCurrentWorkspace } from "../../../utils/workspace/workspaceStorage";
 
 export const ConnectIntegration = ({
   isOpen,
@@ -31,6 +33,39 @@ export const ConnectIntegration = ({
         type: "password",
         placeholder: "Ingresa tu Application Key",
         required: true,
+      },
+    ],
+    dropi: [
+      {
+        name: "webhook",
+        label: "Webhook",
+        type: "copyText",
+        description:
+          'Copia este webhook y pégalo dentro de tu cuenta de dropi en la sección de "mis integraciones" para obtener tu apikey.',
+        getTextFunction: dropiGetWebhook,
+      },
+      {
+        name: "apiKey",
+        label: "API Key de Dropi",
+        type: "text",
+        placeholder: "Ingresa tu API Key de Dropi",
+        required: true,
+      },
+      {
+        name: "url",
+        label: "País",
+        placeholder: "Selecciona un país",
+        required: true,
+        type: "select",
+        options: [
+          { key: "https://api.dropi.co", value: "Colombia" },
+          { key: "https://api.dropi.cl", value: "Chile" },
+          { key: "https://api.dropi.mx", value: "México" },
+          { key: "https://api.dropi.ec", value: "Ecuador" },
+          { key: "https://api.dropi.pe", value: "Perú" },
+          { key: "https://api.dropi.py", value: "Paraguay" },
+          { key: "https://api.dropi.pa", value: "Panamá" },
+        ],
       },
     ],
     openai: [
@@ -65,22 +100,6 @@ export const ConnectIntegration = ({
         required: true,
       },
     ],
-    googlesheets: [
-      {
-        name: "serviceAccountEmail",
-        label: "Service Account Email",
-        type: "email",
-        placeholder: "ejemplo@proyecto.iam.gserviceaccount.com",
-        required: true,
-      },
-      {
-        name: "privateKey",
-        label: "Private Key",
-        type: "textarea",
-        placeholder: "Pega aquí tu clave privada JSON",
-        required: true,
-      },
-    ],
     metaConversionsApi: [
       {
         name: "token",
@@ -99,16 +118,43 @@ export const ConnectIntegration = ({
     ],
   };
 
+  const workspaceId = getCurrentWorkspace();
+
   const integrationGuide = {
+    googleSheets: {
+      video: {
+        href: "/integraciones/#",
+      },
+      steps: [
+        {
+          title: 'Ingresa a la integración de "Google Sheets"',
+          button: {
+            href: `https://chateapro.app/settings/accounts/${workspaceId}#/integration/sheet`,
+            text: "Ir a Google Sheets",
+          },
+        },
+        {
+          title: 'Presiona "Conectar" y selecciona tu cuenta de Google',
+          description:
+            "Se abrirá una ventana para autenticarte con tu cuenta de Google",
+        },
+        {
+          title:
+            'Selecciona "Agregar hoja" y selecciona la sheet que deseas conectar',
+          description:
+            "Elige la hoja de cálculo específica que quieres vincular a Chatea PRO",
+        },
+      ],
+    },
     metaAudience: {
       video: {
         href: "/integraciones/#",
       },
       steps: [
         {
-          title: 'Ingresa a la integración de "facebook ads"',
+          title: 'Ingresa a la integración de "Facebook Ads"',
           button: {
-            href: "/integraciones/#",
+            href: `https://chateapro.app/settings/accounts/${workspaceId}#/integration/facebook-ads`,
             text: "Ir a Facebook Ads",
           },
         },
@@ -126,9 +172,9 @@ export const ConnectIntegration = ({
       },
       steps: [
         {
-          title: 'Ingresa a la integración de "facebook"',
+          title: 'Ingresa a la integración de "Facebook"',
           button: {
-            href: "/integraciones/#",
+            href: `https://chateapro.app/settings/accounts/${workspaceId}#/facebook`,
             text: "Ir a Facebook",
           },
         },
@@ -146,9 +192,9 @@ export const ConnectIntegration = ({
       },
       steps: [
         {
-          title: 'Ingresa a la integración de "facebook"',
+          title: 'Ingresa a la integración de "Facebook"',
           button: {
-            href: "/integraciones/#",
+            href: `https://chateapro.app/settings/accounts/${workspaceId}#/whatsapp-cloud`,
             text: "Ir a Facebook",
           },
         },
@@ -157,6 +203,26 @@ export const ConnectIntegration = ({
         },
         {
           title: 'Presiona "sincronizar" y enlaza la página al bot que desees',
+        },
+      ],
+    },
+    googleMaps: {
+      video: {
+        href: "/integraciones/#",
+      },
+      steps: [
+        {
+          title: 'Ingresa a la integración de "Google Maps"',
+          button: {
+            href: `https://chateapro.app/settings/accounts/${workspaceId}#/google_map`,
+            text: "Ir a Google Maps",
+          },
+        },
+        {
+          title: 'Presiona "conectar" y selecciona la cuenta correspondiente',
+        },
+        {
+          title: 'Presiona "sincronizar"',
         },
       ],
     },
@@ -276,7 +342,6 @@ export const ConnectIntegration = ({
             <button
               onClick={handleClose}
               className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-colors"
-              disabled={isLoading}
             >
               <svg
                 className="w-5 h-5"
