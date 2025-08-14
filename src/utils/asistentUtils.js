@@ -60,22 +60,3 @@ export const baseAsistentes = [
     buttonAction: "coming-soon"
   }
 ];
-
-export const updateAsistentesStatus = (baseAsistentes, installedTemplates) => {
-  return baseAsistentes.map(asistente => {
-    // Mantener estado especial para logístico y carritos
-    if (asistente.template_ns === "zkyasze0q8tquwio0fnirvbdgcp0luva" || 
-        asistente.template_ns === "mjvisba1ugmhdttuqnbpvjtocbllluea") {
-      return asistente;
-    }
-    
-    const isInstalled = installedTemplates.includes(asistente.template_ns);
-    
-    return {
-      ...asistente,
-      status: isInstalled ? 'instalado' : asistente.status,
-      buttonText: isInstalled ? 'Configurar' : asistente.buttonText,
-      buttonAction: isInstalled ? 'configure' : asistente.buttonAction
-    };
-  });
-};

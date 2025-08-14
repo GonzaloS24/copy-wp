@@ -1,11 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation, useParams } from "react-router-dom";
 import { FiMenu } from "react-icons/fi";
 import { Sidebar } from "./Saidbar";
+import { getPageTitle } from "../utils/pageTitles";
 import logo from "../assets/chatea.png";
 
 export const MainLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [assistantDropdownOpen, setAssistantDropdownOpen] = useState(false);
+  const [pageTitle, setPageTitle] = useState("Dashboard");
+
+  const location = useLocation();
+  const params = useParams();
+
+  // Actualizar título cuando cambie la ruta
+  useEffect(() => {
+    const updateTitle = () => {
+      const pathname = location.pathname;
+      const urlParams = { ...params };
+
+      const pathSegments = pathname.split("/");
+      if (pathSegments[1] === "configurar" && pathSegments[2]) {
+        urlParams.template_ns = pathSegments[2];
+      }
+
+      const newTitle = getPageTitle(pathname, urlParams);
+      setPageTitle(newTitle);
+    };
+
+    updateTitle();
+  }, [location.pathname, params]);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
@@ -35,8 +59,8 @@ export const MainLayout = ({ children }) => {
             </div>
           </div>
 
-          <h1 className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-semibold text-slate-600 m-0 tracking-tight">
-            Dashboard
+          <h1 className="absolute left-1/2 transform -translate-x-1/2 text-xl font-semibold text-slate-600 m-0 tracking-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-md">
+            {pageTitle}
           </h1>
 
           <div className="relative">
@@ -62,12 +86,14 @@ export const MainLayout = ({ children }) => {
                   <a
                     href="#"
                     className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                    onClick={() => setAssistantDropdownOpen(false)}
                   >
                     Bot Omnicanal
                   </a>
                   <a
                     href="#"
                     className="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-50"
+                    onClick={() => setAssistantDropdownOpen(false)}
                   >
                     Asistente Personal
                   </a>
