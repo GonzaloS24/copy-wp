@@ -5,6 +5,10 @@ import {
   getInstalledAssistants,
   isAssistantInstalled,
 } from "../services/asistentService";
+import {
+  getAssistantConfig,
+  ASSISTANT_TEMPLATE_NS,
+} from "../utils/constants/assistants";
 import AssistantInstaller from "../components/AssistantInstaller";
 import { MainLayout } from "../components/MainLayout";
 
@@ -16,86 +20,26 @@ export const ConfigureAsistent = () => {
   const [isInstalled, setIsInstalled] = useState(false);
 
   const getDynamicContent = () => {
-    switch (template_ns) {
-      case "zkyasze0q8tquwio0fnirvbdgcp0luva":
-        return {
-          title: `Descubre cómo este asistente puede ayudarte a automatizar el seguimiento logístico`,
-          videoDescription:
-            "Aprende a configurar el seguimiento de guías y solución de novedades.",
-          benefits: [
-            "Automatiza el seguimiento de envíos",
-            "Notifica novedades automáticamente",
-            "Integración con principales transportistas",
-          ],
-          src: "/asistente-logistico",
-          defaultTab: "generalConfig",
-        };
-      case "6oaa4zwoupsuuhmsdregbas919fhocgh":
-        return {
-          title: `Descubre cómo este asistente puede ayudarte a escalar tus ventas por WhatsApp automáticamente`,
-          videoDescription:
-            "Aprende a automatizar tus conversaciones de venta.",
-          benefits: [
-            "Responde automáticamente a consultas",
-            "Segmenta clientes por interés",
-            "Envía catálogos automáticamente",
-            "Convierte más del 10% de leads",
-          ],
-          src: "/productos-config",
-          defaultTab: "productos",
-        };
-      case "mjvisba1ugmhdttuqnbpvjtocbllluea":
-        return {
-          title: `Descubre cómo este asistente puede ayudarte a recuperar ventas automáticamente`,
-          videoDescription: "Aprende a recuperar carritos abandonados.",
-          benefits: [
-            "Recupera hasta un 20% de carritos abandonados",
-            "Instalación rápida en segundos",
-            "Mensajes automáticos y personalizados",
-            "Aumenta tus ventas sin esfuerzo adicional",
-          ],
-          src: "/asistente-carritos",
-        };
-      case "ugmasxccs5mpnzqj4rb1ex9rdvld4diu":
-        return {
-          title: `Descubre cómo este asistente puede ayudarte a gestionar comentarios automáticamente`,
-          videoDescription: "Aprende a automatizar la gestión de comentarios.",
-          benefits: [
-            "Elimina comentarios negativos automáticamente",
-            "Convierte comentarios en ventas",
-            "Respuesta automática en redes sociales",
-            "Mejora tu reputación online",
-          ],
-          src: "/productos-config",
-          defaultTab: "productos",
-        };
-      case "byu2drpxtxhmcbgvyuktxrjyofbmemha":
-        return {
-          title: `Descubre cómo este asistente puede ayudarte con remarketing automático`,
-          videoDescription: "Aprende a automatizar el remarketing.",
-          benefits: [
-            "Reactiva clientes inactivos",
-            "Campañas automáticas personalizadas",
-            "Aumenta el valor de vida del cliente",
-            "Fideliza a tus compradores",
-          ],
-          src: "/productos-config",
-          defaultTab: "productos",
-        };
-      default:
-        return {
-          title: `Descubre cómo este asistente puede ayudarte a automatizar tu negocio`,
-          videoDescription:
-            "Aprende a configurar este asistente para tu negocio.",
-          benefits: [
-            "Automatiza procesos clave",
-            "Mejora la experiencia del cliente",
-            "Fácil de configurar y usar",
-          ],
-          src: "/productos-config",
-          defaultTab: "productos",
-        };
+    const assistantConfig = getAssistantConfig(template_ns);
+    if (assistantConfig && assistantConfig.installConfig) {
+      return {
+        ...assistantConfig.installConfig,
+        src: assistantConfig.configRoute || "/productos-config",
+      };
     }
+
+    // Fallback para asistentes no encontrados
+    return {
+      title: `Descubre cómo este asistente puede ayudarte a automatizar tu negocio`,
+      videoDescription: "Aprende a configurar este asistente para tu negocio.",
+      benefits: [
+        "Automatiza procesos clave",
+        "Mejora la experiencia del cliente",
+        "Fácil de configurar y usar",
+      ],
+      src: "/productos-config",
+      defaultTab: "productos",
+    };
   };
 
   useEffect(() => {
@@ -106,6 +50,15 @@ export const ConfigureAsistent = () => {
         console.log(
           `[ConfigureAsistent] Verificando estado del template: ${template_ns}`
         );
+
+        // Verificar si es el asistente de llamadas IA (bloqueado)
+        if (template_ns === ASSISTANT_TEMPLATE_NS.AI_CALLS) {
+          console.warn(
+            `[ConfigureAsistent] Acceso bloqueado al asistente de llamadas IA`
+          );
+          navigate("/");
+          return;
+        }
 
         // Buscar el asistente en la lista base
         const foundAsistente = baseAsistentes.find(
@@ -147,7 +100,7 @@ export const ConfigureAsistent = () => {
           }
 
           // Caso especial para el asistente logístico
-          if (template_ns === "zkyasze0q8tquwio0fnirvbdgcp0luva") {
+          if (template_ns === ASSISTANT_TEMPLATE_NS.LOGISTIC) {
             navigate("/asistente-logistico", {
               state: { activeTab: "generalConfig" },
             });

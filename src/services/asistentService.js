@@ -1,13 +1,8 @@
 import apiClient from "../config/api";
-
-// Mapeo de template_ns a las claves del endpoint
-const TEMPLATE_TO_KEY_MAP = {
-  zkyasze0q8tquwio0fnirvbdgcp0luva: "logistico",
-  mjvisba1ugmhdttuqnbpvjtocbllluea: "carritos",
-  "6oaa4zwoupsuuhmsdregbas919fhocgh": "whatsapp",
-  ugmasxccs5mpnzqj4rb1ex9rdvld4diu: "comentarios",
-  byu2drpxtxhmcbgvyuktxrjyofbmemha: "marketing",
-};
+import {
+  TEMPLATE_TO_KEY_MAP,
+  ASSISTANT_TEMPLATE_NS,
+} from "../utils/constants/assistants";
 
 // obtener asistentes instalados
 export const getInstalledAssistants = async () => {
@@ -60,9 +55,17 @@ export const updateAssistantsWithInstallationStatus = (
   installedData
 ) => {
   return baseAsistentes.map((asistente) => {
-    // Mantener estado especial para asistentes que siempre deben estar disponibles
-    if (asistente.status === "proximamente") {
-      return asistente;
+    // El asistente de llamadas IA siempre debe mantener su estado de "próximamente"
+    if (
+      asistente.template_ns === ASSISTANT_TEMPLATE_NS.AI_CALLS ||
+      asistente.status === "proximamente"
+    ) {
+      return {
+        ...asistente,
+        status: "proximamente",
+        buttonText: "Próximamente",
+        buttonAction: "coming-soon",
+      };
     }
 
     const isInstalled = isAssistantInstalled(
@@ -125,12 +128,12 @@ export const fetchInstalledAgents = async () => {
     data: [
       {
         id: 41979,
-        template_ns: "zkyasze0q8tquwio0fnirvbdgcp0luva",
+        template_ns: ASSISTANT_TEMPLATE_NS.LOGISTIC,
         name: "Asistente logístico de Chile 🚚",
       },
       {
         id: 41980,
-        template_ns: "6oaa4zwoupsuuhmsdregbas919fhocgh",
+        template_ns: ASSISTANT_TEMPLATE_NS.WHATSAPP_SALES,
         name: "Asistente de Ventas WhatsApp",
       },
     ],

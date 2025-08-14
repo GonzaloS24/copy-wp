@@ -4,6 +4,7 @@ import {
   updateAssistantsWithInstallationStatus,
 } from "../services/asistentService";
 import { baseAsistentes } from "../utils/asistentUtils";
+import { ASSISTANT_CONFIG_ROUTES } from "../utils/constants/assistants";
 import { useNavigate } from "react-router-dom";
 
 export const Asistent = () => {
@@ -49,17 +50,15 @@ export const Asistent = () => {
   const handleButtonClick = (action, asistente) => {
     console.log(`[Asistent] Acción ${action} para asistente:`, asistente.title);
 
+    // Bloquear acceso al asistente de llamadas IA
+    if (action === "coming-soon" || asistente.status === "proximamente") {
+      console.log(`[Asistent] Asistente ${asistente.title} no disponible aún`);
+      return; // No hacer nada para asistentes que están "próximamente"
+    }
+
     if (action === "configure") {
       // Si está instalado, ir directamente a la configuración
-      const routeMap = {
-        zkyasze0q8tquwio0fnirvbdgcp0luva: "/asistente-logistico",
-        mjvisba1ugmhdttuqnbpvjtocbllluea: "/asistente-carritos",
-        "6oaa4zwoupsuuhmsdregbas919fhocgh": "/productos-config",
-        ugmasxccs5mpnzqj4rb1ex9rdvld4diu: "/productos-config",
-        byu2drpxtxhmcbgvyuktxrjyofbmemha: "/productos-config",
-      };
-
-      const route = routeMap[asistente.template_ns];
+      const route = ASSISTANT_CONFIG_ROUTES[asistente.template_ns];
       if (route) {
         console.log(`[Asistent] Redirigiendo a configuración: ${route}`);
         navigate(route);

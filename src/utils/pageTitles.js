@@ -1,16 +1,7 @@
-// Mapeo de template_ns a nombres de asistentes
-export const ASSISTANT_NAMES = {
-  zkyasze0q8tquwio0fnirvbdgcp0luva: "Logístico",
-  mjvisba1ugmhdttuqnbpvjtocbllluea: "Carritos Abandonados",
-  "6oaa4zwoupsuuhmsdregbas919fhocgh": "Ventas WhatsApp",
-  ugmasxccs5mpnzqj4rb1ex9rdvld4diu: "Comentarios",
-  byu2drpxtxhmcbgvyuktxrjyofbmemha: "Remarketing",
-  hy2mzxzi0sm0ijnrpeiqxprrluimt83v: "Llamadas IA",
-};
+import { ASSISTANT_NAMES } from "../utils/constants/assistants";
 
 // Función para generar títulos basados en la ruta
 export const getPageTitle = (pathname, params = {}) => {
-  // Extraer información de la ruta
   const segments = pathname.split("/").filter(Boolean);
 
   // Rutas principales
@@ -21,12 +12,12 @@ export const getPageTitle = (pathname, params = {}) => {
   // Configuración de asistentes
   if (pathname.startsWith("/configurar/") && params.template_ns) {
     const assistantName = ASSISTANT_NAMES[params.template_ns] || "Desconocido";
-    return `Instalación del Asistente ${assistantName}`;
+    return `Instalación Asistente ${assistantName}`;
   }
 
   // Configuración de productos
   if (pathname === "/productos-config") {
-    return "Configuración del Asistente Ventas WhatsApp";
+    return "Configuración Asistente Ventas WhatsApp";
   }
 
   // Agregar producto
@@ -37,17 +28,17 @@ export const getPageTitle = (pathname, params = {}) => {
   // Editar producto
   if (pathname.startsWith("/producto/")) {
     const productId = segments[1];
-    return `Configuración del Producto ${productId}`;
+    return `Configuración Producto ${productId}`;
   }
 
   // Asistente de carritos
   if (pathname === "/asistente-carritos") {
-    return "Configuración del Asistente Carritos Abandonados";
+    return "Configuración Asistente Carritos";
   }
 
   // Asistente logístico
   if (pathname === "/asistente-logistico") {
-    return "Configuración del Asistente Logístico";
+    return "Configuración Asistente Logístico";
   }
 
   // Integraciones
