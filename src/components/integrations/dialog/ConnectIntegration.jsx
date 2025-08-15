@@ -6,6 +6,8 @@ import * as getIntegrations from "../../../services/integrations/getIntegrations
 import * as createIntegrations from "../../../services/integrations/createIntegrations";
 import { dropiGetWebhook } from "../../../services/integrations/dropi";
 import { getCurrentWorkspace } from "../../../utils/workspace/workspaceStorage";
+import { showSuccessToast } from "../../../utils/toastNotifications";
+import camelize from "camelize";
 
 export const ConnectIntegration = ({
   isOpen,
@@ -17,6 +19,22 @@ export const ConnectIntegration = ({
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (Object.entries(formData).length === 0 && !!integration) {
+      const getFunctionAsync =
+        getIntegrations[`${integration.id}GetCredentials`];
+
+      if (!getFunctionAsync) return;
+
+      getFunctionAsync().then((data) => {
+        setFormData((prev) => ({
+          ...prev,
+          ...camelize(data),
+        }));
+      });
+    }
+  }, [formData, integration]);
 
   const integrationFields = {
     backblaze: [
@@ -280,7 +298,7 @@ export const ConnectIntegration = ({
           createIntegrations[`${integration.id}CreateIntegrations`];
         const response = await createFunction(formData);
 
-        if (response.status !== "ok") {
+        if (response.status !== "verified") {
           throw new Error(
             "Error al conectar la integración. Por favor, revisa tus credentiales."
           );
@@ -289,15 +307,22 @@ export const ConnectIntegration = ({
       }
 
       console.log("✅ Integración conectada exitosamente:", result);
+      showSuccessToast("¡Integración conectada exitosamente!");
       onConnect(integration.id, formData);
       setFormData({});
       onClose();
     } catch (error) {
       console.error("Error connecting integration:", error);
-      setError(
-        error.message ||
-          "Error al conectar la integración. Por favor, verifica tus credenciales."
-      );
+      if (error.status === 500) {
+        setError(
+          "Ocurrió un error en la comunicación con el servidor. Por favor intente nuevamente más tarde."
+        );
+      } else {
+        setError(
+          error.message ||
+            "Error al conectar la integración. Por favor, verifica tus credenciales."
+        );
+      }
     } finally {
       setIsLoading(false);
     }
