@@ -2,90 +2,112 @@
  * Busca y extrae el ID del workspace desde la URL del navegador
  */
 export const getWorkspaceIdFromUrl = () => {
-  try {
-    let targetUrl;
-    let isEmbedded = false;
+  return new Promise((resolve) => {
+    let resolved = false;
 
-    // Intentar obtener la URL de la ventana padre primero
+    const extractWorkspaceId = (url) => {
+      try {
+        const urlObj = new URL(url);
+        const fullUrl = urlObj.pathname + urlObj.search + urlObj.hash;
+
+        const patterns = [
+          /\/accounts\/(\d+)#?/,
+          /[?&]workspaceId[=:](\d+)/i,
+          /[?&]workspace[=:](\d+)/i,
+          /\/workspace\/(\d+)#?/,
+          /\/workspaces\/(\d+)#?/,
+          /#(\d+)/,
+          /\/(\d+)#?(?:\/|$)/,
+        ];
+
+        for (const pattern of patterns) {
+          const match = fullUrl.match(pattern);
+          if (match && match[1]) {
+            return match[1];
+          }
+        }
+
+        // Último recurso: cualquier número en la URL
+        const allNumbers = fullUrl.match(/\d+/g);
+        if (allNumbers && allNumbers.length > 0) {
+          return allNumbers[allNumbers.length - 1];
+        }
+
+        return null;
+      } catch (error) {
+        return null;
+      }
+    };
+
     try {
-      if (window.parent && window.parent !== window) {
-        targetUrl = window.parent.location.href;
-        isEmbedded = true;
-        console.log(
-          "[Workspace] Aplicación embebida detectada, usando URL padre"
-        );
-      } else {
-        targetUrl = window.location.href;
+      // CASO 1: No está embebida (desarrollo local)
+      if (!window.parent || window.parent === window) {
+        console.log("[Workspace] App no embebida, usando URL actual");
+        const workspaceId = extractWorkspaceId(window.location.href);
+        resolve(workspaceId);
+        return;
       }
-    } catch (corsError) {
-      // Error de CORS - aplicación embebida en diferente dominio
-      console.warn(
-        "[Workspace] No se puede acceder a URL padre (CORS), usando URL actual"
-      );
-      targetUrl = window.location.href;
-      isEmbedded = true;
-    }
 
-    const url = new URL(targetUrl);
-
-    // Combinar pathname, search y hash para buscar en toda la URL
-    const fullUrl = url.pathname + url.search + url.hash;
-
-    // Diferentes patrones para encontrar el workspace ID
-    const patterns = [
-      // Parámetros de query
-      /[?&]workspaceId[=:](\d+)/i, // ?workspaceId=123 o &workspaceId=123
-      /[?&]workspace[=:](\d+)/i, // ?workspace=123 o &workspace=123
-
-      // En el path
-      /\/accounts\/(\d+)#?/,
-      /\/accounts\/(\d+)/,
-      /\/workspace\/(\d+)#?/,
-      /\/workspaces\/(\d+)#?/,
-
-      // Hash al inicio
-      /#(\d+)/,
-
-      // Número al final del path
-      /\/(\d+)#?(?:\/|$)/,
-    ];
-
-    for (let i = 0; i < patterns.length; i++) {
-      const pattern = patterns[i];
-      const match = fullUrl.match(pattern);
-
-      if (match && match[1]) {
-        console.log(
-          `[Workspace] WorkspaceId encontrado con patrón ${i + 1}: ${
-            match[1]
-          } ${isEmbedded ? "(desde ventana padre)" : "(desde ventana actual)"}`
-        );
-        return match[1];
+      // CASO 2: Está embebida - intentar acceso directo primero
+      try {
+        const parentUrl = window.parent.location.href;
+        const workspaceId = extractWorkspaceId(parentUrl);
+        if (workspaceId) {
+          console.log(
+            "[Workspace] WorkspaceId encontrado directamente de ventana padre:",
+            workspaceId
+          );
+          resolve(workspaceId);
+          return;
+        }
+      } catch (corsError) {
+        console.log("[Workspace] CORS detectado, usando postMessage");
       }
-    }
 
-    // Si no encuentra nada con los patrones, intenta extraer cualquier número de la URL
-    const allNumbers = fullUrl.match(/\d+/g);
-    if (allNumbers && allNumbers.length > 0) {
-      const lastNumber = allNumbers[allNumbers.length - 1];
-      console.log(
-        `[Workspace] WorkspaceId encontrado como último recurso: ${lastNumber} ${
-          isEmbedded ? "(desde ventana padre)" : "(desde ventana actual)"
-        }`
+      // CASO 3: Está embebida con CORS - usar postMessage
+      const handleMessage = (event) => {
+        if (resolved) return;
+
+        if (event.data && event.data.type === "WORKSPACE_ID_RESPONSE") {
+          resolved = true;
+          window.removeEventListener("message", handleMessage);
+          console.log(
+            "[Workspace] WorkspaceId recibido via postMessage:",
+            event.data.workspaceId
+          );
+          resolve(event.data.workspaceId);
+        }
+      };
+
+      window.addEventListener("message", handleMessage);
+
+      // Solicitar workspaceId a la ventana padre
+      window.parent.postMessage(
+        {
+          type: "REQUEST_WORKSPACE_ID",
+        },
+        "*"
       );
-      return lastNumber;
-    }
 
-    console.warn(
-      `[Workspace] No se encontró workspaceId en la URL: ${url.href} ${
-        isEmbedded ? "(ventana padre)" : "(ventana actual)"
-      }`
-    );
-    return null;
-  } catch (error) {
-    console.error("[Workspace] Error al extraer workspaceId:", error);
-    return null;
-  }
+      // Timeout de 3 segundos
+      setTimeout(() => {
+        if (!resolved) {
+          resolved = true;
+          window.removeEventListener("message", handleMessage);
+          console.warn(
+            "[Workspace] Timeout al solicitar workspaceId, usando URL actual como fallback"
+          );
+
+          // Fallback: usar URL actual
+          const fallbackId = extractWorkspaceId(window.location.href);
+          resolve(fallbackId);
+        }
+      }, 3000);
+    } catch (error) {
+      console.error("[Workspace] Error:", error);
+      resolve(null);
+    }
+  });
 };
 
 /**

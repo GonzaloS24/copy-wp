@@ -42,7 +42,7 @@ export const shouldShowWelcomeWizard = async () => {
     console.log("[Welcome] Verificando si mostrar wizard...");
 
     // 1. Obtener workspaceId de la URL o de cookies
-    let workspaceId = getWorkspaceIdFromUrl();
+    let workspaceId = await getWorkspaceIdFromUrl();
 
     if (!workspaceId) {
       // Si no está en URL, intentar obtener de cookies

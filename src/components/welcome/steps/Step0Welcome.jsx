@@ -11,7 +11,7 @@ const Step0Welcome = ({ onNext }) => {
     setError(null);
 
     try {
-      let workspaceId = getWorkspaceIdFromUrl();
+      let workspaceId = await getWorkspaceIdFromUrl();
       await workspacePrepare(workspaceId);
       onNext();
     } catch (error) {
