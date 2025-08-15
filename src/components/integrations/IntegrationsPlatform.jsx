@@ -349,13 +349,9 @@ export const IntegrationsPlatform = () => {
                   }
                 `}
               >
-<<<<<<< HEAD
-                <div className={`
-=======
                 {/* Status Badge */}
                 <div
                   className={`
->>>>>>> 935b39b55696da4bbf4562102cc94aefb45eed68
                   absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full text-xs font-semibold 
                   flex items-center gap-1.5
                   ${

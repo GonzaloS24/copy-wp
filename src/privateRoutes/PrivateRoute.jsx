@@ -8,18 +8,6 @@ export const PrivateRoute = () => {
   const location = useLocation();
 
   useEffect(() => {
-<<<<<<< HEAD
-  const verifyToken = async () => {
-   // console.group('[Auth] Verificando autenticación');
-    const token = getAuthToken();
-    
-    if (token) {
- //     console.log('Token encontrado, validando...');
-      const isValid = await validateToken(token);
-      
-      if (isValid) {
-    //    console.log('Token válido. Acceso concedido');
-=======
     const verifyToken = async () => {
       console.log("[Auth] Verificando autenticación");
 
@@ -36,7 +24,6 @@ export const PrivateRoute = () => {
         }
 
         setIsAuthenticated(isValid);
->>>>>>> 935b39b55696da4bbf4562102cc94aefb45eed68
       } else {
         console.warn(
           "[Auth] No hay token para el workspace. Redirigiendo al wizard..."

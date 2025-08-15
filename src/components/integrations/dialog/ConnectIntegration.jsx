@@ -20,8 +20,6 @@ export const ConnectIntegration = ({
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [error, setError] = useState("");
 
-<<<<<<< HEAD
-=======
   useEffect(() => {
     if (Object.entries(formData).length === 0 && !!integration) {
       const getFunctionAsync =
@@ -38,7 +36,6 @@ export const ConnectIntegration = ({
     }
   }, [formData, integration]);
 
->>>>>>> 935b39b55696da4bbf4562102cc94aefb45eed68
   const integrationFields = {
     dropi: [
       {
@@ -139,24 +136,6 @@ export const ConnectIntegration = ({
         required: true,
       },
       {
-<<<<<<< HEAD
-        name: 'privateKey',
-        label: 'Private Key',
-        type: 'textarea',
-        placeholder: 'Pega aquí tu clave privada JSON',
-        required: true
-      }
-    ],
-    openai: [
-      {
-        name: 'apiKey',
-        label: 'API Key de OpenAI',
-        type: 'password',
-        placeholder: 'sk-...',
-        required: true
-      }
-    ]
-=======
         name: "datasetId",
         label: "Dataset ID",
         type: "textarea",
@@ -164,7 +143,6 @@ export const ConnectIntegration = ({
         required: true,
       },
     ],
->>>>>>> 935b39b55696da4bbf4562102cc94aefb45eed68
   };
 
   const workspaceId = getCurrentWorkspace();
@@ -336,28 +314,6 @@ export const ConnectIntegration = ({
 
     try {
       let result;
-<<<<<<< HEAD
-      
-      switch (integration.id) {
-        case 'dropi':
-          result = await verifyDropiToken(formData.apiToken);
-          break;
-        
-        case 'backblaze':
-          result = await uploadImage.authorize(
-            formData.applicationKeyId,
-            formData.applicationKey
-          );
-          break;
-        
-        case 'openai':
-          result = await verifyOpenAIKey(formData.apiKey);
-          break;
-        
-        default:
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          result = { success: true, message: 'Conexión exitosa' };
-=======
 
       if (integration.id === "backblaze") {
         result = await uploadImage.authorize(
@@ -375,7 +331,6 @@ export const ConnectIntegration = ({
           );
         }
         result = { success: true, message: "Conexión exitosa" };
->>>>>>> 935b39b55696da4bbf4562102cc94aefb45eed68
       }
 
       console.log("✅ Integración conectada exitosamente:", result);
@@ -553,84 +508,6 @@ export const ConnectIntegration = ({
             </div>
           )}
 
-<<<<<<< HEAD
-          <form onSubmit={handleSubmit}>
-            <div className="space-y-4 max-h-96 overflow-y-auto">
-              {fields.map((field) => (
-                <div key={field.name} className="space-y-2">
-                  <label className="block text-sm font-semibold text-slate-700">
-                    {field.label}
-                    {field.required && <span className="text-red-500 ml-1">*</span>}
-                  </label>
-                  
-                  {field.type === 'textarea' ? (
-                    <textarea
-                      value={formData[field.name] || ''}
-                      onChange={(e) => handleInputChange(field.name, e.target.value)}
-                      placeholder={field.placeholder}
-                      required={field.required}
-                      rows={4}
-                      disabled={isLoading}
-                      autoComplete="off"
-                      className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all resize-none disabled:bg-gray-50 disabled:cursor-not-allowed"
-                    />
-                  ) : field.type === 'select' ? (
-                    <select
-                      value={formData[field.name] || ''}
-                      onChange={(e) => handleInputChange(field.name, e.target.value)}
-                      required={field.required}
-                      disabled={isLoading}
-                      className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
-                    >
-                      <option value="">Selecciona una opción</option>
-                      {field.options?.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <input
-                      type={field.type}
-                      value={formData[field.name] || ''}
-                      onChange={(e) => handleInputChange(field.name, e.target.value)}
-                      placeholder={field.placeholder}
-                      required={field.required}
-                      disabled={isLoading}
-                      autoComplete={field.type === 'password' ? 'new-password' : 'off'}
-                      className="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-sky-500 focus:border-transparent transition-all disabled:bg-gray-50 disabled:cursor-not-allowed"
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-
-            <div className="flex gap-3 mt-6 pt-4 border-t border-slate-200">
-              <button
-                type="button"
-                onClick={handleClose}
-                className="flex-1 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={isLoading}
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="flex-1 px-4 py-3 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-              >
-                {isLoading ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    Conectando...
-                  </>
-                ) : (
-                  'Conectar'
-                )}
-              </button>
-            </div>
-          </form>
-=======
           {integration.type === "form" && !!fields && (
             <DialogForm
               fields={fields}
@@ -649,7 +526,6 @@ export const ConnectIntegration = ({
               handleClose={handleClose}
             />
           )}
->>>>>>> 935b39b55696da4bbf4562102cc94aefb45eed68
         </div>
       </div>
     </div>
