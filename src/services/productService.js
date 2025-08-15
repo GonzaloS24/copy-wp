@@ -83,7 +83,7 @@ export class ProductService {
       const result = await response.json();
       const productsData = this.extractProductsData(result);
       
-      console.log('📦 Productos obtenidos:', productsData);
+    //  console.log('📦 Productos obtenidos:', productsData);
       return productsData.map(product => this.normalizeProductData(product));
       
     } catch (error) {
@@ -100,7 +100,7 @@ export class ProductService {
 
       const cleanId = this.extractNumericId(productId);
       
-      console.log('🔍 Obteniendo configuración del producto ID:', cleanId);
+      console.log(' Obteniendo configuración del producto ID:', cleanId);
       
       const endpoint = `http://localhost:3000/api/integrations/chateapro/products/${cleanId}`;
       
@@ -159,8 +159,8 @@ export class ProductService {
       value: JSON.stringify(normalizedData)
     };
 
-    console.log('🔄 Actualizando producto:', productName);
-    console.log('📦 Payload de actualización:', payload);
+    console.log('Actualizando producto:', productName);
+    console.log('Payload de actualización:', payload);
 
 
     const fetchOptions = {
@@ -188,7 +188,7 @@ export class ProductService {
     }
 
     const result = await response.json();
-    console.log('✅ Producto actualizado exitosamente:', result);
+    console.log('Producto actualizado exitosamente:', result);
     
     return result;
     
@@ -251,8 +251,8 @@ export class ProductService {
         mensaje_1: recordatorios.mensaje_recordatorio_1 || recordatorios.mensaje_1 || "",
         tiempo_2: recordatorios.tiempo_recordatorio_2 || recordatorios.tiempo_2 || 10,
         mensaje_2: recordatorios.mensaje_recordatorio_2 || recordatorios.mensaje_2 || "",
-        horario_minimo: recordatorios.horario_minimo || "",
-        horario_maximo: recordatorios.horario_maximo || ""
+        hora_min: recordatorios.hora_min || recordatorios.horario_minimo || "",
+        hora_max: recordatorios.hora_max || recordatorios.horario_maximo || ""
       },
       remarketing: {
         tiempo_1: remarketing.tiempo_remarketing_1 || remarketing.tiempo_1 || "",

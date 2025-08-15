@@ -14,7 +14,7 @@ export const setAuthToken = (token) => {
 export const getAuthToken = () => {
   const token = Cookies.get(TOKEN_KEY);
   if (token) {
-    console.log(`[Auth] Token encontrado en cookies`);
+  // console.log(`[Auth] Token encontrado en cookies`);
   } else {
     console.warn(`[Auth] No se encontró token en cookies`);
   }

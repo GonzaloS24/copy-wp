@@ -25,7 +25,9 @@ export const EditTemplateCard = ({ number, flowsState, setFlowsState }) => {
       setFlowsState((prev) => ({ ...prev, ...flowsState }));
     }
 
-    window.location.href = `https://chateapro.app/flow/${flowsState.flowNs}#/content/whatsapp_template`;
+    window.open(
+      `https://chateapro.app/flow/${flowsState.flowNs}#/content/whatsapp_template`
+    );
   };
 
   return (

@@ -179,7 +179,7 @@ const parseTimeAndUnit = (timeString) => {
                 filled: true,
                 url: url.trim(),
                 key: key,
-                fileName: url.split('/').pop() || `archivo_${index + 1}` // Extraer nombre del archivo
+                fileName: url.split('/').pop() || `archivo_${index + 1}`
               };
               
               mediaItems.push(mediaItem);
@@ -218,8 +218,8 @@ const parseTimeAndUnit = (timeString) => {
                 initialMessage: embudoVentas.mensaje_inicial || '¡Hola! Soy Laura, bienvenida a Master Shop.',
                 entryQuestion: embudoVentas.pregunta_de_entrada || 'Gracias por interesarte en nuestro producto. Cuéntanos, ¿desde qué ciudad nos escribes?'
               },
-              mediaItems: mediaItems, // Estructura completamente dinámica
-              totalFiles: mediaItems.filter(item => item.filled).length // Contador útil
+              mediaItems: mediaItems, 
+              totalFiles: mediaItems.filter(item => item.filled).length 
             },
           freePrompt: {
             promptText: tipoPrompt === 'libre' ? promptText : undefined, 
@@ -247,9 +247,9 @@ const parseTimeAndUnit = (timeString) => {
               text: recordatoriosData.mensaje_2 || ''
             },
             timeRange: {
-              enabled: !!(recordatoriosData.horario_minimo),
-              minTime: recordatoriosData.horario_minimo || '09:00',
-              maxTime: recordatoriosData.horario_maximo || '20:00'
+              enabled: !!(recordatoriosData.hora_min || recordatoriosData.horario_minimo),
+              minTime: recordatoriosData.hora_min || recordatoriosData.horario_minimo || '09:00',
+              maxTime: recordatoriosData.hora_max || recordatoriosData.horario_maximo || '20:00'
             }
           },
           remarketing: {

@@ -370,7 +370,6 @@ export const IntegrationsPlatform = () => {
                   {integration.connected ? "Conectado" : "Desconectado"}
                 </div>
 
-                {/* Header with Icon */}
                 <div className="h-36 flex justify-center items-center">
                   <div
                     className={`
@@ -382,7 +381,6 @@ export const IntegrationsPlatform = () => {
                   </div>
                 </div>
 
-                {/* Body */}
                 <div className="p-6 text-center flex flex-col gap-3">
                   <h3 className="text-xl font-bold text-slate-700">
                     {integration.name}
@@ -391,7 +389,6 @@ export const IntegrationsPlatform = () => {
                     {integration.description}
                   </p>
 
-                  {/* Buttons */}
                   {integration.connected ? (
                     <div className="flex justify-center gap-4">
                       <button
@@ -434,7 +431,6 @@ export const IntegrationsPlatform = () => {
         </div>
       </section>
 
-      {/* Modal de Integración */}
       <ConnectIntegration
         isOpen={isModalOpen}
         onClose={handleModalClose}
