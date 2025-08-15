@@ -3,7 +3,30 @@
  */
 export const getWorkspaceIdFromUrl = () => {
   try {
-    const url = new URL(window.location.href);
+    let targetUrl;
+    let isEmbedded = false;
+
+    // Intentar obtener la URL de la ventana padre primero
+    try {
+      if (window.parent && window.parent !== window) {
+        targetUrl = window.parent.location.href;
+        isEmbedded = true;
+        console.log(
+          "[Workspace] Aplicación embebida detectada, usando URL padre"
+        );
+      } else {
+        targetUrl = window.location.href;
+      }
+    } catch (corsError) {
+      // Error de CORS - aplicación embebida en diferente dominio
+      console.warn(
+        "[Workspace] No se puede acceder a URL padre (CORS), usando URL actual"
+      );
+      targetUrl = window.location.href;
+      isEmbedded = true;
+    }
+
+    const url = new URL(targetUrl);
 
     // Combinar pathname, search y hash para buscar en toda la URL
     const fullUrl = url.pathname + url.search + url.hash;
@@ -15,13 +38,16 @@ export const getWorkspaceIdFromUrl = () => {
       /[?&]workspace[=:](\d+)/i, // ?workspace=123 o &workspace=123
 
       // En el path
-      /\/accounts\/(\d+)/, // /accounts/123 (tu caso principal)
-      /\/workspace\/(\d+)/, // /workspace/123
-      /\/workspaces\/(\d+)/, // /workspaces/123
-      /#(\d+)/, // #123
+      /\/accounts\/(\d+)#?/,
+      /\/accounts\/(\d+)/,
+      /\/workspace\/(\d+)#?/,
+      /\/workspaces\/(\d+)#?/,
 
-      // Número al final del path (antes del hash o query)
-      /\/(\d+)(?:[#?]|$)/, // /123# o /123? o /123 al final
+      // Hash al inicio
+      /#(\d+)/,
+
+      // Número al final del path
+      /\/(\d+)#?(?:\/|$)/,
     ];
 
     for (let i = 0; i < patterns.length; i++) {
@@ -30,7 +56,9 @@ export const getWorkspaceIdFromUrl = () => {
 
       if (match && match[1]) {
         console.log(
-          `[Workspace] WorkspaceId encontrado con patrón ${i + 1}: ${match[1]}`
+          `[Workspace] WorkspaceId encontrado con patrón ${i + 1}: ${
+            match[1]
+          } ${isEmbedded ? "(desde ventana padre)" : "(desde ventana actual)"}`
         );
         return match[1];
       }
@@ -41,12 +69,18 @@ export const getWorkspaceIdFromUrl = () => {
     if (allNumbers && allNumbers.length > 0) {
       const lastNumber = allNumbers[allNumbers.length - 1];
       console.log(
-        `[Workspace] WorkspaceId encontrado como último recurso: ${lastNumber}`
+        `[Workspace] WorkspaceId encontrado como último recurso: ${lastNumber} ${
+          isEmbedded ? "(desde ventana padre)" : "(desde ventana actual)"
+        }`
       );
       return lastNumber;
     }
 
-    console.warn("[Workspace] No se encontró workspaceId en la URL:", url.href);
+    console.warn(
+      `[Workspace] No se encontró workspaceId en la URL: ${url.href} ${
+        isEmbedded ? "(ventana padre)" : "(ventana actual)"
+      }`
+    );
     return null;
   } catch (error) {
     console.error("[Workspace] Error al extraer workspaceId:", error);
