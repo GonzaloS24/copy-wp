@@ -32,7 +32,9 @@ export const MapTemplateCard = ({
       setFlowsState((prev) => ({ ...prev, ...flowsState }));
     }
 
-    window.location.href = `https://chateapro.app/flow/${flowsState.flowNs}#/${flowsState.subflowNs}/edit`;
+    window.open(
+      `https://chateapro.app/flow/${flowsState.flowNs}#/${flowsState.subflowNs}/edit`
+    );
   };
 
   return (
