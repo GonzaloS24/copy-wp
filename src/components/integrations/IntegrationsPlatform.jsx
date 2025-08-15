@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { ConnectIntegration } from "./dialog/ConnectIntegration";
 import * as deleteIntegrations from "../../services/integrations/deleteIntegrations";
+import { ToastContainer } from "react-toastify";
+import { getInstalledIntegrations } from "../../services/integrations/getIntegrations";
 //import { uploadImage } from './uploadImageService';
 
 export const IntegrationsPlatform = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedIntegration, setSelectedIntegration] = useState(null);
-  const [connectedIntegrations, setConnectedIntegrations] = useState([
-    "openai",
-  ]);
+  const [connectedIntegrations, setConnectedIntegrations] = useState({});
+
+  useEffect(() => {
+    if (Object.entries(connectedIntegrations).length === 0) {
+      getInstalledIntegrations().then(({ data }) => {
+        setConnectedIntegrations((prev) => ({ ...prev, ...data }));
+      });
+    }
+  }, [connectedIntegrations]);
 
   const integrations = [
     {
@@ -32,7 +40,7 @@ export const IntegrationsPlatform = () => {
           <line x1="12" y1="22.08" x2="12" y2="15"></line>
         </svg>
       ),
-      connected: false,
+      connected: connectedIntegrations.dropi,
       type: "form",
       iconBg: "bg-blue-50",
       iconColor: "text-blue-500",
@@ -59,7 +67,7 @@ export const IntegrationsPlatform = () => {
           <path d="M9.5 17a.5.5 0 0 0 1 0 .5.5 0 0 0-1 0z"></path>
         </svg>
       ),
-      connected: true,
+      connected: connectedIntegrations.openai,
       type: "form",
       iconBg: "bg-green-50",
       iconColor: "text-green-500",
@@ -85,7 +93,7 @@ export const IntegrationsPlatform = () => {
           <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
         </svg>
       ),
-      connected: false,
+      connected: connectedIntegrations.shopify,
       type: "form",
       iconBg: "bg-yellow-50",
       iconColor: "text-yellow-500",
@@ -166,7 +174,7 @@ export const IntegrationsPlatform = () => {
           <path d="M2 12l10 5 10-5"></path>
         </svg>
       ),
-      connected: false,
+      connected: connectedIntegrations.metaConversionsApi,
       type: "form",
       iconBg: "bg-blue-50",
       iconColor: "text-blue-500",
@@ -278,7 +286,7 @@ export const IntegrationsPlatform = () => {
 
   const integrationsWithStatus = integrations.map((integration) => ({
     ...integration,
-    connected: connectedIntegrations.includes(integration.id),
+    connected: connectedIntegrations[integration.id],
   }));
 
   const handleConnectClick = (integration) => {
@@ -292,7 +300,10 @@ export const IntegrationsPlatform = () => {
   };
 
   const handleConnect = (integrationId, formData) => {
-    setConnectedIntegrations((prev) => [...prev, integrationId]);
+    setConnectedIntegrations((prev) => ({
+      ...prev,
+      [integrationId]: true,
+    }));
     console.log(`Integración ${integrationId} conectada con datos:`, formData);
   };
 
@@ -306,9 +317,10 @@ export const IntegrationsPlatform = () => {
         throw new Error("Error al intentar desconectar la integración.");
       }
 
-      setConnectedIntegrations((prev) =>
-        prev.filter((id) => id !== integrationId)
-      );
+      setConnectedIntegrations((prev) => ({
+        ...prev,
+        [integrationId]: false,
+      }));
       console.log(`Integración ${integrationId} desconectada`);
     } catch (error) {
       console.error("Error disconnecting integration:", error);
@@ -428,6 +440,26 @@ export const IntegrationsPlatform = () => {
         onClose={handleModalClose}
         integration={selectedIntegration}
         onConnect={handleConnect}
+      />
+
+      {/* Componente de toast para retroalimentación rápida */}
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+        progressStyle={{
+          backgroundColor: "#e5e7eb",
+        }}
+        closeButtonStyle={{
+          color: "#6b7280",
+        }}
       />
     </>
   );
