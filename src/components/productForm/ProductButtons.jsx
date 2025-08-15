@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { useParams, useLocation, useNavigate  } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useProduct } from '../../context/ProductContext';
 import { ProductService } from '../../services/productService';
 import { AlertDialog } from './content/dialog/AlertDialog';
@@ -7,48 +7,68 @@ import { AlertDialog } from './content/dialog/AlertDialog';
 import { mapProductDataToServiceFormat } from '../../utils/productDataMapper';
 
 import { SaveButton } from '../buttons/SaveButton';
+import { AutoAssistantButton } from './content/productInSeconds/AutoAssistantButton';
 
 export const ProductButtons = () => {
   const { productData, validationState } = useProduct();
   const { productName } = useParams();
   const location = useLocation();
-   const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [showValidationDialog, setShowValidationDialog] = useState(false);
   const [missingFields, setMissingFields] = useState([]);
   const [isSecondAttempt, setIsSecondAttempt] = useState(false);
   const [showNameRequiredDialog, setShowNameRequiredDialog] = useState(false);
+  const [isGeneratingAssistant, setIsGeneratingAssistant] = useState(false);
 
   const openAutoAssistantModal = () => {
+    setIsGeneratingAssistant(true);
     console.log('Abriendo modal de asistente automático');
-  };
+  }
 
   const isEditMode = () => {
     return productName && location.pathname.includes(`/${productName}`);
   };
 
-  const getPromptText = () => {
-    const promptData = productData.freePrompt?.promptText || productData.freePrompt?.promptContent;
-    
-    if (!promptData) return '';
-    
-    if (typeof promptData === 'string') return promptData;
-    
-    if (typeof promptData === 'object') {
-      if (promptData.text) return promptData.text;
-      if (promptData.prompt) return promptData.prompt;
-      if (promptData.content) return promptData.content;
-      if (promptData.value) return promptData.value;
-      
+  const formatPromptText = (promptText, promptType) => {
+  if (!promptText || typeof promptText !== 'string') return '';
+  
+  if (promptType === 'libre' && promptText.trim() !== '') {
+    return promptText.replace(/\n/g, '\\n');
+  }
+  
+  return promptText;
+};
+
+
+const getPromptText = () => {
+  const promptData = productData.freePrompt?.promptText || productData.freePrompt?.promptContent;
+  
+  if (!promptData) return '';
+  
+  let processedText = '';
+  
+  if (typeof promptData === 'string') {
+    processedText = promptData;
+  } else if (typeof promptData === 'object') {
+    if (promptData.text) processedText = promptData.text;
+    else if (promptData.prompt) processedText = promptData.prompt;
+    else if (promptData.content) processedText = promptData.content;
+    else if (promptData.value) processedText = promptData.value;
+    else {
       const keys = Object.keys(promptData);
       if (keys.length === 1) {
         const value = promptData[keys[0]];
-        if (typeof value === 'string') return value;
+        if (typeof value === 'string') processedText = value;
       }
     }
-    
-    return '';
-  };
+  }
+  
+  return formatPromptText(
+    processedText,
+    productData.freePrompt?.promptType
+  );
+};
 
   const validateProductData = (mappedData) => {
     const errors = [];
@@ -152,12 +172,12 @@ const saveAssistant = async (forceInactive = false) => {
   setIsLoading(true);
   
   try {
-    console.log('🎯 MediaItems antes del mapeo:', productData.messageWel?.mediaItems);
+    console.log('MediaItems antes del mapeo:', productData.messageWel?.mediaItems);
     
     const mappedData = mapProductDataToServiceFormat(productData, isInactive);
     const productNameFromData = productData.info?.formData?.name?.trim() || '';
     
-    console.log('📊 Datos completos mapeados:', mappedData);
+    console.log('Datos completos mapeados:', mappedData);
     
     const validationErrors = validateProductData(mappedData);
     if (validationErrors.length > 0) {
@@ -165,11 +185,11 @@ const saveAssistant = async (forceInactive = false) => {
     }
     
     if (isEditMode()) {
-      console.log('🔄 Modo edición - actualizando producto:', productName);
-      console.log('📝 Datos a enviar para actualización:', mappedData);
+      console.log('Modo edición - actualizando producto:', productName);
+      console.log('Datos a enviar para actualización:', mappedData);
 
       const response = await ProductService.updateProduct(productName, mappedData);
-      console.log('✅ Respuesta de actualización:', response);
+      console.log('Respuesta de actualización:', response);
 
       if (response && (response.status === 'ok' || response.message || response.data)) {
         alert(`¡Producto "${productName || 'nuevo'}" actualizado exitosamente!`);
@@ -192,8 +212,8 @@ const saveAssistant = async (forceInactive = false) => {
       }
     }
   } catch (error) {
-    console.error('❌ Error al guardar el asistente:', error);
-    console.error('📊 Datos que causaron el error:', productData);
+    console.error('Error al guardar el asistente:', error);
+    console.error('Datos que causaron el error:', productData);
     alert(`Error al ${isEditMode() ? 'actualizar' : 'guardar'} el asistente: ${error.message}`);
   } finally {
     setIsLoading(false);
@@ -256,11 +276,17 @@ const saveAssistant = async (forceInactive = false) => {
 
   return (
     <>
-      <SaveButton
-        isLoading={isLoading}
-        onClick={() => saveAssistant(false)}
-        className="fixed bottom-8 left-80"
-      />
+      <div className="fixed bottom-8 left-80 right-8 flex justify-between items-center">
+        <SaveButton
+          isLoading={isLoading}
+          onClick={() => saveAssistant(false)}
+        />
+        
+        <AutoAssistantButton
+          isLoading={isGeneratingAssistant}
+          onClick={openAutoAssistantModal}
+        />
+      </div>
 
       <AlertDialog
         title={isSecondAttempt ? 

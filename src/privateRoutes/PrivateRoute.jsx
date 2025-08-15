@@ -11,7 +11,7 @@ export const PrivateRoute = () => {
 
   useEffect(() => {
   const verifyToken = async () => {
-    console.group('[Auth] Verificando autenticación');
+   // console.group('[Auth] Verificando autenticación');
     const token = getAuthToken();
     
     if (token) {

@@ -45,7 +45,6 @@ export class uploadImage {
         applicationKey
       };
 
-      console.log('🔐 Authorizing with Backblaze with payload:', payload);
 
       const response = await fetch(
         'http://localhost:3000/api/integrations/backblaze/authorize',
@@ -61,7 +60,7 @@ export class uploadImage {
       }
 
       const result = await response.json();
-      console.log('✅ Backblaze authorization successful:', result);
+      console.log(' Backblaze authorization successful:', result);
       
       return result;
       
@@ -88,7 +87,7 @@ export class uploadImage {
       formData.append('file', file);
       formData.append('fileName', finalFileName);
 
-      console.log('📤 Uploading file to Backblaze:', finalFileName);
+      console.log('Uploading file to Backblaze:', finalFileName);
 
       const response = await fetch(
         'http://localhost:3000/api/integrations/backblaze/upload',
@@ -104,7 +103,7 @@ export class uploadImage {
       }
 
       const result = await response.json();
-      console.log('✅ File uploaded successfully:', result);
+      console.log('File uploaded successfully:', result);
       
       return result;
       
