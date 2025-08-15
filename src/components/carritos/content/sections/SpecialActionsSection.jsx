@@ -1,15 +1,17 @@
-import { useState } from "react";
+import { useCarritos } from "../../../../context/CarritosContext";
 import Tooltip from "./Tooltip";
 
 const SpecialActionsSection = () => {
-  const [formData, setFormData] = useState({
-    autoUpload: "",
-    infoSource: "",
-  });
+  const { carritoData, updateCarritoData } = useCarritos();
 
   const handleInputChange = (field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    updateCarritoData("acciones_especiales", {
+      [field]: value,
+    });
   };
+
+  const autoUpload = carritoData.acciones_especiales?.subida_automatica;
+  const infoSource = carritoData.acciones_especiales?.origen_datos;
 
   return (
     <div className="bg-white rounded-2xl p-10 shadow-xl border border-slate-200 w-full relative z-5">
@@ -32,8 +34,10 @@ const SpecialActionsSection = () => {
               name="subida-automatica"
               className="w-5 h-5 border-2 border-slate-300 rounded-full cursor-pointer relative appearance-none transition-all duration-200 bg-white checked:border-sky-500"
               value="si"
-              checked={formData.autoUpload === "si"}
-              onChange={(e) => handleInputChange("autoUpload", e.target.value)}
+              checked={autoUpload === "si"}
+              onChange={(e) =>
+                handleInputChange("subida_automatica", e.target.value)
+              }
             />
             <label
               htmlFor="subida-si"
@@ -49,8 +53,10 @@ const SpecialActionsSection = () => {
               name="subida-automatica"
               className="w-5 h-5 border-2 border-slate-300 rounded-full cursor-pointer relative appearance-none transition-all duration-200 bg-white checked:border-sky-500"
               value="no"
-              checked={formData.autoUpload === "no"}
-              onChange={(e) => handleInputChange("autoUpload", e.target.value)}
+              checked={autoUpload === "no"}
+              onChange={(e) =>
+                handleInputChange("subida_automatica", e.target.value)
+              }
             />
             <label
               htmlFor="subida-no"
@@ -76,9 +82,11 @@ const SpecialActionsSection = () => {
               id="info-chatea"
               name="fuente-informacion"
               className="w-5 h-5 border-2 border-slate-300 rounded-full cursor-pointer relative appearance-none transition-all duration-200 bg-white checked:border-sky-500"
-              value="chatea"
-              checked={formData.infoSource === "chatea"}
-              onChange={(e) => handleInputChange("infoSource", e.target.value)}
+              value="Ecommerce de Chatea PRO"
+              checked={infoSource === "Ecommerce de Chatea PRO"}
+              onChange={(e) =>
+                handleInputChange("origen_datos", e.target.value)
+              }
             />
             <label
               htmlFor="info-chatea"
@@ -93,9 +101,11 @@ const SpecialActionsSection = () => {
               id="info-shopify"
               name="fuente-informacion"
               className="w-5 h-5 border-2 border-slate-300 rounded-full cursor-pointer relative appearance-none transition-all duration-200 bg-white checked:border-sky-500"
-              value="shopify"
-              checked={formData.infoSource === "shopify"}
-              onChange={(e) => handleInputChange("infoSource", e.target.value)}
+              value="Shopify"
+              checked={infoSource === "Shopify"}
+              onChange={(e) =>
+                handleInputChange("origen_datos", e.target.value)
+              }
             />
             <label
               htmlFor="info-shopify"

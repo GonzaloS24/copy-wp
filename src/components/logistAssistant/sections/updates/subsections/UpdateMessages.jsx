@@ -2,8 +2,15 @@ import { Card } from "../../../generalComponents/Card";
 import { TemplateReinstallation } from "../../../generalComponents/TemplateReinstallation";
 import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { updateMessagesInitialValues } from "../../../../../utils/logistAssistant/initialValues/updates";
+import { EditTemplateCard } from "../../../generalComponents/EditTemplateCard";
+import { MapTemplateCard } from "../../../generalComponents/MapTemplates";
 
-export const UpdateMessages = ({ formData, setFormData }) => {
+export const UpdateMessages = ({
+  formData,
+  setFormData,
+  flowsState,
+  setFlowsState,
+}) => {
   const handleInputChange = ({ target }) => {
     setFormData((prev) => ({
       ...prev,
@@ -12,14 +19,6 @@ export const UpdateMessages = ({ formData, setFormData }) => {
         [target.id]: target.value,
       },
     }));
-  };
-
-  const handleEditTemplates = () => {
-    alert("Editar plantillas de novedad");
-  };
-
-  const handleMapTemplates = () => {
-    alert("Mapear plantillas de novedad");
   };
 
   return (
@@ -36,52 +35,19 @@ export const UpdateMessages = ({ formData, setFormData }) => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
           {/* Tarjeta 1 - Editar plantillas */}
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-8 min-h-[180px] flex flex-col items-center text-center transition-all duration-200 hover:bg-white hover:border-sky-500 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-sky-500/10">
-            <div className="w-8 h-8 bg-transparent text-slate-500 border-2 border-slate-300 rounded-full flex items-center justify-center text-sm font-bold mb-4">
-              1
-            </div>
-            <div className="flex-1 w-full">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <label className="font-medium text-slate-700 text-sm">
-                  Edita las plantillas de mensaje
-                </label>
-                <TooltipIcon
-                  tooltipId="editTrackingTemplates"
-                  content="Edita las plantillas de mensaje del asistente de novedad"
-                />
-              </div>
-              <button
-                className="bg-gradient-to-br from-sky-500 to-sky-600 text-white border-none rounded-lg px-6 py-3 text-sm font-semibold cursor-pointer transition-all duration-200 shadow-md shadow-sky-500/20 mt-2 w-full hover:-translate-y-0.5 hover:shadow-lg hover:shadow-sky-500/30"
-                onClick={handleEditTemplates}
-              >
-                Editar plantillas
-              </button>
-            </div>
-          </div>
+          <EditTemplateCard
+            number={1}
+            flowsState={flowsState}
+            setFlowsState={setFlowsState}
+          />
 
           {/* Tarjeta 2 - Mapear plantillas */}
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-8 min-h-[180px] flex flex-col items-center text-center transition-all duration-200 hover:bg-white hover:border-sky-500 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-sky-500/10">
-            <div className="w-8 h-8 bg-transparent text-slate-500 border-2 border-slate-300 rounded-full flex items-center justify-center text-sm font-bold mb-4">
-              2
-            </div>
-            <div className="flex-1 w-full">
-              <div className="flex items-center justify-center gap-2 mb-2">
-                <label className="font-medium text-slate-700 text-sm">
-                  Mapea las plantillas en el flujo
-                </label>
-                <TooltipIcon
-                  tooltipId="mapTrackingTemplates"
-                  content="Mapea las plantillas en el flujo de novedad"
-                />
-              </div>
-              <button
-                className="bg-gradient-to-br from-sky-500 to-sky-600 text-white border-none rounded-lg px-6 py-3 text-sm font-semibold cursor-pointer transition-all duration-200 shadow-md shadow-sky-500/20 mt-2 w-full hover:-translate-y-0.5 hover:shadow-lg hover:shadow-sky-500/30"
-                onClick={handleMapTemplates}
-              >
-                Mapear plantillas
-              </button>
-            </div>
-          </div>
+          <MapTemplateCard
+            number={2}
+            subflowName={"Logistica: Mensajes de novedad"}
+            flowsState={flowsState}
+            setFlowsState={setFlowsState}
+          />
         </div>
       </Card>
 
@@ -156,7 +122,7 @@ export const UpdateMessages = ({ formData, setFormData }) => {
         </div>
       </Card>
 
-      <TemplateReinstallation />
+      <TemplateReinstallation templateNs={"w4fsogyyeyu3n15ur1kkb7ixgpe32gl6"} />
     </div>
   );
 };

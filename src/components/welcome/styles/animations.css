@@ -1,0 +1,281 @@
+/* Animaciones de transición entre pasos */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100px);
+    opacity: 0;
+  }
+}
+
+/* Animaciones para la página final */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  53%,
+  80%,
+  100% {
+    animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+    transform: translate3d(0, 0, 0);
+  }
+  40%,
+  43% {
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(0, -10px, 0);
+  }
+  70% {
+    animation-timing-function: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+    transform: translate3d(0, -5px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Animación especial para el checkmark */
+@keyframes drawCheck {
+  0% {
+    stroke-dasharray: 0 100;
+    stroke-dashoffset: 0;
+  }
+  100% {
+    stroke-dasharray: 100 100;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Clases de utilidad para las animaciones */
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.animate-bounce-in {
+  animation: scaleIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.animate-slide-up-1 {
+  animation: slideUp 0.6s ease-out 0.1s both;
+}
+
+.animate-slide-up-2 {
+  animation: slideUp 0.6s ease-out 0.2s both;
+}
+
+.animate-slide-up-3 {
+  animation: slideUp 0.6s ease-out 0.3s both;
+}
+
+.animate-slide-up-4 {
+  animation: slideUp 0.6s ease-out 0.4s both;
+}
+
+.animate-draw-check {
+  animation: scaleIn 0.5s ease-out 0.3s both;
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+.animate-check-draw {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: drawCheck 0.8s ease-out 0.5s forwards;
+}
+
+/* Transiciones suaves para los pasos */
+.step-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.step-transition-smooth {
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Estados de transición */
+.step-entering-right {
+  transform: translateX(100px);
+  opacity: 0;
+  animation: slideInRight 0.3s ease-out forwards;
+}
+
+.step-entering-left {
+  transform: translateX(-100px);
+  opacity: 0;
+  animation: slideInLeft 0.3s ease-out forwards;
+}
+
+.step-exiting-right {
+  animation: slideOutRight 0.3s ease-in forwards;
+}
+
+.step-exiting-left {
+  animation: slideOutLeft 0.3s ease-in forwards;
+}
+
+/* Animaciones de hover para mejorar la interactividad */
+.hover-lift {
+  transition: all 0.2s ease-out;
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.hover-scale {
+  transition: transform 0.2s ease-out;
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+/* Animación del progress bar */
+.progress-bar-fill {
+  transition: width 0.5s ease-out;
+}
+
+/* Animaciones para elementos que aparecen con delay */
+.stagger-1 {
+  animation: fadeIn 0.6s ease-out 0.1s both;
+}
+
+.stagger-2 {
+  animation: fadeIn 0.6s ease-out 0.2s both;
+}
+
+.stagger-3 {
+  animation: fadeIn 0.6s ease-out 0.3s both;
+}
+
+.stagger-4 {
+  animation: fadeIn 0.6s ease-out 0.4s both;
+}
+
+/* Utilidades para diferentes tipos de entrada */
+.slide-in-bottom {
+  animation: slideUp 0.5s ease-out;
+}
+
+.fade-in-fast {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.fade-in-slow {
+  animation: fadeIn 0.8s ease-out;
+}
+
+/* Media queries para dispositivos móviles */
+@media (max-width: 768px) {
+  .animate-slide-up-1,
+  .animate-slide-up-2,
+  .animate-slide-up-3,
+  .animate-slide-up-4 {
+    animation-duration: 0.4s;
+  }
+
+  .step-transition {
+    transition-duration: 0.2s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .step-transition {
+    transition: opacity 0.2s ease;
+  }
+}

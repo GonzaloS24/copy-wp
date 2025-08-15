@@ -6,8 +6,13 @@ export const subsectionsData = [
   {
     id: "udpateMessages",
     label: "Mensajes de novedad",
-    component: (formData, setFormData) => (
-      <UpdateMessages formData={formData} setFormData={setFormData} />
+    component: (formData, setFormData, flowsState, setFlowsState) => (
+      <UpdateMessages
+        formData={formData}
+        setFormData={setFormData}
+        flowsState={flowsState}
+        setFlowsState={setFlowsState}
+      />
     ),
   },
   {

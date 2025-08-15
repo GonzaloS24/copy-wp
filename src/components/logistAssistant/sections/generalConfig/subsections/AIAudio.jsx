@@ -1,4 +1,5 @@
 import { Card } from "../../../generalComponents/Card";
+import { HiddenTextField } from "../../../generalComponents/HiddenTextField";
 import { ToggleSwitch } from "../../../generalComponents/ToggleSwitch";
 import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { NumberInput } from "../../../generalComponents/inputs/NumberInput";
@@ -68,6 +69,16 @@ export const AIAudio = ({ formData, setFormData }) => {
               </h3>
 
               <div className="mb-5">
+                <label className="font-medium text-slate-700 text-sm block mb-2">
+                  Token
+                </label>
+                <HiddenTextField
+                  placeholder="Ingresa el token"
+                  value={formData.AIAudio.token}
+                  onChange={(e) => handleInputChange("token", e.target.value)}
+                  isDisabled={isDisabled}
+                />
+
                 <label className="font-medium text-slate-700 text-sm block mb-2">
                   ID de voz
                 </label>

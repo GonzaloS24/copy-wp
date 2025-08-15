@@ -6,8 +6,13 @@ export const subsectionsData = [
   {
     id: "trackMessages",
     label: "Mensajes de seguimiento",
-    component: (formData, setFormData) => (
-      <TrackMessages formData={formData} setFormData={setFormData} />
+    component: (formData, setFormData, flowsState, setFlowsState) => (
+      <TrackMessages
+        formData={formData}
+        setFormData={setFormData}
+        flowsState={flowsState}
+        setFlowsState={setFlowsState}
+      />
     ),
   },
   {
