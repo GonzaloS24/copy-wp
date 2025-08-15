@@ -9,7 +9,8 @@ import { LogistAssistantPage } from "./pages/LogistAssistantPage";
 import { useEffect, useState } from "react";
 import { shouldShowWelcomeWizard } from "./services/welcome";
 import WelcomeWizard from "./components/welcome/WelcomeWizard";
-import { IntegrationsView } from './pages/IntegrationsView';
+import { IntegrationsView } from "./pages/IntegrationsView";
+import { initializeWorkspace } from "./utils/workspace/workspaceUtils";
 
 export default function App() {
   const [showWelcome, setShowWelcome] = useState(null);
@@ -32,7 +33,24 @@ export default function App() {
       }
     };
 
-    checkWelcomeStatus();
+    const initializeWorkspaceFromUrl = async () => {
+      try {
+        console.log("[App] Inicializando workspace desde URL...");
+        const workspaceId = await initializeWorkspace();
+        if (workspaceId) {
+          console.log("[App] Workspace configurado:", workspaceId);
+        }
+      } catch (error) {
+        console.error("[App] Error inicializando workspace:", error);
+      }
+    };
+
+    const initialize = async () => {
+      initializeWorkspaceFromUrl().catch(console.error);
+      await checkWelcomeStatus();
+    };
+
+    initialize();
   }, []);
 
   const handleWelcomeComplete = () => {
@@ -77,14 +95,10 @@ export default function App() {
             path="/asistente-logistico"
             element={<LogistAssistantPage />}
           />
-          <Route
-            path="/integraciones"
-            element={<IntegrationsView />}
-          />
+          <Route path="/integraciones" element={<IntegrationsView />} />
 
           {/* Capturar todas las rutas no válidas y redirigir a home */}
           <Route path="*" element={<Navigate to="/" replace />} />
-
         </Route>
       </Routes>
     </BrowserRouter>
