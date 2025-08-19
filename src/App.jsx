@@ -11,20 +11,36 @@ import { shouldShowWelcomeWizard } from "./services/welcome";
 import WelcomeWizard from "./components/welcome/WelcomeWizard";
 import { IntegrationsView } from "./pages/IntegrationsView";
 import { initializeWorkspace } from "./utils/workspace/workspaceUtils";
+import { getCurrentWorkspace } from "./utils/workspace/workspaceStorage";
 
 export default function App() {
   const [showWelcome, setShowWelcome] = useState(null);
   const [isCheckingWelcome, setIsCheckingWelcome] = useState(true);
+  const [currentWorkspaceId, setCurrentWorkspaceId] = useState(null);
 
   useEffect(() => {
-    const checkWelcomeStatus = async () => {
+    const checkWelcomeStatus = async (forceCheck = false) => {
       try {
         console.log("[App] Verificando estado del wizard...");
 
-        const shouldShow = await shouldShowWelcomeWizard();
-        console.log("[App] ¿Mostrar wizard?", shouldShow);
+        // Inicializar workspace y obtener ID
+        const workspaceId = await initializeWorkspace();
 
-        setShowWelcome(shouldShow);
+        // Si el workspace cambió, forzar verificación
+        if (forceCheck || currentWorkspaceId !== workspaceId) {
+          console.log(
+            `[App] Workspace cambió: ${currentWorkspaceId} → ${workspaceId}`
+          );
+          setCurrentWorkspaceId(workspaceId);
+
+          if (workspaceId) {
+            const shouldShow = await shouldShowWelcomeWizard();
+            console.log("[App] ¿Mostrar wizard?", shouldShow);
+            setShowWelcome(shouldShow);
+          } else {
+            setShowWelcome(true);
+          }
+        }
       } catch (error) {
         console.error("[App] Error checking welcome status:", error);
         setShowWelcome(true);
@@ -33,25 +49,31 @@ export default function App() {
       }
     };
 
-    const initializeWorkspaceFromUrl = async () => {
-      try {
-        console.log("[App] Inicializando workspace desde URL...");
-        const workspaceId = await initializeWorkspace();
-        if (workspaceId) {
-          console.log("[App] Workspace configurado:", workspaceId);
+    // Verificación inicial
+    checkWelcomeStatus(true);
+
+    // Listener para cambios de workspace via postMessage
+    const handleWorkspaceChange = (event) => {
+      if (event.data && event.data.type === "WORKSPACE_ID_RESPONSE") {
+        const newWorkspaceId = event.data.workspaceId;
+        const current = getCurrentWorkspace();
+
+        if (newWorkspaceId && newWorkspaceId !== current) {
+          console.log(
+            "[App] Workspace cambió via postMessage, re-verificando..."
+          );
+          setIsCheckingWelcome(true);
+          setTimeout(() => checkWelcomeStatus(true), 100);
         }
-      } catch (error) {
-        console.error("[App] Error inicializando workspace:", error);
       }
     };
 
-    const initialize = async () => {
-      initializeWorkspaceFromUrl().catch(console.error);
-      await checkWelcomeStatus();
-    };
+    window.addEventListener("message", handleWorkspaceChange);
 
-    initialize();
-  }, []);
+    return () => {
+      window.removeEventListener("message", handleWorkspaceChange);
+    };
+  }, [currentWorkspaceId]);
 
   const handleWelcomeComplete = () => {
     console.log("[App] Wizard completado, ocultando...");

@@ -6,9 +6,9 @@ const extractWorkspaceIdFromUrl = (url) => {
     const fullUrl = urlObj.pathname + urlObj.search + urlObj.hash;
 
     const patterns = [
+      /\/accounts\/(\d+)#?/,
       /[?&]workspaceId[=:](\d+)/i,
       /[?&]workspace[=:](\d+)/i,
-      /\/accounts\/(\d+)#?/,
       /\/workspace\/(\d+)#?/,
       /\/workspaces\/(\d+)#?/,
       /#(\d+)/,
@@ -27,15 +27,6 @@ const extractWorkspaceIdFromUrl = (url) => {
       }
     }
 
-    const allNumbers = fullUrl.match(/\d+/g);
-    if (allNumbers && allNumbers.length > 0) {
-      const lastNumber = allNumbers[allNumbers.length - 1];
-      console.log(
-        `[Workspace] WorkspaceId encontrado como último recurso: ${lastNumber}`
-      );
-      return lastNumber;
-    }
-
     return null;
   } catch (error) {
     console.error("[Workspace] Error al extraer workspaceId:", error);
@@ -44,115 +35,122 @@ const extractWorkspaceIdFromUrl = (url) => {
 };
 
 /**
- * Busca y extrae el ID del workspace desde la URL del navegador
+ * Busca el workspace ID desde la URL actual
  */
 export const getWorkspaceIdFromUrl = () => {
   try {
-    // CASO 1: No está embebida (desarrollo local)
-    if (!window.parent || window.parent === window) {
-      console.log("[Workspace] App no embebida, usando URL actual");
-      return extractWorkspaceIdFromUrl(window.location.href);
-    }
+    // Intentar obtener de la URL actual primero
+    const currentUrl = window.location.href;
+    const workspaceId = extractWorkspaceIdFromUrl(currentUrl);
 
-    // CASO 2: Está embebida - intentar acceso directo
-    try {
-      const parentUrl = window.parent.location.href;
-      const workspaceId = extractWorkspaceIdFromUrl(parentUrl);
-      if (workspaceId) {
-        console.log(
-          "[Workspace] WorkspaceId encontrado de ventana padre:",
-          workspaceId
-        );
-        return workspaceId;
-      }
-    } catch (corsError) {
+    if (workspaceId) {
       console.log(
-        "[Workspace] CORS detectado, usando URL actual como fallback"
+        "[Workspace] WorkspaceId encontrado en URL actual:",
+        workspaceId
       );
+      return workspaceId;
     }
 
-    // CASO 3: Fallback a URL actual
-    return extractWorkspaceIdFromUrl(window.location.href);
+    // Si no está embebida o no se encuentra, intentar acceso directo al padre
+    if (window.parent && window.parent !== window) {
+      try {
+        const parentUrl = window.parent.location.href;
+        const parentWorkspaceId = extractWorkspaceIdFromUrl(parentUrl);
+        if (parentWorkspaceId) {
+          console.log(
+            "[Workspace] WorkspaceId encontrado de ventana padre:",
+            parentWorkspaceId
+          );
+          return parentWorkspaceId;
+        }
+      } catch (corsError) {
+        console.log("[Workspace] CORS detectado al acceder a parent.location");
+      }
+    }
+
+    return null;
   } catch (error) {
     console.error("[Workspace] Error general:", error);
     return null;
   }
 };
 
-// FUNCIÓN ASÍNCRONA PARA COMUNICACIÓN CON IFRAME
+/**
+ * Inicializa el workspace usando postMessage como respaldo
+ */
 export const initializeWorkspaceFromParent = () => {
   return new Promise((resolve) => {
-    let resolved = false;
-    let timeoutId;
-
     // Primero intentar método síncrono
     const syncResult = getWorkspaceIdFromUrl();
-    if (syncResult && (!window.parent || window.parent === window)) {
-      // Si no está embebida, usar resultado síncrono
+
+    // Si encontramos el workspace o no estamos embebidos, resolver inmediatamente
+    if (syncResult || !window.parent || window.parent === window) {
       resolve(syncResult);
       return;
     }
 
-    // Si está embebida y hay CORS, intentar postMessage
-    if (window.parent && window.parent !== window) {
-      const handleMessage = (event) => {
-        if (resolved) return;
+    // Solo usar postMessage si estamos embebidos y no encontramos el workspace
+    let resolved = false;
+    let timeoutId;
 
-        if (event.data && event.data.type === "WORKSPACE_ID_RESPONSE") {
-          resolved = true;
-          clearTimeout(timeoutId);
-          window.removeEventListener("message", handleMessage);
+    const handleMessage = (event) => {
+      if (resolved) return;
 
-          const receivedId = event.data.workspaceId;
-          console.log(
-            "[Workspace] WorkspaceId recibido via postMessage:",
-            receivedId
-          );
+      // Verificar que viene de un dominio confiable
+      if (
+        !event.origin.includes("chateapro.app") &&
+        !event.origin.includes("vercel.app")
+      ) {
+        return;
+      }
 
-          // Actualizar cookies si es diferente
-          const currentId = getCurrentWorkspace();
-          if (currentId !== receivedId) {
-            setCurrentWorkspace(receivedId);
-            console.log(
-              "[Workspace] Cookies actualizadas con nuevo workspaceId"
-            );
-          }
+      if (event.data && event.data.type === "WORKSPACE_ID_RESPONSE") {
+        resolved = true;
+        clearTimeout(timeoutId);
+        window.removeEventListener("message", handleMessage);
 
-          resolve(receivedId);
+        const receivedId = event.data.workspaceId;
+        console.log(
+          "[Workspace] WorkspaceId recibido via postMessage:",
+          receivedId
+        );
+
+        if (receivedId) {
+          // Guardar inmediatamente en localStorage
+          setCurrentWorkspace(receivedId);
         }
-      };
 
-      window.addEventListener("message", handleMessage);
+        resolve(receivedId);
+      }
+    };
 
-      // Solicitar workspaceId al padre
-      window.parent.postMessage(
-        {
-          type: "REQUEST_WORKSPACE_ID",
-        },
-        "*"
-      );
+    window.addEventListener("message", handleMessage);
 
-      // Timeout de 3 segundos
-      timeoutId = setTimeout(() => {
-        if (!resolved) {
-          resolved = true;
-          window.removeEventListener("message", handleMessage);
-          console.warn(
-            "[Workspace] Timeout al solicitar workspaceId, usando fallback"
-          );
-
-          // Usar resultado síncrono como fallback
-          const fallbackId = syncResult || getCurrentWorkspace();
-          resolve(fallbackId);
-        }
-      }, 3000);
-    } else {
-      // No está embebida, usar resultado síncrono
-      resolve(syncResult);
+    // Solicitar workspaceId al padre
+    try {
+      window.parent.postMessage({ type: "REQUEST_WORKSPACE_ID" }, "*");
+      console.log("[Workspace] Solicitud de workspaceId enviada al padre");
+    } catch (error) {
+      console.error("[Workspace] Error enviando postMessage:", error);
     }
+
+    timeoutId = setTimeout(() => {
+      if (!resolved) {
+        resolved = true;
+        window.removeEventListener("message", handleMessage);
+        console.warn("[Workspace] Timeout al solicitar workspaceId");
+
+        // Usar localStorage como último recurso
+        const fallbackId = getCurrentWorkspace();
+        resolve(fallbackId);
+      }
+    }, 2000);
   });
 };
 
+/**
+ * Función principal para inicializar el workspace
+ */
 export const initializeWorkspace = async () => {
   try {
     console.log("[Workspace] Inicializando workspace...");
@@ -160,13 +158,20 @@ export const initializeWorkspace = async () => {
     const workspaceId = await initializeWorkspaceFromParent();
 
     if (workspaceId) {
-      // Verificar si ya existe en cookies
+      // Verificar si es diferente al actual
       const currentWorkspace = getCurrentWorkspace();
 
       if (currentWorkspace !== workspaceId) {
         console.log(
           `[Workspace] Actualizando workspace: ${currentWorkspace} → ${workspaceId}`
         );
+
+        // Si cambia el workspace, limpiar token anterior
+        if (currentWorkspace && currentWorkspace !== workspaceId) {
+          console.log("[Workspace] Limpiando token del workspace anterior");
+          localStorage.removeItem("auth_token");
+        }
+
         setCurrentWorkspace(workspaceId);
       } else {
         console.log(`[Workspace] Workspace ya configurado: ${workspaceId}`);
@@ -185,23 +190,17 @@ export const initializeWorkspace = async () => {
 
 /**
  * Limpia un token quitando "Bearer " del inicio si lo tiene
- * Algunos tokens vienen como "Bearer abc123" y necesitamos solo "abc123"
  */
 export const cleanToken = (token) => {
   if (!token || typeof token !== "string") return null;
-
-  const cleaned = token.replace(/^bearer\s+/i, "").trim();
-
-  return cleaned;
+  return token.replace(/^bearer\s+/i, "").trim();
 };
 
 /**
  * Verifica si un token tiene el formato correcto
- * Debe tener al menos 32 caracteres y solo letras/números
  */
 export const isValidTokenFormat = (token) => {
   if (!token || typeof token !== "string") return false;
-
   const cleaned = cleanToken(token);
   return cleaned && cleaned.length >= 32 && /^[A-Za-z0-9]+$/.test(cleaned);
 };

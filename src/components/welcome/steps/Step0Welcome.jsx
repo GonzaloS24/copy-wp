@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { getWorkspaceIdFromUrl } from "../../../utils/workspace";
 import { workspacePrepare } from "../../../services/workspace";
+import { initializeWorkspace } from "../../../utils/workspace/workspaceUtils";
 
 const Step0Welcome = ({ onNext }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -11,7 +11,7 @@ const Step0Welcome = ({ onNext }) => {
     setError(null);
 
     try {
-      let workspaceId = await getWorkspaceIdFromUrl();
+      let workspaceId = await initializeWorkspace();
       await workspacePrepare(workspaceId);
       onNext();
     } catch (error) {
