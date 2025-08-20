@@ -42,7 +42,9 @@ export const shopifyGetCredentials = async () => {
     }
   );
 
+  console.log('data', response.data)
   return response.data;
+  
 };
 
 export const shopifyDeleteIntegration = async () => {

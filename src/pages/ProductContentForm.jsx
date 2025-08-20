@@ -206,11 +206,12 @@ const parseTimeAndUnit = (timeString) => {
               name: infoProducto.nombre_del_producto || infoProducto.nombre || '',
               price: infoProducto.precio_del_producto || infoProducto.precio || '',
               id: infoProducto.id || infoProducto.id_dropi || '',
-              description: '',
+              description: infoProducto.descripcion || infoProducto.descripcion_del_producto || '',
+              productType: infoProducto.tipo || infoProducto.tipo_de_producto || '',
               image: infoProducto.imagen_del_producto || infoProducto.imagen || null,
               currency: 'COP'
             },
-            productType: infoProducto.tipo === 'variable' || infoProducto.tipo_de_producto === 'variable' ? 'variable' : 'simple',
+            productType: infoProducto.variable === "si" ? 'VARIABLE' : 'SIMPLE',
             isActive: infoProducto.estado === 'activo' || infoProducto.estado_producto === 'activo'
           },
           messageWel: {

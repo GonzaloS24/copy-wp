@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie';
+import { BACK_BASE_URL } from '../../../utils/backendUrl';
 
 const openiaCredential = {
   async getCredentials() {
@@ -9,7 +10,7 @@ const openiaCredential = {
         throw new Error('Authorization token not found in cookies');
       }
 
-      const response = await fetch('http://localhost:3000/api/integrations/openai', {
+      const response = await fetch(`${BACK_BASE_URL}/api/integrations/openai`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -23,7 +24,7 @@ const openiaCredential = {
 
       return await response.json();
     } catch (error) {
-      console.error('Error fetching Dropi credentials:', error);
+      console.error('Error fetching OpenAI credentials:', error);
       throw error;
     }
   }

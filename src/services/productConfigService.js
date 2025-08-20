@@ -1,4 +1,6 @@
-import { getAuthToken } from '../utils/authCookies';
+import { getAuthToken } from '../utils/authCookies'
+import { BACK_BASE_URL } from '../utils/backendUrl';
+;
 
 export class productConfigService {
   static createFetchOptions(token, body) {
@@ -26,7 +28,7 @@ export class productConfigService {
       console.log('Configuring product with data:', configData);
 
       const response = await fetch(
-        'http://localhost:3000/api/integrations/chateapro/set-bot-fields-by-name',
+        `${BACK_BASE_URL}/api/integrations/chateapro/set-bot-fields-by-name`,
         this.createFetchOptions(token, configData)
       );
 

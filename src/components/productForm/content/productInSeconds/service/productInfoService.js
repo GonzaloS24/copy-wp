@@ -6,84 +6,92 @@ const CLOUDFRONT_URL = "https://d39ru7awumhhs2.cloudfront.net/";
 const useProductService = () => {
   const { updateProductData } = useProduct();
   
-const processProductInfo = async (selectedSource, inputValue, setLoadingState) => {
-  let productObject;
-  let productId = inputValue.trim();
-  
-  try {
-    setLoadingState && setLoadingState(1);
+  const processProductInfo = async (selectedSource, inputValue, setLoadingState) => {
+    let productObject;
+    let productId = inputValue.trim();
     
-    if (selectedSource === 'dropi') {
-      console.log('Buscando producto en Dropi con ID:', productId);
-      const productData = await autoCreateFormService.getProductById(productId);
-      productObject = productData?.objects;
-    } else if (selectedSource === 'url') {
-      console.log('Obteniendo producto desde URL:', productId);
-      const response = await autoCreateFormService.getProductsByUrl(productId);
+    try {
+      setLoadingState && setLoadingState(1);
       
-      if (!response || !response.data) {
-        throw new Error('La respuesta del servidor no contiene datos válidos');
-      }
+      if (selectedSource === 'dropi') {
+        console.log('Buscando producto en Dropi con ID:', productId);
+        const productData = await autoCreateFormService.getProductById(productId);
+        productObject = productData?.objects;
+      } else if (selectedSource === 'url') {
+        console.log('Obteniendo producto desde URL:', productId);
+        const response = await autoCreateFormService.getProductsByUrl(productId);
+        
+        if (!response || !response.data) {
+          throw new Error('La respuesta del servidor no contiene datos válidos');
+        }
+        
+        productObject = response.data;
+        productId = productObject.id || productId;
+      } else if (selectedSource === 'shopify') {
+      console.log('Buscando producto en Shopify con ID:', productId);
+      const productData = await autoCreateFormService.getShopifyProductById(productId);
       
-      productObject = response.data;
-      productId = productObject.id || productId;
+      productObject = productData.data; 
+      
+      console.log('Producto de Shopify obtenido:', productObject);
+      
     } else {
       return { success: false, message: 'Fuente no soportada aún' };
     }
 
-    if (!productObject) {
-      throw new Error('No se encontró información válida del producto');
-    }
-
-      setLoadingState && setLoadingState(2);
-      const generatedJson = await autoCreateFormService.generateJson(productObject);
-      console.log('JSON generado por OpenAI:', generatedJson);
-
-      if (!generatedJson?.data) {
-        throw new Error('No se pudo generar la estructura del producto');
+      if (!productObject) {
+        throw new Error('No se encontró información válida del producto');
       }
 
-      const data = generatedJson.data;
+        setLoadingState && setLoadingState(2);
+        const generatedJson = await autoCreateFormService.generateJson(productObject);
+        console.log('JSON generado por OpenAI:', generatedJson);
 
-      const nombre = data?.informacion_de_producto?.nombre_del_producto;
-      const precio = data?.informacion_de_producto?.precio_del_producto;
-      const mensaje_inicial = data?.embudo_de_ventas?.mensaje_inicial;
-      const pregunta_entrada = data?.embudo_de_ventas?.pregunta_de_entrada;
-      const producto_json = JSON.stringify(productObject);
+        if (!generatedJson?.data) {
+          throw new Error('No se pudo generar la estructura del producto');
+        }
 
-      const multimedia = data?.embudo_de_ventas?.multimedia;
-      const urls_imagenes = [];
+        const data = generatedJson.data;
 
-      if (multimedia) {
-        Object.values(multimedia).forEach(url => {
-          if (url && typeof url === 'string' && url.trim() !== '') {
-            urls_imagenes.push(url); 
-          }
-        });
-      }
-      
-      const promptData = {
-        nombre,
-        precio,
-        mensaje_inicial,
-        urls_imagenes,
-        pregunta_entrada,
-        producto_json
-      };
+        const nombre = data?.informacion_de_producto?.nombre_del_producto;
+        const precio = data?.informacion_de_producto?.precio_del_producto;
+        const mensaje_inicial = data?.embudo_de_ventas?.mensaje_inicial;
+        const pregunta_entrada = data?.embudo_de_ventas?.pregunta_de_entrada;
+        const producto_json = JSON.stringify(productObject);
 
-      console.log('Datos preparados para el prompt:', promptData);
+        const multimedia = data?.embudo_de_ventas?.multimedia;
+        const urls_imagenes = [];
 
-      const promptResult = await autoCreateFormService.generatePrompt(promptData);
-      console.log('Resultado del prompt:', promptResult);
+        if (multimedia) {
+          Object.values(multimedia).forEach(url => {
+            if (url && typeof url === 'string' && url.trim() !== '') {
+              urls_imagenes.push(url); 
+            }
+          });
+        }
+        
+        const promptData = {
+          nombre,
+          precio,
+          mensaje_inicial,
+          urls_imagenes,
+          pregunta_entrada,
+          producto_json
+        };
 
-      setLoadingState && setLoadingState(3);
-      
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      const mappedData = mapApiDataToContext(data, productId, promptResult.data?.prompt);
-      updateProductData('', mappedData);
+        console.log('Datos preparados para el prompt:', promptData);
 
-      return { success: true };
+        const promptResult = await autoCreateFormService.generatePrompt(promptData);
+        console.log('Resultado del prompt:', promptResult);
+
+        setLoadingState && setLoadingState(3);
+        
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        const mappedData = mapApiDataToContext(data, productId, promptResult.data?.prompt);
+        updateProductData('', mappedData);
+
+        return { success: true };
 
     } catch (error) {
       console.error('Error en processProductInfo:', error);

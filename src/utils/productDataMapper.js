@@ -38,7 +38,10 @@ export const mapProductDataToServiceFormat = (productData, isInactive = false) =
       nombre_del_producto: productData.info?.formData?.name || '',
       precio_del_producto: productData.info?.formData?.price || '', 
       id_del_producto_en_dropi: productData.info?.formData?.dropiId || '', 
-      tipo_de_producto: productData.info?.productType || 'SIMPLE', 
+      // CAMBIO: tipo_de_producto ahora es el valor del select (físico, digital, servicio)
+      tipo_de_producto: productData.info?.formData?.productType || '', 
+      // NUEVO: variable indica si es simple o variable
+      variable: productData.info?.productType === 'VARIABLE' ? "si" : "no",
       imagen_del_producto: productData.info?.formData?.image || '', 
       estado: isInactive ? 'inactivo' : 'activo'
     },

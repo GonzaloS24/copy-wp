@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie';
+import { BACK_BASE_URL } from '../../../utils/backendUrl'; 
 
 const dropiCredentials = {
   async getCredentials() {
@@ -9,7 +10,7 @@ const dropiCredentials = {
         throw new Error('Authorization token not found in cookies');
       }
 
-      const response = await fetch('http://localhost:3000/api/integrations/dropi', {
+      const response = await fetch(`${BACK_BASE_URL}/api/integrations/dropi`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

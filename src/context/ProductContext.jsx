@@ -12,6 +12,7 @@ export const ProductProvider = ({ children }) => {
         price: '',
         currency: 'COP',
         description: '',
+        productType: '',
         id: '',
         image: ''
       }

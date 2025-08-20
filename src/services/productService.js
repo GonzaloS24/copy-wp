@@ -1,4 +1,5 @@
 import { getAuthToken } from '../utils/authCookies';
+import { BACK_BASE_URL } from '../utils/backendUrl'; 
 
 export class ProductService {
   static createFetchOptions(token) {
@@ -42,8 +43,9 @@ export class ProductService {
 
       console.log('📦 Creando producto con payload simplificado:', JSON.stringify(payload, null, 2));
 
+      // URL actualizada para usar el backend desplegado
       const response = await fetch(
-        'http://localhost:3000/api/integrations/chateapro/bot-fields',
+        `${BACK_BASE_URL}/api/integrations/chateapro/bot-fields`,
         this.createPostFetchOptions(token, payload)
       );
 
@@ -71,7 +73,8 @@ export class ProductService {
       const token = getAuthToken();
       if (!token) throw new Error('No se encontró token de autenticación');
 
-      const response = await fetch('http://localhost:3000/api/integrations/chateapro/products', 
+      // URL actualizada para usar el backend desplegado
+      const response = await fetch(`${BACK_BASE_URL}/api/integrations/chateapro/products`, 
         this.createFetchOptions(token)
       );
 
@@ -83,7 +86,6 @@ export class ProductService {
       const result = await response.json();
       const productsData = this.extractProductsData(result);
       
-    //  console.log('📦 Productos obtenidos:', productsData);
       return productsData.map(product => this.normalizeProductData(product));
       
     } catch (error) {
@@ -91,7 +93,6 @@ export class ProductService {
       throw error;
     }
   }
-
 
   static async getProductConfiguration(productId) {
     try {
@@ -102,7 +103,8 @@ export class ProductService {
       
       console.log(' Obteniendo configuración del producto ID:', cleanId);
       
-      const endpoint = `http://localhost:3000/api/integrations/chateapro/products/${cleanId}`;
+      // URL actualizada para usar el backend desplegado
+      const endpoint = `${BACK_BASE_URL}/api/integrations/chateapro/products/${cleanId}`;
       
       const response = await fetch(endpoint, this.createFetchOptions(token));
 
@@ -140,89 +142,89 @@ export class ProductService {
   }
 
   static async updateProduct(productName, productData) {
-  try {
-    const token = getAuthToken();
-    if (!token) throw new Error('No se encontró token de autenticación');
+    try {
+      const token = getAuthToken();
+      if (!token) throw new Error('No se encontró token de autenticación');
 
-    if (!productData || typeof productData !== 'object') {
-      throw new Error('Los datos del producto son requeridos');
-    }
+      if (!productData || typeof productData !== 'object') {
+        throw new Error('Los datos del producto son requeridos');
+      }
 
-    if (!productName || typeof productName !== 'string') {
-      throw new Error('El nombre del producto es requerido');
-    }
+      if (!productName || typeof productName !== 'string') {
+        throw new Error('El nombre del producto es requerido');
+      }
 
-    const normalizedData = this.normalizeProductDataForUpdate(productData);
+      const normalizedData = this.normalizeProductDataForUpdate(productData);
 
-    const payload = {
-      name: `[Producto Ventas Wp] ${productName.trim()}`,
-      value: JSON.stringify(normalizedData)
-    };
+      const payload = {
+        name: `[Producto Ventas Wp] ${productName.trim()}`,
+        value: JSON.stringify(normalizedData)
+      };
 
-    console.log('Actualizando producto:', productName);
-    console.log('Payload de actualización:', payload);
+      console.log('Actualizando producto:', productName);
+      console.log('Payload de actualización:', payload);
 
+      const fetchOptions = {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include',
+        body: JSON.stringify(payload)
+      };
 
-    const fetchOptions = {
-      method: 'PUT',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      credentials: 'include',
-      body: JSON.stringify(payload)
-    };
-
-    const response = await fetch(
-      'http://localhost:3000/api/integrations/chateapro/bot-fields',
-      fetchOptions
-    );
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(
-        errorData.message || 
-        `Error ${response.status}: ${response.statusText}`
+      // URL actualizada para usar el backend desplegado
+      const response = await fetch(
+        `${BACK_BASE_URL}/api/integrations/chateapro/bot-fields`,
+        fetchOptions
       );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || 
+          `Error ${response.status}: ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      console.log('Producto actualizado exitosamente:', result);
+      
+      return result;
+      
+    } catch (error) {
+      console.error('Error en ProductService.updateProduct:', error);
+      throw error;
     }
-
-    const result = await response.json();
-    console.log('Producto actualizado exitosamente:', result);
-    
-    return result;
-    
-  } catch (error) {
-    console.error('Error en ProductService.updateProduct:', error);
-    throw error;
-  }
   }
 
-  static normalizeProductDataForUpdate(productData) {
+static normalizeProductDataForUpdate(productData) {
+  const info = productData.informacion_de_producto || {};
+  const embudo = productData.embudo_de_ventas || {};
+  const prompt = productData.prompt || {};
+  const voz = productData.voz_con_ia || {};
+  const recordatorios = productData.recordatorios || {};
+  const remarketing = productData.remarketing || {};
+  const activadores = productData.activadores_del_flujo || {};
 
-    const info = productData.informacion_de_producto || {};
-    const embudo = productData.embudo_de_ventas || {};
-    const prompt = productData.prompt || {};
-    const voz = productData.voz_con_ia || {};
-    const recordatorios = productData.recordatorios || {};
-    const remarketing = productData.remarketing || {};
-    const activadores = productData.activadores_del_flujo || {};
+  const multimediaData = embudo.multimedia || {};
+  console.log('🔧 [NORMALIZE] Multimedia extraída:', multimediaData);
 
-    const multimediaData = embudo.multimedia || {};
-    console.log('🔧 [NORMALIZE] Multimedia extraída:', multimediaData);
-
-    return {
-      informacion_de_producto: {
-        id: info.id || info.id_del_producto_en_dropi || "",
-        nombre: info.nombre_del_producto || info.nombre || "",
-        precio: info.precio_del_producto || info.precio || "",
-        id_dropi: info.id_del_producto_en_dropi || info.id_dropi || "",
-        tipo: info.tipo_de_producto || info.tipo || "simple",
-        imagen: info.imagen_del_producto || info.imagen || "",
-        estado_producto: info.estado_producto || info.estado || "inactivo",
-        estado: info.estado || info.estado_producto || "inactivo",
-        nombre_del_producto: info.nombre_del_producto || info.nombre || ""
-      },
+  return {
+    informacion_de_producto: {
+      id: info.id || info.id_del_producto_en_dropi || "",
+      nombre: info.nombre_del_producto || info.nombre || "",
+      precio: info.precio_del_producto || info.precio || "",
+      id_dropi: info.id_del_producto_en_dropi || info.id_dropi || "",
+      tipo: info.tipo_de_producto || info.tipo || "",
+      variable: info.variable === "si" ? "si" : "no",
+      imagen: info.imagen_del_producto || info.imagen || "",
+      estado_producto: info.estado_producto || info.estado || "inactivo",
+      estado: info.estado || info.estado_producto || "inactivo",
+      nombre_del_producto: info.nombre_del_producto || info.nombre || ""
+    },
       embudo_de_ventas: {
         mensaje_inicial: embudo.mensaje_inicial || "",
         multimedia: multimediaData,
@@ -303,37 +305,38 @@ export class ProductService {
   }
 
 
-  static normalizeProductData(product) {
-    try {
-      let productData;
-      if (typeof product.value === 'string') {
-        productData = JSON.parse(product.value);
-      } else if (typeof product.value === 'object') {
-        productData = product.value;
-      } else {
-        console.warn('Producto sin datos válidos:', product);
-        return this.createFallbackProduct(product);
-      }
-
-      const info = productData.informacion_de_producto || {};
-      
-      return {
-        id: this.extractIdFromProductName(product.name) || info.id || 'unknown',
-        name: this.getProductName(info, product),
-        price: this.getProductPrice(info),
-        type: this.getProductType(info),
-        status: this.getProductStatus(info),
-        image: this.getProductImage(info),
-        dropiId: info.id_del_producto_en_dropi || info.id_dropi || '',
-        rawData: product,
-        productData: productData
-      };
-      
-    } catch (error) {
-      console.error('Error al normalizar producto:', error, product);
+static normalizeProductData(product) {
+  try {
+    let productData;
+    if (typeof product.value === 'string') {
+      productData = JSON.parse(product.value);
+    } else if (typeof product.value === 'object') {
+      productData = product.value;
+    } else {
+      console.warn('Producto sin datos válidos:', product);
       return this.createFallbackProduct(product);
     }
+
+    const info = productData.informacion_de_producto || {};
+    
+    return {
+      id: this.extractIdFromProductName(product.name) || info.id || 'unknown',
+      name: this.getProductName(info, product),
+      price: this.getProductPrice(info),
+      type: this.getProductType(info), 
+      variability: this.getProductVariability(info), 
+      status: this.getProductStatus(info),
+      image: this.getProductImage(info),
+      dropiId: info.id_del_producto_en_dropi || info.id_dropi || '',
+      rawData: product,
+      productData: productData
+    };
+    
+  } catch (error) {
+    console.error('Error al normalizar producto:', error, product);
+    return this.createFallbackProduct(product);
   }
+}
 
   static createFallbackProduct(product) {
     const extractedId = this.extractIdFromProductName(product.name);
@@ -390,11 +393,21 @@ export class ProductService {
   }
 
   static getProductType(info) {
-    const type = info.tipo_de_producto || info.tipo || 'simple';
-    if (type === 'simple' || type === 'no') return 'Simple';
-    if (type === 'variable' || type === 'si') return 'Variable';
-    return 'Simple';
+    const type = info.tipo_de_producto || info.tipo || '';
+    
+    if (type === 'fisico') return 'Físico';
+    if (type === 'digital') return 'Digital';
+    if (type === 'servicio') return 'Servicio';
+    
+    return type || 'No especificado';
   }
+
+  static getProductVariability(info) {
+    const variable = info.variable || "no";
+    return variable === "si" ? "Variable" : "Simple";
+  }
+
+
 
   static getProductImage(info) {
     return info.imagen_del_producto || info.imagen || '';

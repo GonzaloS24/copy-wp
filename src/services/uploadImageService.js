@@ -1,4 +1,5 @@
 import { getAuthToken } from '../utils/authCookies';
+import { BACK_BASE_URL } from '../utils/backendUrl';
 
 export class uploadImage {
   static createAuthFetchOptions(token, body) {
@@ -45,9 +46,8 @@ export class uploadImage {
         applicationKey
       };
 
-
       const response = await fetch(
-        'http://localhost:3000/api/integrations/backblaze/authorize',
+        `${BACK_BASE_URL}/api/integrations/backblaze/authorize`,
         this.createAuthFetchOptions(token, payload)
       );
 
@@ -90,7 +90,7 @@ export class uploadImage {
       console.log('Uploading file to Backblaze:', finalFileName);
 
       const response = await fetch(
-        'http://localhost:3000/api/integrations/backblaze/upload',
+        `${BACK_BASE_URL}/api/integrations/backblaze/upload`,
         this.createUploadFetchOptions(token, formData)
       );
 
