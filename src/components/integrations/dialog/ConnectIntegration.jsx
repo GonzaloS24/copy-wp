@@ -6,6 +6,8 @@ import * as getIntegrations from "../../../services/integrations/getIntegrations
 import * as createIntegrations from "../../../services/integrations/createIntegrations";
 import { dropiGetWebhook } from "../../../services/integrations/dropi";
 import { getCurrentWorkspace } from "../../../utils/workspace/workspaceStorage";
+import { showSuccessToast } from "../../../utils/toastNotifications";
+import camelize from "camelize";
 
 export const ConnectIntegration = ({
   isOpen,
@@ -18,7 +20,32 @@ export const ConnectIntegration = ({
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    if (Object.entries(formData).length === 0 && !!integration) {
+      const getFunctionAsync =
+        getIntegrations[`${integration.id}GetCredentials`];
+
+      if (!getFunctionAsync) return;
+
+      getFunctionAsync().then((data) => {
+        setFormData((prev) => ({
+          ...prev,
+          ...camelize(data),
+        }));
+      });
+    }
+  }, [formData, integration]);
+
   const integrationFields = {
+    dropi: [
+      {
+        name: 'apiToken',
+        label: 'Token de Dropi',
+        type: 'password',
+        placeholder: 'Ingresa tu token de Dropi',
+        required: true
+      }
+    ],
     backblaze: [
       {
         name: "applicationKeyId",
@@ -249,6 +276,24 @@ export const ConnectIntegration = ({
         return false;
       }
     }
+
+    // Validaciones específicas
+    if (integration?.id === 'dropi') {
+      const token = formData.apiToken;
+      if (token && token.length < 10) {
+        setError('El token debe tener al menos 10 caracteres');
+        return false;
+      }
+    }
+
+    if (integration?.id === 'shopify') {
+      const shopUrl = formData.shopUrl;
+      if (shopUrl && !shopUrl.includes('.myshopify.com')) {
+        setError('La URL debe ser una URL válida de Shopify (.myshopify.com)');
+        return false;
+      }
+    }
+
     return true;
   };
 
@@ -280,7 +325,7 @@ export const ConnectIntegration = ({
           createIntegrations[`${integration.id}CreateIntegrations`];
         const response = await createFunction(formData);
 
-        if (response.status !== "ok") {
+        if (response.status !== "verified") {
           throw new Error(
             "Error al conectar la integración. Por favor, revisa tus credentiales."
           );
@@ -289,18 +334,54 @@ export const ConnectIntegration = ({
       }
 
       console.log("✅ Integración conectada exitosamente:", result);
+      showSuccessToast("¡Integración conectada exitosamente!");
       onConnect(integration.id, formData);
       setFormData({});
       onClose();
     } catch (error) {
       console.error("Error connecting integration:", error);
-      setError(
-        error.message ||
-          "Error al conectar la integración. Por favor, verifica tus credenciales."
-      );
+      if (error.status === 500) {
+        setError(
+          "Ocurrió un error en la comunicación con el servidor. Por favor intente nuevamente más tarde."
+        );
+      } else {
+        setError(
+          error.message ||
+            "Error al conectar la integración. Por favor, verifica tus credenciales."
+        );
+      }
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // Función para verificar el token de Dropi
+  const verifyDropiToken = async (token) => {
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    // Validación básica del token
+    if (token.length < 10) {
+      throw new Error('Token de Dropi inválido');
+    }
+    
+    return {
+      success: true,
+      message: 'Conectado exitosamente con Dropi'
+    };
+  };
+
+  // Función para verificar la API key de OpenAI
+  const verifyOpenAIKey = async (apiKey) => {
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    if (!apiKey.startsWith('sk-')) {
+      throw new Error('API Key de OpenAI inválida. Debe comenzar con "sk-"');
+    }
+    
+    return {
+      success: true,
+      message: 'Conexión con OpenAI verificada'
+    };
   };
 
   const handleCancelConfirmation = () => {
@@ -319,7 +400,6 @@ export const ConnectIntegration = ({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden">
-        {/* Header */}
         <div className="bg-gradient-to-r from-sky-500 to-blue-600 p-6 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -360,7 +440,6 @@ export const ConnectIntegration = ({
           </div>
         </div>
 
-        {/* Confirmation Modal */}
         {showConfirmation && (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-10">
             <div className="bg-white rounded-xl p-6 m-4 max-w-sm w-full">
@@ -407,9 +486,7 @@ export const ConnectIntegration = ({
           </div>
         )}
 
-        {/* Form */}
         <div className="p-6">
-          {/* Error Message */}
           {error && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
               <div className="flex items-center gap-2">

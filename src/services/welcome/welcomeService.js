@@ -1,10 +1,10 @@
 import { GOOGLE_APPS_SCRIPT_URL } from "../../utils/backendUrl";
-import { getWorkspaceIdFromUrl } from "../../utils/workspace";
 import {
   setCurrentWorkspace,
   getCurrentWorkspace,
   setWorkspaceToken,
 } from "../../utils/workspace";
+import { initializeWorkspace } from "../../utils/workspace/workspaceUtils";
 import { checkWorkspaceToken } from "../workspace/workspaceService";
 
 // Mapeo de respuestas a texto completo
@@ -42,7 +42,7 @@ export const shouldShowWelcomeWizard = async () => {
     console.log("[Welcome] Verificando si mostrar wizard...");
 
     // 1. Obtener workspaceId de la URL o de cookies
-    let workspaceId = getWorkspaceIdFromUrl();
+    let workspaceId = await initializeWorkspace();
 
     if (!workspaceId) {
       // Si no está en URL, intentar obtener de cookies

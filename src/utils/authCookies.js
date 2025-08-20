@@ -1,27 +1,34 @@
-import Cookies from "js-cookie";
-
 const TOKEN_KEY = "auth_token";
 
 export const setAuthToken = (token) => {
-  Cookies.set(TOKEN_KEY, token, {
-    expires: 60,
-    secure: true,
-    sameSite: "strict",
-  });
-  console.log(`[Auth] Token almacenado en cookies (expira en 60 días)`);
+  try {
+    localStorage.setItem(TOKEN_KEY, token);
+    console.log(`[Auth] Token almacenado en localStorage`);
+  } catch (error) {
+    console.error("[Auth] Error guardando token:", error);
+  }
 };
 
 export const getAuthToken = () => {
-  const token = Cookies.get(TOKEN_KEY);
-  if (token) {
-    console.log(`[Auth] Token encontrado en cookies`);
-  } else {
-    console.warn(`[Auth] No se encontró token en cookies`);
+  try {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (token) {
+      console.log(`[Auth] Token encontrado en localStorage`);
+    } else {
+      console.warn(`[Auth] No se encontró token en localStorage`);
+    }
+    return token;
+  } catch (error) {
+    console.error("[Auth] Error leyendo token:", error);
+    return null;
   }
-  return token;
 };
 
 export const removeAuthToken = () => {
-  Cookies.remove(TOKEN_KEY);
-  console.log(`[Auth] Token eliminado de cookies`);
+  try {
+    localStorage.removeItem(TOKEN_KEY);
+    console.log(`[Auth] Token eliminado de localStorage`);
+  } catch (error) {
+    console.error("[Auth] Error eliminando token:", error);
+  }
 };

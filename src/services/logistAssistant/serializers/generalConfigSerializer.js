@@ -24,6 +24,7 @@ export const generalConfigSerializer = (formData) => {
 
     voz_con_ia: {
       usar_audio: generalConfigData.AIAudio.useAudioAI ? "si" : "no", // Posibles valores: "si" o "no"
+      token: generalConfigData.AIAudio.token,
       id_de_la_voz: generalConfigData.AIAudio.voiceId,
       estabilidad: String(generalConfigData.AIAudio.stability),
       similaridad: String(generalConfigData.AIAudio.similarity),

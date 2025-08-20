@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { getCurrentWorkspace } from "../../../utils/workspace/workspaceStorage";
 
 const Step6Token = ({
   token,
@@ -12,6 +13,32 @@ const Step6Token = ({
   onRetry = null,
 }) => {
   const [localError, setLocalError] = useState("");
+  const [currentWorkspaceId, setCurrentWorkspaceId] = useState(null);
+
+  // Detectar cambios de workspace y limpiar token
+  useEffect(() => {
+    const workspaceId = getCurrentWorkspace();
+
+    if (currentWorkspaceId && currentWorkspaceId !== workspaceId) {
+      console.log(
+        `[Step6Token] Workspace cambió: ${currentWorkspaceId} → ${workspaceId}`
+      );
+      console.log("[Step6Token] Limpiando token anterior del localStorage");
+
+      // Limpiar token anterior
+      localStorage.removeItem("auth_token");
+
+      // Limpiar el input también
+      onTokenChange("");
+    }
+
+    setCurrentWorkspaceId(workspaceId);
+  }, [currentWorkspaceId, onTokenChange]);
+
+  // limpiar token al montar el componente por primera vez
+  useEffect(() => {
+    localStorage.removeItem("auth_token");
+  }, []);
 
   const handleTokenChange = (e) => {
     const value = e.target.value;
@@ -221,7 +248,7 @@ const Step6Token = ({
                 controls
                 preload="metadata"
               >
-                <source src="" type="video/mp4" />
+                <source type="video/mp4" />
                 Tu navegador no soporta el elemento de video.
               </video>
             </div>

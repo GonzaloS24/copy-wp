@@ -2,6 +2,7 @@ import z from "zod/v4";
 
 const AIAudioSchema = z.object({
   useAudioAI: z.boolean(),
+  token: z.string(),
   voiceId: z.string(),
   respondAudioWithAudio: z.boolean(),
   maxAudioCount: z.int().positive(),

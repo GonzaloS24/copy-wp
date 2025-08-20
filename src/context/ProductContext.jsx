@@ -5,7 +5,7 @@ const ProductContext = createContext();
 export const ProductProvider = ({ children }) => {
   const [productData, setProductData] = useState({
     info: {
-      productType: 'simple',
+      productType: 'SIMPLE',
       isActive: false,
       formData: {
         name: '',

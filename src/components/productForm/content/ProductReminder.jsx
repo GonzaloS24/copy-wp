@@ -69,6 +69,50 @@ export const ProductReminder = () => {
     });
   };
 
+  const handleTooltipToggle = (tooltip, show) => {
+    updateProductData('reminder', {
+      showTooltips: {
+        ...reminderData.showTooltips,
+        [tooltip]: show
+      }
+    });
+  };
+
+  const insertReminderExample = (reminderNumber, exampleText) => {
+    if (reminderNumber === 1) {
+      handleReminder1TextChange(exampleText);
+    } else if (reminderNumber === 2) {
+      handleReminder2TextChange(exampleText);
+    }
+  };
+
+  const handleTimeRangeToggle = () => {
+    updateProductData('reminder', {
+      timeRange: {
+        ...reminderData.timeRange,
+        enabled: !reminderData.timeRange.enabled
+      }
+    });
+  };
+
+  const handleMinTimeChange = (value) => {
+    updateProductData('reminder', {
+      timeRange: {
+        ...reminderData.timeRange,
+        minTime: value
+      }
+    });
+  };
+
+  const handleMaxTimeChange = (value) => {
+    updateProductData('reminder', {
+      timeRange: {
+        ...reminderData.timeRange,
+        maxTime: value
+      }
+    });
+  };
+
   const handleReminder1TimeChange = (value) => {
     if (!touchedFields.reminder1Time) {
       setTouchedField('reminder1Time');
@@ -135,6 +179,9 @@ export const ProductReminder = () => {
     });
   };
 
+  // Variables para las horas
+  const hora_min = reminderData.timeRange?.minTime || '09:00';
+  const hora_max = reminderData.timeRange?.maxTime || '20:00';
 
   return (
     <div className="p-6 bg-white">
@@ -143,6 +190,7 @@ export const ProductReminder = () => {
           Recordatorios
         </h1>
         
+
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 items-start">
           <div className="flex flex-col">
@@ -319,7 +367,56 @@ export const ProductReminder = () => {
             </button>
           </div>
         </div>
+                    {/* Toggle para rango de horas */}
+        <div className="mb-8 p-4 bg-gray-50 rounded-lg">
+          <div className="flex items-center gap-3 mb-4">
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={reminderData.timeRange?.enabled || false}
+                onChange={handleTimeRangeToggle}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+            </label>
+            <span className="text-slate-700 font-medium">
+              ¿Deseas definir un rango de horas para enviar los recordatorios?
+            </span>
+          </div>
 
+          {reminderData.timeRange?.enabled && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Hora mínima
+                </label>
+                <div className="relative">
+                  <input
+                    type="time"
+                    value={hora_min}
+                    onChange={(e) => handleMinTimeChange(e.target.value)}
+                    className="w-full p-3 border-2 border-slate-200 rounded-lg text-base bg-white focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Hora máxima
+                </label>
+                <div className="relative">
+                  <input
+                    type="time"
+                    value={hora_max}
+                    onChange={(e) => handleMaxTimeChange(e.target.value)}
+                    className="w-full p-3 border-2 border-slate-200 rounded-lg text-base bg-white focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500"
+                  />
+
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -23,7 +23,7 @@ export class productConfigService {
         throw new Error('Configuration data is required');
       }
 
-      console.log('⚙️ Configuring product with data:', configData);
+      console.log('Configuring product with data:', configData);
 
       const response = await fetch(
         'http://localhost:3000/api/integrations/chateapro/set-bot-fields-by-name',
@@ -39,7 +39,7 @@ export class productConfigService {
       }
 
       const result = await response.json();
-      console.log('✅ Product configuration successful:', result);
+      console.log('Product configuration successful:', result);
       
       return result;
       

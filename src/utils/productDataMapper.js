@@ -24,7 +24,6 @@ export const mapProductDataToServiceFormat = (productData, isInactive = false) =
       }
     });
 
-    // Asegurar que c1 siempre exista, aunque sea vacío
     if (!multimedia.c1) {
       multimedia.c1 = '';
       console.log('🔧 c1 no encontrado, asignando string vacío');
@@ -39,7 +38,7 @@ export const mapProductDataToServiceFormat = (productData, isInactive = false) =
       nombre_del_producto: productData.info?.formData?.name || '',
       precio_del_producto: productData.info?.formData?.price || '', 
       id_del_producto_en_dropi: productData.info?.formData?.dropiId || '', 
-      tipo_de_producto: productData.info?.productType || 'simple', 
+      tipo_de_producto: productData.info?.productType || 'SIMPLE', 
       imagen_del_producto: productData.info?.formData?.image || '', 
       estado: isInactive ? 'inactivo' : 'activo'
     },
@@ -50,7 +49,7 @@ export const mapProductDataToServiceFormat = (productData, isInactive = false) =
     },
     prompt: {
       tipo_de_prompt: productData.freePrompt?.promptType || 'libre',
-      prompt_libre: productData.freePrompt?.promptType === 'libre' ? getPromptText(productData.freePrompt) : '',
+      prompt_libre: productData.freePrompt?.promptType === 'libre' ? (productData.freePrompt?.promptText || '') : '',
       prompt_guiado_contextualizacion: productData.freePrompt?.promptType === 'guiado' ? guideData.contextualizacion || '' : '',
       prompt_guiado_ficha_tecnica: productData.freePrompt?.promptType === 'guiado' ? guideData.fichaTecnica || '' : '',
       prompt_guiado_guion_conversacional: productData.freePrompt?.promptType === 'guiado' ? guideData.guionConversacional || '' : '',
@@ -74,8 +73,8 @@ export const mapProductDataToServiceFormat = (productData, isInactive = false) =
         ? `${productData.reminder.reminder2.time}${productData.reminder.reminder2.unit}` 
         : '',
       mensaje_recordatorio_2: productData.reminder?.reminder2?.text || '', 
-      horario_minimo: productData.reminder?.timeRange?.enabled ? productData.reminder.timeRange.minTime : '', 
-      horario_maximo: productData.reminder?.timeRange?.enabled ? productData.reminder.timeRange.maxTime : ''  
+      hora_min: productData.reminder?.timeRange?.enabled ? productData.reminder.timeRange.minTime : '', 
+      hora_max: productData.reminder?.timeRange?.enabled ? productData.reminder.timeRange.maxTime : ''  
     },
     remarketing: {
       tiempo_remarketing_1: productData.remarketing?.remarketing1?.time ? `${productData.remarketing.remarketing1.time}${productData.remarketing.remarketing1.unit}` : '', 
@@ -84,8 +83,8 @@ export const mapProductDataToServiceFormat = (productData, isInactive = false) =
       plantilla_remarketing_2: productData.remarketing?.remarketing2?.template || '' 
     },
     activadores_del_flujo: {
-      palabras_clave: productData.triggers?.keywords || productData.activators?.keywords || '', // Corregido: usar triggers en lugar de activators
-      ids_de_anuncio: productData.triggers?.adIds || productData.activators?.adIds || '' // Corregido: usar triggers en lugar de activators
+      palabras_clave: productData.triggers?.keywords || productData.activators?.keywords || '', 
+      ids_de_anuncio: productData.triggers?.adIds || productData.activators?.adIds || '' 
     }
   };
 
