@@ -1,8 +1,8 @@
 // Template NS de los asistentes
 export const ASSISTANT_TEMPLATE_NS = {
-  LOGISTIC: "zkyasze0q8tquwio0fnirvbdgcp0luva",
-  CARTS: "mjvisba1ugmhdttuqnbpvjtocbllluea",
-  WHATSAPP_SALES: "6oaa4zwoupsuuhmsdregbas919fhocgh",
+  LOGISTIC: "rlgblvshr3kx37gv6jlaroervpsfheqp",
+  CARTS: "9vmvwba67ckqncrkpkae0xjuhpd1ccxc",
+  WHATSAPP_SALES: "gaxwwhrwajcoti5xkvspjj17gzs8vdth",
   COMMENTS: "ugmasxccs5mpnzqj4rb1ex9rdvld4diu",
   REMARKETING: "byu2drpxtxhmcbgvyuktxrjyofbmemha",
   AI_CALLS: "hy2mzxzi0sm0ijnrpeiqxprrluimt83v",
