@@ -9,21 +9,38 @@ import { LogistAssistantPage } from "./pages/LogistAssistantPage";
 import { useEffect, useState } from "react";
 import { shouldShowWelcomeWizard } from "./services/welcome";
 import WelcomeWizard from "./components/welcome/WelcomeWizard";
-import { IntegrationsView } from './pages/IntegrationsView';
+import { IntegrationsView } from "./pages/IntegrationsView";
+import { initializeWorkspace } from "./utils/workspace/workspaceUtils";
+import { getCurrentWorkspace } from "./utils/workspace/workspaceStorage";
 
 export default function App() {
   const [showWelcome, setShowWelcome] = useState(null);
   const [isCheckingWelcome, setIsCheckingWelcome] = useState(true);
+  const [currentWorkspaceId, setCurrentWorkspaceId] = useState(null);
 
   useEffect(() => {
-    const checkWelcomeStatus = async () => {
+    const checkWelcomeStatus = async (forceCheck = false) => {
       try {
         console.log("[App] Verificando estado del wizard...");
 
-        const shouldShow = await shouldShowWelcomeWizard();
-        console.log("[App] ¿Mostrar wizard?", shouldShow);
+        // Inicializar workspace y obtener ID
+        const workspaceId = await initializeWorkspace();
 
-        setShowWelcome(shouldShow);
+        // Si el workspace cambió, forzar verificación
+        if (forceCheck || currentWorkspaceId !== workspaceId) {
+          console.log(
+            `[App] Workspace cambió: ${currentWorkspaceId} → ${workspaceId}`
+          );
+          setCurrentWorkspaceId(workspaceId);
+
+          if (workspaceId) {
+            const shouldShow = await shouldShowWelcomeWizard();
+            console.log("[App] ¿Mostrar wizard?", shouldShow);
+            setShowWelcome(shouldShow);
+          } else {
+            setShowWelcome(true);
+          }
+        }
       } catch (error) {
         console.error("[App] Error checking welcome status:", error);
         setShowWelcome(true);
@@ -32,8 +49,31 @@ export default function App() {
       }
     };
 
-    checkWelcomeStatus();
-  }, []);
+    // Verificación inicial
+    checkWelcomeStatus(true);
+
+    // Listener para cambios de workspace via postMessage
+    const handleWorkspaceChange = (event) => {
+      if (event.data && event.data.type === "WORKSPACE_ID_RESPONSE") {
+        const newWorkspaceId = event.data.workspaceId;
+        const current = getCurrentWorkspace();
+
+        if (newWorkspaceId && newWorkspaceId !== current) {
+          console.log(
+            "[App] Workspace cambió via postMessage, re-verificando..."
+          );
+          setIsCheckingWelcome(true);
+          setTimeout(() => checkWelcomeStatus(true), 100);
+        }
+      }
+    };
+
+    window.addEventListener("message", handleWorkspaceChange);
+
+    return () => {
+      window.removeEventListener("message", handleWorkspaceChange);
+    };
+  }, [currentWorkspaceId]);
 
   const handleWelcomeComplete = () => {
     console.log("[App] Wizard completado, ocultando...");
@@ -77,14 +117,10 @@ export default function App() {
             path="/asistente-logistico"
             element={<LogistAssistantPage />}
           />
-          <Route
-            path="/integraciones"
-            element={<IntegrationsView />}
-          />
+          <Route path="/integraciones" element={<IntegrationsView />} />
 
           {/* Capturar todas las rutas no válidas y redirigir a home */}
           <Route path="*" element={<Navigate to="/" replace />} />
-
         </Route>
       </Routes>
     </BrowserRouter>
