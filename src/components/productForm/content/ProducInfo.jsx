@@ -100,7 +100,7 @@ export const ProductInfo = () => {
   // Opciones para el select de tipo de producto
   const productTypes = [
     { value: '', label: 'Selecciona un tipo', disabled: true },
-    { value: 'fisico', label: 'Físico' },
+    { value: 'fisico', label: 'Producto Físico' },
     { value: 'digital', label: 'Producto Digital' },
     { value: 'servicio', label: 'Servicio' }
   ];

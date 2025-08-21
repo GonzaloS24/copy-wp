@@ -1,11 +1,10 @@
-// src/components/ProductMessageWel/ProductMessageWel.jsx
 import React, { useState } from 'react';
 import { useProduct } from '../../../context/ProductContext';
 import { MediaManager } from './mediaCarrusel/MediaManager';
 
 export const ProductMessageWel = () => {
   const { productData, updateProductData, validationState, updateValidationState } = useProduct();
-  const [showFileTypesModal, setShowFileTypesModal] = useState(false); // Estado del modal
+  const [showFileTypesModal, setShowFileTypesModal] = useState(false); 
 
   const initialMediaItems = [
     { id: 1, type: 'image', icon: '🖼️', filled: false },
@@ -64,7 +63,6 @@ export const ProductMessageWel = () => {
           Mensajes de bienvenida
         </h1>
 
-        {/* Mensaje inicial */}
         <div className="mb-6 flex flex-col">
           <label className={`text-base font-semibold mb-2 ${
             !isFieldValid('initialMessage') ? 'text-red-500' : 'text-slate-700'
@@ -88,16 +86,14 @@ export const ProductMessageWel = () => {
           )}
         </div>
 
-        {/* Pasamos los estados del modal a MediaManager */}
         <MediaManager
           mediaItems={messageWelData.mediaItems}
           updateProductData={updateProductData}
           parentData={messageWelData}
-          showFileTypesModal={showFileTypesModal} // Prop para mostrar/ocultar
-          setShowFileTypesModal={setShowFileTypesModal} // Prop para cambiar el estado
+          showFileTypesModal={showFileTypesModal} 
+          setShowFileTypesModal={setShowFileTypesModal} 
         />
 
-        {/* Pregunta de entrada */}
         <div className="mb-6 flex flex-col">
           <label className={`text-base font-semibold mb-2 ${
             !isFieldValid('entryQuestion') ? 'text-red-500' : 'text-slate-700'

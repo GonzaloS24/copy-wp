@@ -211,7 +211,7 @@ const parseTimeAndUnit = (timeString) => {
               image: infoProducto.imagen_del_producto || infoProducto.imagen || null,
               currency: 'COP'
             },
-            productType: infoProducto.variable === "si" ? 'VARIABLE' : 'SIMPLE',
+            productType: infoProducto.variable === "VARIABLE" ? 'VARIABLE' : 'SIMPLE',
             isActive: infoProducto.estado === 'activo' || infoProducto.estado_producto === 'activo'
           },
           messageWel: {

@@ -43,8 +43,7 @@ export class ProductService {
 
       console.log('📦 Creando producto con payload simplificado:', JSON.stringify(payload, null, 2));
 
-      // URL actualizada para usar el backend desplegado
-      const response = await fetch(
+         const response = await fetch(
         `${BACK_BASE_URL}/api/integrations/chateapro/bot-fields`,
         this.createPostFetchOptions(token, payload)
       );
@@ -219,17 +218,14 @@ static normalizeProductDataForUpdate(productData) {
       precio: info.precio_del_producto || info.precio || "",
       id_dropi: info.id_del_producto_en_dropi || info.id_dropi || "",
       tipo: info.tipo_de_producto || info.tipo || "",
-      variable: info.variable === "si" ? "si" : "no",
+      variable: info.variable === "VARIABLE" ? "VARIABLE" : "SIMPLE",
       imagen: info.imagen_del_producto || info.imagen || "",
-      estado_producto: info.estado_producto || info.estado || "inactivo",
-      estado: info.estado || info.estado_producto || "inactivo",
-      nombre_del_producto: info.nombre_del_producto || info.nombre || ""
+      estado: info.estado || info.estado_producto || "inactivo"
     },
       embudo_de_ventas: {
         mensaje_inicial: embudo.mensaje_inicial || "",
         multimedia: multimediaData,
-        pregunta_de_entrada: embudo.pregunta_de_entrada || "",
-        imagen_1: embudo.imagen_1 || ""
+        pregunta_de_entrada: embudo.pregunta_de_entrada || ""
       },
       prompt: {
         tipo_de_prompt: prompt.tipo_de_prompt || "libre",

@@ -1,4 +1,3 @@
-// src/components/ProductMessageWel/MediaPreview.jsx
 import React from 'react';
 
 const formatFileSize = (bytes) => {

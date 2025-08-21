@@ -5,29 +5,22 @@ export const mapProductDataToServiceFormat = (productData, isInactive = false) =
     console.log('🔍 Procesando mediaItems:', mediaItems);
     
     if (!mediaItems || !Array.isArray(mediaItems)) {
-      console.log('⚠️ MediaItems no es un array válido, retornando c1 vacío');
-      return { c1: '' };
+      console.log('⚠️ MediaItems no es un array válido, retornando array vacío');
+      return [];
     }
 
-    const multimedia = {};
-    let counter = 1;
+    const multimedia = [];
 
     mediaItems.forEach((item, index) => {
       console.log(`📋 Procesando item ${index}:`, item);
       
       if (item.filled && item.url) {
-        multimedia[`c${counter}`] = item.url;
-        console.log(`✅ Asignado c${counter}: ${item.url}`);
-        counter++;
+        multimedia.push(item.url);
+        console.log(`✅ Agregado URL: ${item.url}`);
       } else {
         console.log(`❌ Item ${index} omitido - filled: ${item.filled}, url: ${item.url}`);
       }
     });
-
-    if (!multimedia.c1) {
-      multimedia.c1 = '';
-      console.log('🔧 c1 no encontrado, asignando string vacío');
-    }
 
     console.log('📦 Multimedia final:', multimedia);
     return multimedia;
@@ -38,10 +31,8 @@ export const mapProductDataToServiceFormat = (productData, isInactive = false) =
       nombre_del_producto: productData.info?.formData?.name || '',
       precio_del_producto: productData.info?.formData?.price || '', 
       id_del_producto_en_dropi: productData.info?.formData?.dropiId || '', 
-      // CAMBIO: tipo_de_producto ahora es el valor del select (físico, digital, servicio)
       tipo_de_producto: productData.info?.formData?.productType || '', 
-      // NUEVO: variable indica si es simple o variable
-      variable: productData.info?.productType === 'VARIABLE' ? "si" : "no",
+      variable: productData.info?.productType === 'VARIABLE' ? "VARIABLE" : "no",
       imagen_del_producto: productData.info?.formData?.image || '', 
       estado: isInactive ? 'inactivo' : 'activo'
     },
@@ -69,11 +60,11 @@ export const mapProductDataToServiceFormat = (productData, isInactive = false) =
     },
     recordatorios: {
       tiempo_recordatorio_1: productData.reminder?.reminder1?.time && productData.reminder?.reminder1?.unit 
-        ? `${productData.reminder.reminder1.time}${productData.reminder.reminder1.unit}` 
+        ? `${productData.reminder.reminder1.time} ${productData.reminder.reminder1.unit}` 
         : '',
       mensaje_recordatorio_1: productData.reminder?.reminder1?.text || '', 
       tiempo_recordatorio_2: productData.reminder?.reminder2?.time && productData.reminder?.reminder2?.unit 
-        ? `${productData.reminder.reminder2.time}${productData.reminder.reminder2.unit}` 
+        ? `${productData.reminder.reminder2.time} ${productData.reminder.reminder2.unit}` 
         : '',
       mensaje_recordatorio_2: productData.reminder?.reminder2?.text || '', 
       hora_min: productData.reminder?.timeRange?.enabled ? productData.reminder.timeRange.minTime : '', 
