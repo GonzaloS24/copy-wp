@@ -39,12 +39,12 @@ export const ConnectIntegration = ({
   const integrationFields = {
     dropi: [
       {
-        name: 'apiToken',
-        label: 'Token de Dropi',
-        type: 'password',
-        placeholder: 'Ingresa tu token de Dropi',
-        required: true
-      }
+        name: "apiToken",
+        label: "Token de Dropi",
+        type: "password",
+        placeholder: "Ingresa tu token de Dropi",
+        required: true,
+      },
     ],
     backblaze: [
       {
@@ -241,7 +241,7 @@ export const ConnectIntegration = ({
         {
           title: 'Ingresa a la integración de "Google Maps"',
           button: {
-            href: `https://chateapro.app/settings/accounts/${workspaceId}#/google_map`,
+            href: `https://chateapro.app/settings/accounts/${workspaceId}#/integration/google_map`,
             text: "Ir a Google Maps",
           },
         },
@@ -278,18 +278,18 @@ export const ConnectIntegration = ({
     }
 
     // Validaciones específicas
-    if (integration?.id === 'dropi') {
+    if (integration?.id === "dropi") {
       const token = formData.apiToken;
       if (token && token.length < 10) {
-        setError('El token debe tener al menos 10 caracteres');
+        setError("El token debe tener al menos 10 caracteres");
         return false;
       }
     }
 
-    if (integration?.id === 'shopify') {
+    if (integration?.id === "shopify") {
       const shopUrl = formData.shopUrl;
-      if (shopUrl && !shopUrl.includes('.myshopify.com')) {
-        setError('La URL debe ser una URL válida de Shopify (.myshopify.com)');
+      if (shopUrl && !shopUrl.includes(".myshopify.com")) {
+        setError("La URL debe ser una URL válida de Shopify (.myshopify.com)");
         return false;
       }
     }
@@ -357,30 +357,30 @@ export const ConnectIntegration = ({
 
   // Función para verificar el token de Dropi
   const verifyDropiToken = async (token) => {
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
     // Validación básica del token
     if (token.length < 10) {
-      throw new Error('Token de Dropi inválido');
+      throw new Error("Token de Dropi inválido");
     }
-    
+
     return {
       success: true,
-      message: 'Conectado exitosamente con Dropi'
+      message: "Conectado exitosamente con Dropi",
     };
   };
 
   // Función para verificar la API key de OpenAI
   const verifyOpenAIKey = async (apiKey) => {
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    if (!apiKey.startsWith('sk-')) {
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+
+    if (!apiKey.startsWith("sk-")) {
       throw new Error('API Key de OpenAI inválida. Debe comenzar con "sk-"');
     }
-    
+
     return {
       success: true,
-      message: 'Conexión con OpenAI verificada'
+      message: "Conexión con OpenAI verificada",
     };
   };
 
