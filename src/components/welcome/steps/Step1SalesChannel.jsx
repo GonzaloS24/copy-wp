@@ -50,7 +50,7 @@ const Step1SalesChannel = ({
                     }`}
                   >
                     <div
-                      className={`text-white transition-transform duration-300 text-xl sm:text-3xl ${
+                      className={`text-white transition-transform w-20 duration-300 text-xl sm:text-3xl ${
                         isSelected ? "scale-110" : "group-hover:scale-105"
                       }`}
                     >

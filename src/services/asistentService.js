@@ -2,7 +2,7 @@ import apiClient from "../config/api";
 import {
   TEMPLATE_TO_KEY_MAP,
   ASSISTANT_TEMPLATE_NS,
-} from "../utils/constants/assistants";
+} from "../utils/constants/assistants.jsx";
 
 // obtener asistentes instalados
 export const getInstalledAssistants = async () => {

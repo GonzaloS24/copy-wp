@@ -8,7 +8,7 @@ import {
 import {
   getAssistantConfig,
   ASSISTANT_TEMPLATE_NS,
-} from "../utils/constants/assistants";
+} from "../utils/constants/assistants.jsx";
 import AssistantInstaller from "../components/AssistantInstaller";
 import { MainLayout } from "../components/MainLayout";
 
