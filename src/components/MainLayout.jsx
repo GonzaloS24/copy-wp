@@ -50,13 +50,13 @@ export const MainLayout = ({ children }) => {
             >
               <FiMenu className="text-xl" />
             </button>
-            <div className="flex items-center gap-3">
+            {/* <div className="flex items-center gap-3">
               <img
                 src={logo}
                 alt="chateapro logo"
                 className="h-8 w-auto sm:h-8 md:h-10"
               />
-            </div>
+            </div> */}
           </div>
 
           <h1 className="absolute left-1/2 transform -translate-x-1/2 text-xl font-semibold text-slate-600 m-0 tracking-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-md">

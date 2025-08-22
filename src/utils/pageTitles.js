@@ -1,4 +1,4 @@
-import { ASSISTANT_NAMES } from "../utils/constants/assistants";
+import { ASSISTANT_NAMES } from "../utils/constants/assistants.jsx";
 
 // Función para generar títulos basados en la ruta
 export const getPageTitle = (pathname, params = {}) => {
