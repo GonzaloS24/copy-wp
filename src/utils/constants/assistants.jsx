@@ -1,3 +1,10 @@
+import logisticIcon from "../../assets/assistantIcons/Asistente_Logistico.png";
+import cartIcon from "../../assets/assistantIcons/Asistente_Carritos Abandonados.png";
+import whatsappSalesIcon from "../../assets/assistantIcons/Asistente_Ventas Wp.png";
+import commentsIcon from "../../assets/assistantIcons/Asistente_Comentarios.png";
+import remarketingIcon from "../../assets/assistantIcons/Asistente_Remarketing.png";
+import aiCallsIcon from "../../assets/assistantIcons/Asistente_Llamadas IA.png";
+
 // Template NS de los asistentes
 export const ASSISTANT_TEMPLATE_NS = {
   LOGISTIC: "rlgblvshr3kx37gv6jlaroervpsfheqp",
@@ -43,7 +50,13 @@ export const ASSISTANT_CONFIG = {
     template_ns: ASSISTANT_TEMPLATE_NS.LOGISTIC,
     title: "Asistente logístico",
     description: "Confirmación, seguimiento de guías y solución de novedades",
-    icon: "📦",
+    icon: (
+      <img
+        src={logisticIcon}
+        alt="Asistente Logístico"
+        className="w-full h-full object-contain"
+      />
+    ),
     configRoute: ASSISTANT_CONFIG_ROUTES[ASSISTANT_TEMPLATE_NS.LOGISTIC],
     installConfig: {
       title:
@@ -63,7 +76,13 @@ export const ASSISTANT_CONFIG = {
     template_ns: ASSISTANT_TEMPLATE_NS.CARTS,
     title: "Asistente de carritos",
     description: "Recupera hasta el 50% de tus carritos abandonados",
-    icon: "🛒",
+    icon: (
+      <img
+        src={cartIcon}
+        alt="Asistente Carritos Abandonados"
+        className="w-full h-full object-contain"
+      />
+    ),
     configRoute: ASSISTANT_CONFIG_ROUTES[ASSISTANT_TEMPLATE_NS.CARTS],
     installConfig: {
       title:
@@ -82,7 +101,13 @@ export const ASSISTANT_CONFIG = {
     template_ns: ASSISTANT_TEMPLATE_NS.WHATSAPP_SALES,
     title: "Asistente de Ventas WhatsApp",
     description: "Escala tus ventas por WhatsApp y convierte a más del 10%",
-    icon: "✓",
+    icon: (
+      <img
+        src={whatsappSalesIcon}
+        alt="Asistente Ventas WhatsApp"
+        className="w-full h-full object-contain"
+      />
+    ),
     configRoute: ASSISTANT_CONFIG_ROUTES[ASSISTANT_TEMPLATE_NS.WHATSAPP_SALES],
     installConfig: {
       title:
@@ -102,7 +127,13 @@ export const ASSISTANT_CONFIG = {
     template_ns: ASSISTANT_TEMPLATE_NS.COMMENTS,
     title: "Asistente de comentarios",
     description: "Elimina comentarios negativos y vende desde Messenger",
-    icon: "💬",
+    icon: (
+      <img
+        src={commentsIcon}
+        alt="Asistente Comentarios"
+        className="w-full h-full object-contain"
+      />
+    ),
     configRoute: ASSISTANT_CONFIG_ROUTES[ASSISTANT_TEMPLATE_NS.COMMENTS],
     installConfig: {
       title:
@@ -123,7 +154,13 @@ export const ASSISTANT_CONFIG = {
     title: "Asistente de remarketing",
     description:
       "Convierte a los clientes que ya te han comprado en fieles a tu marca",
-    icon: "🎯",
+    icon: (
+      <img
+        src={remarketingIcon}
+        alt="Asistente Remarketing"
+        className="w-full h-full object-contain"
+      />
+    ),
     configRoute: ASSISTANT_CONFIG_ROUTES[ASSISTANT_TEMPLATE_NS.REMARKETING],
     installConfig: {
       title:
@@ -144,7 +181,13 @@ export const ASSISTANT_CONFIG = {
     title: "Asistente de llamadas IA",
     description:
       "Muy pronto disponible para llamar a tus clientes con inteligencia artificial",
-    icon: "📞",
+    icon: (
+      <img
+        src={aiCallsIcon}
+        alt="Asistente Llamadas IA"
+        className="w-full h-full object-contain"
+      />
+    ),
     configRoute: null, // No disponible aún
     isComingSoon: true, // Marcador especial para próximamente
     installConfig: {

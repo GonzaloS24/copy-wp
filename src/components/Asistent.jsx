@@ -4,7 +4,7 @@ import {
   updateAssistantsWithInstallationStatus,
 } from "../services/asistentService";
 import { baseAsistentes } from "../utils/asistentUtils";
-import { ASSISTANT_CONFIG_ROUTES } from "../utils/constants/assistants";
+import { ASSISTANT_CONFIG_ROUTES } from "../utils/constants/assistants.jsx";
 import { useNavigate } from "react-router-dom";
 
 export const Asistent = () => {
@@ -155,7 +155,7 @@ export const Asistent = () => {
 
   const getIconClasses = (status) => {
     const baseClasses =
-      "w-20 h-20 rounded-2xl flex items-center justify-center border transition-all duration-300 ease-in-out text-2xl";
+      "w-30 h-20 rounded-2xl flex items-center justify-center border transition-all duration-300 ease-in-out text-2xl";
 
     switch (status) {
       case "proximamente":

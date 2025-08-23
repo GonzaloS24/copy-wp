@@ -243,14 +243,20 @@ const Step6Token = ({
 
             {/* Video container */}
             <div className="relative aspect-video bg-gray-900">
-              <video
-                className="w-full h-full object-cover"
-                controls
-                preload="metadata"
-              >
-                <source type="video/mp4" />
-                Tu navegador no soporta el elemento de video.
-              </video>
+              <div className="relative aspect-video bg-gray-900">
+                <video
+                  className="w-full h-full object-cover"
+                  controls
+                  preload="metadata"
+                  poster="https://storage.googleapis.com/chateapro-cdn/video-poster-token.png"
+                >
+                  <source
+                    src="https://storage.googleapis.com/chateapro-cdn/Como%20Obtener%20el%20Token.mp4"
+                    type="video/mp4"
+                  />
+                  Tu navegador no soporta el elemento de video.
+                </video>
+              </div>
             </div>
 
             {/* Footer */}
