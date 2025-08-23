@@ -37,15 +37,6 @@ export const ConnectIntegration = ({
   }, [formData, integration]);
 
   const integrationFields = {
-    dropi: [
-      {
-        name: "apiToken",
-        label: "Token de Dropi",
-        type: "password",
-        placeholder: "Ingresa tu token de Dropi",
-        required: true,
-      },
-    ],
     backblaze: [
       {
         name: "applicationKeyId",

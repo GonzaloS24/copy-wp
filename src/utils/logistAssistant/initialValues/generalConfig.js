@@ -1,5 +1,6 @@
 export const AIAudioInitialValues = {
   useAudioAI: false,
+  token: "",
   voiceId: "",
   respondAudioWithAudio: false,
   maxAudioCount: 3,

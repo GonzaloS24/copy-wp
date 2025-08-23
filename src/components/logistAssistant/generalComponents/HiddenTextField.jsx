@@ -14,7 +14,7 @@ export const HiddenTextField = ({
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full mb-6">
       <input
         type={showPassword ? "text" : "password"}
         className={`w-full p-3.5 pr-12 border border-gray-300 rounded-xl text-sm transition-all duration-200 font-inherit leading-relaxed focus:outline-none placeholder:text-slate-400 placeholder:text-sm ${

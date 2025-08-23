@@ -98,14 +98,6 @@ export const ConfigureAsistent = () => {
             navigate(content.src, { state: { activeTab: content.defaultTab } });
             return;
           }
-
-          // Caso especial para el asistente logístico
-          if (template_ns === ASSISTANT_TEMPLATE_NS.LOGISTIC) {
-            navigate("/asistente-logistico", {
-              state: { activeTab: "generalConfig" },
-            });
-            return;
-          }
         } catch (statusError) {
           console.error(
             "[ConfigureAsistent] Error verificando estado:",
