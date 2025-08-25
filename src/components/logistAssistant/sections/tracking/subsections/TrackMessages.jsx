@@ -1,3 +1,4 @@
+import { MESSAGES_REINSTALL_TEMPLATE_NS } from "../../../../../utils/constants/assistants";
 import { Card } from "../../../generalComponents/Card";
 import { EditTemplateCard } from "../../../generalComponents/EditTemplateCard";
 import { MapTemplateCard } from "../../../generalComponents/MapTemplates";
@@ -98,7 +99,9 @@ export const TrackMessages = ({
         </div>
       </Card>
 
-      <TemplateReinstallation templateNs={"uzo8catmfmg77u6yaehfku0ntwtdxmh1"} />
+      <TemplateReinstallation
+        templateNs={MESSAGES_REINSTALL_TEMPLATE_NS.LOGISTIC.TRACKING}
+      />
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { useCarritos } from "../../../../context/CarritosContext";
 import { EditTemplateCard } from "../../../logistAssistant/generalComponents/EditTemplateCard";
 import { MapTemplateCard } from "../../../logistAssistant/generalComponents/MapTemplates";
 import { TemplateReinstallation } from "../../../logistAssistant/generalComponents/TemplateReinstallation";
+import { MESSAGES_REINSTALL_TEMPLATE_NS } from "../../../../utils/constants/assistants";
 
 const RecoveryMessagesSection = () => {
   const { carritoData, updateCarritoData } = useCarritos();
@@ -225,7 +226,9 @@ const RecoveryMessagesSection = () => {
       </div>
 
       {/* Contenedor separado para reinstalación de plantillas */}
-      <TemplateReinstallation templateNs={"v1lviytxq8u44vpfbw6z9qgbi0jf77m8"} />
+      <TemplateReinstallation
+        templateNs={MESSAGES_REINSTALL_TEMPLATE_NS.CARTS.UPDATES}
+      />
     </>
   );
 };
