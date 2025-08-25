@@ -15,10 +15,19 @@ export const ConnectIntegration = ({
   integration,
   onConnect,
 }) => {
+  const [workspaceId, setWorkspaceId] = useState();
   const [formData, setFormData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    if (!workspaceId) {
+      const id = getCurrentWorkspace();
+
+      if (!!id) setWorkspaceId(id);
+    }
+  }, [workspaceId]);
 
   useEffect(() => {
     if (Object.entries(formData).length === 0 && !!integration) {
@@ -100,7 +109,7 @@ export const ConnectIntegration = ({
         name: "url",
         label: "URL de la tienda",
         type: "url",
-        placeholder: "https://tu-tienda.myshopify.com",
+        placeholder: "tu-tienda.myshopify.com",
         required: true,
       },
       {
@@ -135,8 +144,6 @@ export const ConnectIntegration = ({
       },
     ],
   };
-
-  const workspaceId = getCurrentWorkspace();
 
   const integrationGuide = {
     googleSheets: {
@@ -318,7 +325,7 @@ export const ConnectIntegration = ({
 
         if (response.status !== "verified") {
           throw new Error(
-            "Error al conectar la integración. Por favor, revisa tus credentiales."
+            "Error al conectar la integración. Por favor, revisa tus credenciales."
           );
         }
         result = { success: true, message: "Conexión exitosa" };
@@ -344,35 +351,6 @@ export const ConnectIntegration = ({
     } finally {
       setIsLoading(false);
     }
-  };
-
-  // Función para verificar el token de Dropi
-  const verifyDropiToken = async (token) => {
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    // Validación básica del token
-    if (token.length < 10) {
-      throw new Error("Token de Dropi inválido");
-    }
-
-    return {
-      success: true,
-      message: "Conectado exitosamente con Dropi",
-    };
-  };
-
-  // Función para verificar la API key de OpenAI
-  const verifyOpenAIKey = async (apiKey) => {
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    if (!apiKey.startsWith("sk-")) {
-      throw new Error('API Key de OpenAI inválida. Debe comenzar con "sk-"');
-    }
-
-    return {
-      success: true,
-      message: "Conexión con OpenAI verificada",
-    };
   };
 
   const handleCancelConfirmation = () => {
