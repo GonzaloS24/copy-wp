@@ -7,6 +7,8 @@ import {
 
 export const TemplateReinstallation = ({ templateNs }) => {
   const [showReinstallModal, setShowReinstallModal] = useState(false);
+  const [showLoadingModal, setShowLoadingModal] = useState(false);
+  const [loadingText, setLoadingText] = useState("Reinstalando...");
 
   const handleReinstallTemplates = () => {
     installTemplate(templateNs)
@@ -22,8 +24,10 @@ export const TemplateReinstallation = ({ templateNs }) => {
         showErrorToast(
           "Ocurrió un error al intentar reinstalar las plantillas."
         );
-      });
+      })
+      .finally(() => setShowLoadingModal(false));
 
+    setShowLoadingModal(true);
     setShowReinstallModal(false);
   };
 
@@ -86,6 +90,18 @@ export const TemplateReinstallation = ({ templateNs }) => {
                 Reinstalar plantilla
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Loading Modal */}
+      {showLoadingModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
+          <div className="bg-white rounded-2xl p-8 sm:p-12 text-center shadow-2xl transform transition-transform duration-300 scale-100">
+            <div className="w-12 h-12 border-4 border-slate-200 border-t-sky-500 rounded-full animate-spin mx-auto mb-6"></div>
+            <p className="text-lg font-semibold text-slate-700">
+              {loadingText}
+            </p>
           </div>
         </div>
       )}
