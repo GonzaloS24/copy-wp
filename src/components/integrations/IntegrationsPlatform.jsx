@@ -23,7 +23,11 @@ export const IntegrationsPlatform = () => {
   useEffect(() => {
     if (Object.entries(connectedIntegrations).length === 0) {
       getInstalledIntegrations().then(({ data }) => {
-        setConnectedIntegrations((prev) => ({ ...prev, ...data }));
+        console.info("[Integrations] Datos de integración obtenidos");
+        console.info(data);
+        if (!!data && Object.entries(data).length !== 0) {
+          setConnectedIntegrations((prev) => ({ ...prev, ...data }));
+        }
       });
     }
   }, [connectedIntegrations]);
