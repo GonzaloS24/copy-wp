@@ -4,12 +4,15 @@ import {
   showInfoToast,
   showSuccessToast,
 } from "../../../../utils/toastNotifications";
+import { EditTemplateCard } from "../../../logistAssistant/generalComponents/EditTemplateCard";
+import { MapTemplateCard } from "../../../logistAssistant/generalComponents/MapTemplates";
+import { TemplateReinstallation } from "../../../logistAssistant/generalComponents/TemplateReinstallation";
 
 const RecoveryMessagesSection = () => {
   const { carritoData, updateCarritoData } = useCarritos();
-  const [showReinstallModal, setShowReinstallModal] = useState(false);
   const [showLoadingModal, setShowLoadingModal] = useState(false);
   const [loadingText, setLoadingText] = useState("Reinstalando...");
+  const [flowsState, setFlowsState] = useState({});
 
   const timeUnits = [
     { value: "segundos", label: "segundos" },
@@ -58,40 +61,6 @@ const RecoveryMessagesSection = () => {
     </div>
   );
 
-  const editarPlantillas = () => {
-    showInfoToast(
-      "Redirigiendo a la sección de plantillas de mensaje para editar las plantillas del asistente de carritos..."
-    );
-  };
-
-  const mapearPlantillas = () => {
-    showInfoToast(
-      "Redirigiendo al flujo de configuración final para insertar las plantillas de mensaje dentro del flujo..."
-    );
-  };
-
-  const openReinstallModal = () => {
-    setShowReinstallModal(true);
-  };
-
-  const closeReinstallModal = () => {
-    setShowReinstallModal(false);
-  };
-
-  const reinstallTemplates = () => {
-    setShowReinstallModal(false);
-    setShowLoadingModal(true);
-    setLoadingText("Reinstalando...");
-
-    setTimeout(() => {
-      setLoadingText("Plantilla reinstalada");
-      setTimeout(() => {
-        setShowLoadingModal(false);
-        showSuccessToast("Plantillas reinstaladas correctamente");
-      }, 2000);
-    }, 3000);
-  };
-
   return (
     <>
       <div className="bg-white rounded-2xl p-4 sm:p-6 md:p-8 lg:p-10 shadow-xl border border-slate-200 w-full relative z-5">
@@ -133,42 +102,19 @@ const RecoveryMessagesSection = () => {
             </div>
 
             {/* Paso 2: Editar plantillas */}
-            <div className="bg-slate-50 hover:bg-white border border-slate-200 hover:border-sky-500 rounded-2xl p-4 sm:p-6 flex flex-col items-center gap-4 transition-all duration-200 hover:-translate-y-1 shadow-sm hover:shadow-lg">
-              <div className="w-8 h-8 bg-transparent text-slate-500 border-2 border-slate-300 rounded-full flex items-center justify-center text-sm font-bold">
-                2
-              </div>
-              <div className="flex items-center gap-3 flex-col text-center">
-                <label className="block font-semibold text-slate-700 text-sm sm:text-base tracking-tight">
-                  Edita las plantillas de mensaje
-                </label>
-                <Tooltip content="Este botón te lleva directamente a la sección de plantillas de mensaje, la cuál te permite editar cualquiera de las plantillas de mensaje del asistente de carritos a tu gusto" />
-              </div>
-              <button
-                className="bg-gradient-to-r from-sky-500 to-sky-600 text-white border-none rounded-xl py-3 sm:py-4 px-4 sm:px-6 text-sm sm:text-base font-semibold cursor-pointer transition-all duration-200 font-inherit shadow-lg hover:-translate-y-1 hover:shadow-xl"
-                onClick={editarPlantillas}
-              >
-                Editar plantillas
-              </button>
-            </div>
+            <EditTemplateCard
+              number={2}
+              flowsState={flowsState}
+              setFlowsState={setFlowsState}
+            />
 
             {/* Paso 3: Mapear plantillas */}
-            <div className="bg-slate-50 hover:bg-white border border-slate-200 hover:border-sky-500 rounded-2xl p-4 sm:p-6 flex flex-col items-center gap-4 transition-all duration-200 hover:-translate-y-1 shadow-sm hover:shadow-lg">
-              <div className="w-8 h-8 bg-transparent text-slate-500 border-2 border-slate-300 rounded-full flex items-center justify-center text-sm font-bold">
-                3
-              </div>
-              <div className="flex items-center gap-3 flex-col text-center">
-                <label className="block font-semibold text-slate-700 text-sm sm:text-base tracking-tight">
-                  Mapea las plantillas en el flujo
-                </label>
-                <Tooltip content="Este botón te lleva al flujo en el cuál harás la configuración final de tus plantillas, el cuál consiste en insertar las plantillas de mensaje dentro del flujo" />
-              </div>
-              <button
-                className="bg-gradient-to-r from-sky-500 to-sky-600 text-white border-none rounded-xl py-3 sm:py-4 px-4 sm:px-6 text-sm sm:text-base font-semibold cursor-pointer transition-all duration-200 font-inherit shadow-lg hover:-translate-y-1 hover:shadow-xl"
-                onClick={mapearPlantillas}
-              >
-                Mapear plantillas
-              </button>
-            </div>
+            <MapTemplateCard
+              number={3}
+              subflowName={"Carritos: Mensajes de recuperacion"}
+              flowsState={flowsState}
+              setFlowsState={setFlowsState}
+            />
           </div>
         </div>
 
@@ -285,60 +231,7 @@ const RecoveryMessagesSection = () => {
       </div>
 
       {/* Contenedor separado para reinstalación de plantillas */}
-      <div className="bg-white rounded-2xl p-4 sm:p-6 shadow-xl border border-slate-200 w-full mt-8 sm:mt-12">
-        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 sm:p-6 md:p-8 text-center">
-          <h3 className="text-lg sm:text-xl font-bold text-slate-500 mb-2 text-center">
-            Reinstalación de plantillas
-          </h3>
-          <p className="text-xs sm:text-sm font-normal text-slate-400 italic text-center mb-4">
-            (solo en casos especiales)
-          </p>
-          <p className="text-slate-500 text-xs sm:text-sm leading-relaxed mb-4 sm:mb-6 max-w-2xl mx-auto text-center">
-            Usa esta opción si las plantillas de mensaje no se registraron
-            durante la instalación o si cambiaste tu número de WhatsApp. En
-            condiciones normales, no debes tocar este botón.
-          </p>
-          <button
-            className="bg-slate-500 text-white border-none rounded-lg py-2 sm:py-3 px-4 sm:px-6 text-xs sm:text-sm font-medium cursor-pointer transition-all duration-200 font-inherit shadow-sm hover:bg-slate-600 hover:-translate-y-1 hover:shadow-lg"
-            onClick={openReinstallModal}
-          >
-            Reinstalar plantillas
-          </button>
-        </div>
-      </div>
-
-      {/* Modal de advertencia para reinstalación */}
-      {showReinstallModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-4 sm:p-6 md:p-8 max-w-md sm:max-w-lg md:max-w-2xl w-full shadow-2xl transform transition-transform duration-300 scale-100">
-            <h2 className="text-xl sm:text-2xl font-bold text-red-600 mb-4 text-center">
-              Advertencia
-            </h2>
-            <p className="text-gray-600 text-sm sm:text-base leading-relaxed mb-6 sm:mb-8 text-left">
-              Esta opción solo debe utilizarse si el número que tienes enlazado
-              a tu bot, no tiene instaladas las plantillas. Si ya las tiene y
-              procedes, se generarán errores en tu espacio de trabajo. Solo
-              debes utilizar esta opción si las plantillas no se te registraron
-              o si tuviste que cambiar de numero y tu nuevo numero no tiene las
-              plantillas de mensaje
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-              <button
-                className="py-3 sm:py-4 px-4 sm:px-6 border-none rounded-xl text-sm sm:text-base font-semibold cursor-pointer transition-all duration-200 font-inherit bg-sky-500 text-white shadow-lg hover:bg-sky-600 hover:-translate-y-1 hover:shadow-xl"
-                onClick={closeReinstallModal}
-              >
-                No es lo que necesito
-              </button>
-              <button
-                className="py-3 sm:py-4 px-4 sm:px-6 border-none rounded-xl text-sm sm:text-base font-semibold cursor-pointer transition-all duration-200 font-inherit bg-red-600 text-white shadow-lg hover:bg-red-700 hover:-translate-y-1 hover:shadow-xl"
-                onClick={reinstallTemplates}
-              >
-                Reinstalar plantilla
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <TemplateReinstallation templateNs={"v1lviytxq8u44vpfbw6z9qgbi0jf77m8"} />
 
       {/* Loading Modal */}
       {showLoadingModal && (
