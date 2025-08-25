@@ -1,17 +1,11 @@
 import { useState } from "react";
 import { useCarritos } from "../../../../context/CarritosContext";
-import {
-  showInfoToast,
-  showSuccessToast,
-} from "../../../../utils/toastNotifications";
 import { EditTemplateCard } from "../../../logistAssistant/generalComponents/EditTemplateCard";
 import { MapTemplateCard } from "../../../logistAssistant/generalComponents/MapTemplates";
 import { TemplateReinstallation } from "../../../logistAssistant/generalComponents/TemplateReinstallation";
 
 const RecoveryMessagesSection = () => {
   const { carritoData, updateCarritoData } = useCarritos();
-  const [showLoadingModal, setShowLoadingModal] = useState(false);
-  const [loadingText, setLoadingText] = useState("Reinstalando...");
   const [flowsState, setFlowsState] = useState({});
 
   const timeUnits = [
@@ -232,18 +226,6 @@ const RecoveryMessagesSection = () => {
 
       {/* Contenedor separado para reinstalación de plantillas */}
       <TemplateReinstallation templateNs={"v1lviytxq8u44vpfbw6z9qgbi0jf77m8"} />
-
-      {/* Loading Modal */}
-      {showLoadingModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4">
-          <div className="bg-white rounded-2xl p-8 sm:p-12 text-center shadow-2xl transform transition-transform duration-300 scale-100">
-            <div className="w-12 h-12 border-4 border-slate-200 border-t-sky-500 rounded-full animate-spin mx-auto mb-6"></div>
-            <p className="text-lg font-semibold text-slate-700">
-              {loadingText}
-            </p>
-          </div>
-        </div>
-      )}
     </>
   );
 };
