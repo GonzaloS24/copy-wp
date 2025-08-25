@@ -15,6 +15,18 @@ export const ASSISTANT_TEMPLATE_NS = {
   AI_CALLS: "hy2mzxzi0sm0ijnrpeiqxprrluimt83v",
 };
 
+// Template NS de la reinstalación de flujos
+export const MESSAGES_REINSTALL_TEMPLATE_NS = {
+  LOGISTIC: {
+    CONFIRMATIONS: "aqbetdbvdvw2p6zrskerjdyy63vtwpvs",
+    TRACKING: "3xngorwijib8edwjk2m5p4b7qyfsiglt",
+    UPDATES: "o48njvom2najdvartxaj8jukohiomlpt",
+  },
+  CARTS: {
+    UPDATES: "v1lviytxq8u44vpfbw6z9qgbi0jf77m8",
+  },
+};
+
 // Nombres legibles de los asistentes
 export const ASSISTANT_NAMES = {
   [ASSISTANT_TEMPLATE_NS.LOGISTIC]: "Logístico",

@@ -4,6 +4,7 @@ import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { updateMessagesInitialValues } from "../../../../../utils/logistAssistant/initialValues/updates";
 import { EditTemplateCard } from "../../../generalComponents/EditTemplateCard";
 import { MapTemplateCard } from "../../../generalComponents/MapTemplates";
+import { MESSAGES_REINSTALL_TEMPLATE_NS } from "../../../../../utils/constants/assistants";
 
 export const UpdateMessages = ({
   formData,
@@ -122,7 +123,9 @@ export const UpdateMessages = ({
         </div>
       </Card>
 
-      <TemplateReinstallation templateNs={"w4fsogyyeyu3n15ur1kkb7ixgpe32gl6"} />
+      <TemplateReinstallation
+        templateNs={MESSAGES_REINSTALL_TEMPLATE_NS.LOGISTIC.UPDATES}
+      />
     </div>
   );
 };
