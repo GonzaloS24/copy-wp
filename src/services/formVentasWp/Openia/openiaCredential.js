@@ -1,21 +1,21 @@
-import Cookies from 'js-cookie';
-import { BACK_BASE_URL } from '../../../utils/backendUrl';
+import { getAuthToken } from "../../../utils/authCookies";
+import { BACK_BASE_URL } from "../../../utils/backendUrl";
 
 const openiaCredential = {
   async getCredentials() {
     try {
-      const token = Cookies.get('auth_token');
-      
+      const token = getAuthToken();
+
       if (!token) {
-        throw new Error('Authorization token not found in cookies');
+        throw new Error("Authorization token not found in cookies");
       }
 
       const response = await fetch(`${BACK_BASE_URL}/api/integrations/openai`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
 
       if (!response.ok) {
@@ -24,10 +24,10 @@ const openiaCredential = {
 
       return await response.json();
     } catch (error) {
-      console.error('Error fetching OpenAI credentials:', error);
+      console.error("Error fetching OpenAI credentials:", error);
       throw error;
     }
-  }
+  },
 };
 
 export default openiaCredential;
