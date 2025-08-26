@@ -3,6 +3,7 @@ import { MainLayout } from "../components/MainLayout";
 import { useState } from "react";
 import { TabSelector } from "../components/logistAssistant/tabs/tabSelector/Container";
 import { SectionContent } from "../components/logistAssistant/sections/SectionContent";
+import AcademiaButton from "../components/buttons/AcademiaButton";
 
 export const LogistAssistantPage = () => {
   const location = useLocation();
@@ -15,6 +16,7 @@ export const LogistAssistantPage = () => {
       <div className="w-full p-8 bg-slate-50 min-h-screen">
         <TabSelector activeTab={activeTab} setActiveTab={setActiveTab} />
         <SectionContent activeTab={activeTab} />
+        <AcademiaButton />
       </div>
     </MainLayout>
   );
