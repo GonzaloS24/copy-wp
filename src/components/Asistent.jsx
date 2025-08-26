@@ -155,7 +155,7 @@ export const Asistent = () => {
 
   const getIconClasses = (status) => {
     const baseClasses =
-      "w-30 h-20 rounded-2xl flex items-center justify-center border transition-all duration-300 ease-in-out text-2xl";
+      "w-24 h-24 rounded-2xl flex items-center justify-center border transition-all duration-300 ease-in-out text-2xl";
 
     switch (status) {
       case "proximamente":

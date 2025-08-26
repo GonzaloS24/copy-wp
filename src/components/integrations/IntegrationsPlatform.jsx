@@ -241,7 +241,7 @@ export const IntegrationsPlatform = () => {
                 <div className="h-36 flex justify-center items-center">
                   <div
                     className={`
-                    w-16 h-16 rounded-2xl border-2 flex items-center justify-center text-2xl
+                    w-24 h-24 rounded-2xl mt-10 border-2 flex items-center justify-center text-2xl
                     ${integration.iconBg} ${integration.iconColor} ${integration.iconBorder}
                   `}
                   >
