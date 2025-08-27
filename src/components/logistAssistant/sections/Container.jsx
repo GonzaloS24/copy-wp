@@ -1,10 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SectionSideBar } from "./sideBar/Container";
 import { Card } from "../generalComponents/Card";
 import { FloatingSaveButton } from "../generalComponents/FloatingSaveButton";
-import { setBotFieldData } from "../../../services/logistAssistant";
+import {
+  getBotFieldData,
+  setBotFieldData,
+} from "../../../services/logistAssistant";
 import { ModalContainer } from "../../modals/Container";
 import { AssistantFormModal } from "../../modals/assistantFormSave";
+import { generalConfigBotFieldSchema } from "../../../schemas/logistAssistant/botFieldData/generalConfig";
+import camelize from "camelize";
 
 export const SectionContainer = ({
   subsectionsData,
@@ -13,12 +18,30 @@ export const SectionContainer = ({
   sectionId,
 }) => {
   const [modalData, setModalData] = useState({ open: false, type: "success" });
-  const [formData, setFormData] = useState(initialValues);
+  const [formData, setFormData] = useState({});
   const [flowsState, setFlowsState] = useState({});
   const [activeSubsection, setActiveSubsection] = useState(
     subsectionsData[0].id
   );
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (Object.entries(formData).length !== 0) return;
+
+    setFormData(initialValues);
+
+    getBotFieldData(sectionId, sectionName)
+      .then((saveData) => {
+        setFormData((prev) => ({
+          ...prev,
+          ...saveData,
+        }));
+      })
+      .catch((error) =>
+        console.error("Error al cargar los datos guardados.", error)
+      );
+  }, [formData]);
+
   const handleSave = () => {
     setIsLoading((_) => true);
     setBotFieldData(sectionId, sectionName, formData)
