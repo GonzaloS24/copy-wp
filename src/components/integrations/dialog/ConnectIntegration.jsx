@@ -108,7 +108,7 @@ export const ConnectIntegration = ({
       {
         name: "url",
         label: "URL de la tienda",
-        type: "url",
+        type: "text",
         placeholder: "tu-tienda.myshopify.com",
         required: true,
       },
