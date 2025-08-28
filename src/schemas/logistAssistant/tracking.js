@@ -13,7 +13,7 @@ const shippingTimesSchema = z.object({
 });
 
 const trackMessagesSchema = z.object({
-  officeReminderTime: z.int().positive(),
+  officeReminderTime: z.coerce.number().int().positive(),
   officeReminderUnit: z.string(),
 });
 

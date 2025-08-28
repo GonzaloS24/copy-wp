@@ -32,14 +32,16 @@ export const confirmationsDeserializer = (botFieldValue) => {
           fieldData.validacionesOrden.confirmacionAutomatica === "si",
         validateDeliveries:
           fieldData.validacionesOrden.validarEntregas.estaActivo === "si",
-        minSuccessPercentage:
+        minSuccessPercentage: Number(
           fieldData.validacionesOrden.validarEntregas.porcentajeMinimo.replace(
             "%",
             ""
-          ),
+          )
+        ),
         minOrdersValidation:
           fieldData.validacionesOrden.validarEntregas.minimoDeOrdenes,
-        validateShipping: fieldData.validacionesOrden.validarFlete.estaActivo,
+        validateShipping:
+          fieldData.validacionesOrden.validarFlete.estaActivo === "si",
         minShippingValue: fieldData.validacionesOrden.validarFlete.fleteMinimo,
       },
     };

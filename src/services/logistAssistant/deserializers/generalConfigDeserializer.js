@@ -31,7 +31,7 @@ export const generalConfigDeserializer = (botFieldValue) => {
       AIAudio: {
         useAudioAI: fieldData.vozConIa.usarAudio === "si",
         token: fieldData.vozConIa.token,
-        voiceId: Number(fieldData.vozConIa.idDeLaVoz),
+        voiceId: fieldData.vozConIa.idDeLaVoz,
         stability: Number(fieldData.vozConIa.estabilidad),
         similarity: Number(fieldData.vozConIa.similaridad),
         style: Number(fieldData.vozConIa.estilo),

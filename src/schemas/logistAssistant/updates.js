@@ -10,9 +10,9 @@ export const specialActionsSchema = z.object({
 });
 
 export const updateMessagesSchema = z.object({
-  reminder1TimeUpdate: z.int().positive(),
+  reminder1TimeUpdate: z.coerce.number().int().positive(),
   reminder1Unit: z.string(),
-  reminder2TimeUpdate: z.int().positive(),
+  reminder2TimeUpdate: z.coerce.number().int().positive(),
   reminder2Unit: z.string(),
 });
 

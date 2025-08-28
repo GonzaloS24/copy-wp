@@ -112,7 +112,6 @@ export const OrderValidations = ({ formData, setFormData }) => {
           <ToggleSwitch
             checked={formData?.orderValidations?.validateShipping}
             onChange={(value) => handleInputChange("validateShipping", value)}
-            label={formData?.orderValidations?.validateShipping ? "Sí" : "No"}
           />
         </div>
 

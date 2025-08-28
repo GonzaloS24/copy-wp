@@ -5,12 +5,11 @@ const AIAudioSchema = z.object({
   token: z.string(),
   voiceId: z.string(),
   respondAudioWithAudio: z.boolean(),
-  maxAudioCount: z.int().positive(),
-  stability: z.number().positive(),
-  similarity: z.number().positive(),
-  style: z.number().positive(),
+  maxAudioCount: z.coerce.number().int().positive(),
+  stability: z.coerce.number().positive(),
+  similarity: z.coerce.number().positive(),
+  style: z.coerce.number().positive(),
   useSpeakerBoost: z.string(),
-  testText: z.string(),
 });
 
 const AIBehaviourSchema = z.object({

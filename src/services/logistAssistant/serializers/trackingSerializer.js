@@ -7,8 +7,7 @@ export const trackingSerializer = (FormData) => {
 
   const parsedData = {
     mensajesDeSeguimiento: {
-      tiempoRecordatorioOficina: `
-        ${trackingData.trackMessages.officeReminderTime} ${trackingData.trackMessages.officeReminderUnit}`,
+      tiempoRecordatorioOficina: `${trackingData.trackMessages.officeReminderTime} ${trackingData.trackMessages.officeReminderUnit}`,
       // Formato en texto: "5 minutos", "3 dias", "8 horas"
     },
 
