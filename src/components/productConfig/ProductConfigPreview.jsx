@@ -3,68 +3,30 @@ import { ProducConfigSidebar } from './ProducConfigSidebar';
 import { ProductConfig } from './content/ProductConfig';
 import { ProductConfigActions } from './content/ProductConfigActions';
 import { ConfigProvider, useConfig } from '../../context/ConfigContext';
-import { productConfigService } from '../../services/productConfigService';
+import { ProductConfigProductInSeconds } from './content/ProducConfigProductInSeconds';
+import { configSave } from '../../utils/configProduct/configSave';
 
 const ProductConfigContent = ({ onGoToProducts }) => {
   const [activeSection, setActiveSection] = useState('conexion-dropi');
   const [isLoading, setIsLoading] = useState(false);
   const [saveStatus, setSaveStatus] = useState(null); 
   
-  const { dropiConfig, actionsConfig } = useConfig();
-
-  const transformConfigData = () => {
-    return {
-      conexion_con_dropi: {
-        conectar: dropiConfig.dropiConnection || 'no',
-        pais: dropiConfig.country || null,
-        integration_id: dropiConfig.integrationId || null,
-        integration_token: dropiConfig.integrationToken || null
-      },
-      acciones_especiales: {
-        validaciones_orden: {
-          subida_automatica: actionsConfig.autoUpload ? 'si' : 'no',
-          validar_entregas: {
-            esta_activo: actionsConfig.validateDeliveries ? 'si' : 'no',
-            porcentaje_minimo: actionsConfig.minDeliveryPercentage?.toString() || '0',
-            minimo_de_ordenes: actionsConfig.minOrdersQuantity?.toString() || '0'
-          },
-          validar_flete: {
-            esta_activo: actionsConfig.validateFreight ? 'si' : 'no',
-            flete_minimo: actionsConfig.freightValue?.toString() || '0',
-            criterio: actionsConfig.freightCriterion || 'valor'
-          }
-        }
-      }
-    };
-  };
+  const { dropiConfig, actionsConfig, refreshConfiguration } = useConfig();
 
   const handleSaveConfiguration = async () => {
-    try {
-      setIsLoading(true);
-      setSaveStatus(null);
-
-      const configData = transformConfigData();
-      
-      console.log('📤 Enviando configuración:', configData);
-
-      const result = await productConfigService.configureProduct(configData);
-      
-      setSaveStatus('success');
-      console.log('✅ Configuración guardada exitosamente:', result);
+    const success = await configSave.saveConfiguration(
+      dropiConfig,
+      actionsConfig,
+      setSaveStatus,
+      setIsLoading
+    );
+    
+    if (success) {
+      await refreshConfiguration();
       
       setTimeout(() => {
         setSaveStatus(null);
       }, 3000);
-
-    } catch (error) {
-      console.error('❌ Error al guardar configuración:', error);
-      setSaveStatus('error');
-      
-      setTimeout(() => {
-        setSaveStatus(null);
-      }, 5000);
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -74,6 +36,8 @@ const ProductConfigContent = ({ onGoToProducts }) => {
         return <ProductConfig />;
       case 'acciones-especiales':
         return <ProductConfigActions />;
+      case 'personal-prompt':
+        return <ProductConfigProductInSeconds />;
       default:
         return (
           <div className="flex items-center justify-center py-8 text-gray-500">

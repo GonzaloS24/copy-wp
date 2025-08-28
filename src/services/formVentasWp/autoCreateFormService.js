@@ -154,7 +154,6 @@ const autoCreateFormService = {
         throw new Error("Shopify credentials not configured");
       }
 
-      // ✅ USAR QUERY PARAMS con URL actualizada
       const response = await axios.get(
         `${BACK_BASE_URL}/api/integrations/shopify/products/${productId}?shop=${encodeURIComponent(
           shopifyCredentials.url

@@ -7,6 +7,7 @@ export const ProducConfigSidebar = ({
   const sidebarItems = [
     { id: 'conexion-dropi', emoji: '🛒', label: 'Conexión con Dropi' },
     { id: 'acciones-especiales', emoji: '⚡', label: 'Acciones especiales' },
+    { id: 'personal-prompt', emoji:'📝', label: 'Producto en Segundos' }
   ];
 
   const selectSection = (sectionId) => {

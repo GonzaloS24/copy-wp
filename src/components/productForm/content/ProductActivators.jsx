@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useProduct } from '../../../context/ProductContext';
-import { GenerateLink } from './dialog/GenerateLink'; 
+import { GenerateLink } from './dialog/GenerateLink';
+import botKeyandIdAdService from '../../../services/formVentasWp/botKeyandIdAdService'; 
 
 export const ProductActivators = () => {
   const { productData, updateProductData } = useProduct();
@@ -14,7 +15,11 @@ export const ProductActivators = () => {
   const [tempKeywordValue, setTempKeywordValue] = useState('');
   const [editingAdId, setEditingAdId] = useState(null);
   const [tempAdIdValue, setTempAdIdValue] = useState('');
-
+  const [existingValues, setExistingValues] = useState({
+    keywords: new Set(),
+    adIds: new Set()
+  });
+  
   useEffect(() => {
     if (productData.activators) {
       setActivatorsData({
@@ -27,14 +32,96 @@ export const ProductActivators = () => {
     }
   }, [productData.activators]);
 
-  const handleKeywordFocus = (index) => {
+  const loadExistingValues = async () => {
+    try {
+      const response = await botKeyandIdAdService.getTriggerField();
+      if (response.success && response.data && Array.isArray(response.data.value)) {
+        const keywordsSet = new Set();
+        const adIdsSet = new Set();
+
+        response.data.value.forEach(item => {
+          if (item.keyW && item.keyW !== '-') {
+            const keywords = item.keyW.split(',').filter(k => k.trim() !== '');
+            keywords.forEach(keyword => keywordsSet.add(keyword.trim()));
+          }
+
+          if (item.idAd && item.idAd !== '-') {
+            const adIds = item.idAd.split(',').filter(id => id.trim() !== '');
+            adIds.forEach(adId => adIdsSet.add(adId.trim()));
+          }
+        });
+
+        setExistingValues({
+          keywords: keywordsSet,
+          adIds: adIdsSet
+        });
+      }
+    } catch (error) {
+      console.error('Error loading existing values:', error);
+      setExistingValues({
+        keywords: new Set(),
+        adIds: new Set()
+      });
+    }
+  };
+
+  useEffect(() => {
+    loadExistingValues();
+  }, []);
+
+  const validateUniqueValue = (value, fieldType, currentIndex) => {
+    if (!value.trim()) return { isValid: true, message: '' };
+
+    const existingSet = fieldType === 'keyword' ? existingValues.keywords : existingValues.adIds;
+    const currentValues = fieldType === 'keyword' ? activatorsData.keywords : activatorsData.adIds;
+
+    if (existingSet.has(value.trim())) {
+      return {
+        isValid: false,
+        message: `El ${fieldType === 'keyword' ? 'keyword' : 'ID de anuncio'} "${value}" ya existe en otro registro.`
+      };
+    }
+
+    const isDuplicateLocally = currentValues.some((existingValue, index) => 
+      index !== currentIndex && existingValue.trim() === value.trim() && existingValue.trim() !== ''
+    );
+
+    if (isDuplicateLocally) {
+      return {
+        isValid: false,
+        message: `El ${fieldType === 'keyword' ? 'keyword' : 'ID de anuncio'} "${value}" ya existe en otro campo.`
+      };
+    }
+
+    return { isValid: true, message: '' };
+  };
+
+  const handleKeywordFocus = async (index) => {
+    await loadExistingValues();
     setEditingKeyword(index);
     setTempKeywordValue(activatorsData.keywords[index]);
   };
 
   const handleKeywordBlur = (index) => {
+    const valueToUpdate = tempKeywordValue.trim();
+
+    if (valueToUpdate.includes(',')) {
+      alert("No pueden existir , dentro de la palabra clave");
+      setTempKeywordValue('');
+      setEditingKeyword(null); 
+      return;
+    }
+
+    const validation = validateUniqueValue(valueToUpdate, 'keyword', index);
+    if (!validation.isValid) {
+      alert(validation.message);
+      setTempKeywordValue('');
+      setEditingKeyword(null);
+      return;
+    }
+
     const newKeywords = [...activatorsData.keywords];
-    newKeywords[index] = tempKeywordValue;
+    newKeywords[index] = valueToUpdate;
     
     setActivatorsData(prev => ({
       ...prev,
@@ -51,29 +138,25 @@ export const ProductActivators = () => {
     }, 300);
   };
 
-  const handleKeywordChange = (value) => {
-    setTempKeywordValue(value);
-  };
-
-  const handleKeywordKeyDown = (e, index) => {
-    if (e.key === 'Enter') {
-      e.target.blur();
-    }
-  };
-
-  const handleEditKeyword = (index) => {
-    setEditingKeyword(index);
-    setTempKeywordValue(activatorsData.keywords[index]);
-  };
-
-  const handleAdIdFocus = (index) => {
+  const handleAdIdFocus = async (index) => {
+    await loadExistingValues();
     setEditingAdId(index);
     setTempAdIdValue(activatorsData.adIds[index]);
   };
 
   const handleAdIdBlur = (index) => {
+    const valueToUpdate = tempAdIdValue.trim();
+
+    const validation = validateUniqueValue(valueToUpdate, 'adId', index);
+    if (!validation.isValid) {
+      alert(validation.message);
+      setTempAdIdValue('');
+      setEditingAdId(null);
+      return;
+    }
+
     const newAdIds = [...activatorsData.adIds];
-    newAdIds[index] = tempAdIdValue;
+    newAdIds[index] = valueToUpdate;
     
     setActivatorsData(prev => ({
       ...prev,
@@ -90,6 +173,22 @@ export const ProductActivators = () => {
     }, 300);
   };
 
+  const handleKeywordChange = (value) => {
+    setTempKeywordValue(value);
+  };
+
+  const handleKeywordKeyDown = (e, index) => {
+    if (e.key === 'Enter') {
+      e.target.blur();
+    }
+  };
+
+  const handleEditKeyword = async (index) => {
+    await loadExistingValues();
+    setEditingKeyword(index);
+    setTempKeywordValue(activatorsData.keywords[index]);
+  };
+
   const handleAdIdChange = (value) => {
     setTempAdIdValue(value);
   };
@@ -100,7 +199,8 @@ export const ProductActivators = () => {
     }
   };
 
-  const handleEditAdId = (index) => {
+  const handleEditAdId = async (index) => {
+    await loadExistingValues();
     setEditingAdId(index);
     setTempAdIdValue(activatorsData.adIds[index]);
   };
@@ -254,6 +354,7 @@ export const ProductActivators = () => {
           </div>
         </div>
       )}
+
     </div>
   );
-};
+}

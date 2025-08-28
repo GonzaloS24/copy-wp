@@ -11,7 +11,6 @@ export const ProductProvider = ({ children }) => {
         name: '',
         price: '',
         currency: 'COP',
-        description: '',
         productType: 'Físico',
         id: '',
         image: ''
@@ -85,8 +84,8 @@ export const ProductProvider = ({ children }) => {
       ]
     },
     activators: {
-      keywords: ['hola buenas', '', '', '', '', '', ''],
-      adIds: ['79766', '', '', '', '', '', '']
+      keywords: ['', '', '', '', '', '', ''],
+      adIds: ['', '', '', '', '', '', '']
     },
   });
 

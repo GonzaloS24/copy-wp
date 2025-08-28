@@ -72,7 +72,6 @@ export class ProductService {
       const token = getAuthToken();
       if (!token) throw new Error('No se encontró token de autenticación');
 
-      // URL actualizada para usar el backend desplegado
       const response = await fetch(`${BACK_BASE_URL}/api/integrations/chateapro/products`, 
         this.createFetchOptions(token)
       );
@@ -102,7 +101,6 @@ export class ProductService {
       
       console.log(' Obteniendo configuración del producto ID:', cleanId);
       
-      // URL actualizada para usar el backend desplegado
       const endpoint = `${BACK_BASE_URL}/api/integrations/chateapro/products/${cleanId}`;
       
       const response = await fetch(endpoint, this.createFetchOptions(token));
@@ -174,7 +172,6 @@ export class ProductService {
         body: JSON.stringify(payload)
       };
 
-      // URL actualizada para usar el backend desplegado
       const response = await fetch(
         `${BACK_BASE_URL}/api/integrations/chateapro/bot-fields`,
         fetchOptions

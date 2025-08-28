@@ -1,19 +1,23 @@
 import { getAuthToken } from '../utils/authCookies'
 import { BACK_BASE_URL } from '../utils/backendUrl';
-;
 
 export class productConfigService {
-  static createFetchOptions(token, body) {
-    return {
-      method: 'POST',
+  static createFetchOptions(token, body = null) {
+    const options = {
+      method: body ? 'POST' : 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      credentials: 'include',
-      body: JSON.stringify(body)
+      credentials: 'include'
     };
+
+    if (body) {
+      options.body = JSON.stringify(body);
+    }
+
+    return options;
   }
 
   static async configureProduct(configData) {
@@ -47,6 +51,37 @@ export class productConfigService {
       
     } catch (error) {
       console.error('Error in productConfigService.configureProduct:', error);
+      throw error;
+    }
+  }
+
+  static async getGeneralConfiguration() {
+    try {
+      const token = getAuthToken();
+      if (!token) throw new Error('No authentication token found');
+
+      console.log('Fetching general configuration...');
+
+      const response = await fetch(
+        `${BACK_BASE_URL}/api/integrations/chateapro/general-configuration`,
+        this.createFetchOptions(token) 
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(
+          errorData.message || 
+          `Error ${response.status}: ${response.statusText}`
+        );
+      }
+
+      const result = await response.json();
+      console.log('General configuration retrieved successfully:', result);
+      
+      return result;
+      
+    } catch (error) {
+      console.error('Error in productConfigService.getGeneralConfiguration:', error);
       throw error;
     }
   }

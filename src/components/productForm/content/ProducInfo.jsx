@@ -97,7 +97,6 @@ export const ProductInfo = () => {
     { value: 'VES', label: 'VES' }
   ];
 
-  // Opciones para el select de tipo de producto
   const productTypes = [
     { value: '', label: 'Selecciona un tipo', disabled: true },
     { value: 'fisico', label: 'Producto Físico' },
@@ -179,30 +178,6 @@ export const ProductInfo = () => {
 
         <div className="mb-6 flex flex-col">
           <label className={`text-base font-semibold mb-2 ${
-            !isFieldValid('description') ? 'text-red-500' : 'text-slate-700'
-          }`}>
-            Descripción del producto<span className="text-red-500">*</span>
-          </label>
-          <textarea
-            className={`p-4 border-2 rounded-xl text-base bg-white text-slate-700 focus:outline-none focus:ring-4 focus:ring-sky-500/10 transition-all resize-vertical ${
-              !isFieldValid('description')
-                ? 'border-red-500 focus:border-red-500'
-                : 'border-slate-200 focus:border-sky-500'
-            }`}
-            rows="4"
-            placeholder="Ingresa una descripción breve del producto"
-            value={productData.info.formData.description}
-            onChange={(e) => handleInputChange('description', e.target.value)}
-            onBlur={() => setTouchedField('description')}
-          />
-          {!isFieldValid('description') && (
-            <span className="text-red-500 text-sm mt-1">Este campo es obligatorio</span>
-          )}
-        </div>
-
-        {/* Nuevo campo: Tipo de producto */}
-        <div className="mb-6 flex flex-col">
-          <label className={`text-base font-semibold mb-2 ${
             !isFieldValid('productType') ? 'text-red-500' : 'text-slate-700'
           }`}>
             Tipo de producto<span className="text-red-500">*</span>
@@ -234,7 +209,7 @@ export const ProductInfo = () => {
 
         <div className="mb-6 flex flex-col">
           <label className="text-base font-semibold text-slate-700 mb-2">
-            ID del producto en Droplin
+            ID del producto en Dropi
           </label>
           <input
             type="text"
