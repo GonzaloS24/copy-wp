@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CarritosSidebar from "./CarritosSidebar";
@@ -9,11 +9,17 @@ import RecoveryMessagesSection from "./content/sections/RecoveryMessagesSection"
 import EmailSection from "./content/sections/EmailSection";
 import SpecialActionsSection from "./content/sections/SpecialActionsSection";
 import TestAssistantSection from "./content/sections/TestAssistantSection";
-import { CarritosProvider } from "../../context/CarritosContext";
+import { CarritosProvider, useCarritos } from "../../context/CarritosContext";
 import { CarritosButtons } from "./CarritosButtons";
 
 const CarritosMainInner = () => {
+  const { loadCarritoData, isLoading } = useCarritos();
   const [activeSection, setActiveSection] = useState("identidad-asistente");
+
+  // Cargar datos al montar el componente
+  useEffect(() => {
+    loadCarritoData();
+  }, []);
 
   const handleSectionChange = (sectionId) => {
     setActiveSection(sectionId);
@@ -43,6 +49,18 @@ const CarritosMainInner = () => {
         return <IdentitySection />;
     }
   };
+
+  // Mostrar loading mientras se cargan los datos
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-sky-500 mx-auto mb-4"></div>
+          <p className="text-slate-600">Cargando configuración...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

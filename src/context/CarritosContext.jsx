@@ -1,9 +1,10 @@
 import { createContext, useState, useContext } from "react";
+import { CarritoService } from "../services/carritos";
 
 const CarritosContext = createContext();
 
 export const CarritosProvider = ({ children }) => {
-  const [carritoData, setCarritoData] = useState({
+  const defaultData = {
     identidad_asistente: {
       nombre_asesor: "",
       adaptacion_lenguaje: "",
@@ -46,7 +47,10 @@ export const CarritosProvider = ({ children }) => {
       subida_automatica: "",
       origen_datos: "",
     },
-  });
+  };
+
+  const [carritoData, setCarritoData] = useState(defaultData);
+  const [isLoading, setIsLoading] = useState(false);
 
   const updateCarritoData = (section, data) => {
     setCarritoData((prev) => ({
@@ -58,12 +62,75 @@ export const CarritosProvider = ({ children }) => {
     }));
   };
 
+  const loadCarritoData = async () => {
+    try {
+      setIsLoading(true);
+      console.log("🔍 Cargando datos del carrito...");
+
+      const result = await CarritoService.getConfiguration();
+
+      if (result.success && result.data) {
+        // Mergear datos cargados con valores por defecto para campos faltantes
+        const mergedData = {
+          identidad_asistente: {
+            ...defaultData.identidad_asistente,
+            ...result.data.identidad_asistente,
+          },
+          datos_tienda: {
+            ...defaultData.datos_tienda,
+            ...result.data.datos_tienda,
+          },
+          datos_logisticos: {
+            ...defaultData.datos_logisticos,
+            ...result.data.datos_logisticos,
+            metodo_pago: {
+              ...defaultData.datos_logisticos.metodo_pago,
+              ...result.data.datos_logisticos?.metodo_pago,
+            },
+          },
+          mensajes_recuperacion: {
+            ...defaultData.mensajes_recuperacion,
+            ...result.data.mensajes_recuperacion,
+          },
+          envio_correos: {
+            ...defaultData.envio_correos,
+            ...result.data.envio_correos,
+          },
+          acciones_especiales: {
+            ...defaultData.acciones_especiales,
+            ...result.data.acciones_especiales,
+          },
+        };
+
+        setCarritoData(mergedData);
+        console.log("✅ Datos del carrito cargados y aplicados");
+      } else {
+        console.log(
+          "⚠️ No hay configuración previa, usando valores por defecto"
+        );
+        // Ya tiene los valores por defecto, no necesita hacer nada
+      }
+    } catch (error) {
+      console.error("❌ Error cargando datos del carrito:", error);
+      // En caso de error, mantener valores por defecto
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const resetToDefaults = () => {
+    setCarritoData(defaultData);
+  };
+
   return (
     <CarritosContext.Provider
       value={{
         carritoData,
         updateCarritoData,
         setCarritoData,
+        loadCarritoData,
+        resetToDefaults,
+        isLoading,
       }}
     >
       {children}
