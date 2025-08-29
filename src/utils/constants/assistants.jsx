@@ -9,7 +9,7 @@ import aiCallsIcon from "../../assets/assistantIcons/Asistente_Llamadas IA.png";
 export const ASSISTANT_TEMPLATE_NS = {
   LOGISTIC: "rlgblvshr3kx37gv6jlaroervpsfheqp",
   CARTS: "9vmvwba67ckqncrkpkae0xjuhpd1ccxc",
-  WHATSAPP_SALES: "gaxwwhrwajcoti5xkvspjj17gzs8vdth",
+  WHATSAPP_SALES: "5slfaku8clibtzei0gdjifkunktfjeei",
   COMMENTS: "ugmasxccs5mpnzqj4rb1ex9rdvld4diu",
   REMARKETING: "byu2drpxtxhmcbgvyuktxrjyofbmemha",
   AI_CALLS: "hy2mzxzi0sm0ijnrpeiqxprrluimt83v",
