@@ -4,12 +4,14 @@ import camelize from "camelize";
 import { BACK_BASE_URL } from "../../utils/backendUrl";
 import { getAuthToken } from "../../utils/authCookies";
 
+import { backblazeGetCredentials } from "./backblaze";
 import { dropiGetCredentials } from "./dropi";
 import { metaConversionsApiGetCredentials } from "./metaConversionsApi";
 import { openaiGetCredentials } from "./openai";
 import { shopifyGetCredentials } from "./shopify";
 
 export {
+  backblazeGetCredentials,
   dropiGetCredentials,
   shopifyGetCredentials,
   metaConversionsApiGetCredentials,
