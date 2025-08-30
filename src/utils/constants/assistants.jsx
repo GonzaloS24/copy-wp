@@ -83,31 +83,6 @@ export const ASSISTANT_CONFIG = {
       defaultTab: "generalConfig",
     },
   },
-  [ASSISTANT_TEMPLATE_NS.CARTS]: {
-    id: 2,
-    template_ns: ASSISTANT_TEMPLATE_NS.CARTS,
-    title: "Asistente de carritos",
-    description: "Recupera hasta el 50% de tus carritos abandonados",
-    icon: (
-      <img
-        src={cartIcon}
-        alt="Asistente Carritos Abandonados"
-        className="w-full h-full object-contain"
-      />
-    ),
-    configRoute: ASSISTANT_CONFIG_ROUTES[ASSISTANT_TEMPLATE_NS.CARTS],
-    installConfig: {
-      title:
-        "Descubre cómo este asistente puede ayudarte a recuperar ventas automáticamente",
-      videoDescription: "Aprende a recuperar carritos abandonados.",
-      benefits: [
-        "Recupera hasta un 20% de carritos abandonados",
-        "Instalación rápida en segundos",
-        "Mensajes automáticos y personalizados",
-        "Aumenta tus ventas sin esfuerzo adicional",
-      ],
-    },
-  },
   [ASSISTANT_TEMPLATE_NS.WHATSAPP_SALES]: {
     id: 3,
     template_ns: ASSISTANT_TEMPLATE_NS.WHATSAPP_SALES,
@@ -134,6 +109,33 @@ export const ASSISTANT_CONFIG = {
       defaultTab: "productos",
     },
   },
+  [ASSISTANT_TEMPLATE_NS.CARTS]: {
+    id: 2,
+    template_ns: ASSISTANT_TEMPLATE_NS.CARTS,
+    title: "Asistente de carritos",
+    description: "Recupera hasta el 50% de tus carritos abandonados",
+    icon: (
+      <img
+        src={cartIcon}
+        alt="Asistente Carritos Abandonados"
+        className="w-full h-full object-contain"
+      />
+    ),
+    // configRoute: ASSISTANT_CONFIG_ROUTES[ASSISTANT_TEMPLATE_NS.CARTS],
+    configRoute: null, // No disponible aún
+    isComingSoon: true, // Marcador especial para próximamente
+    installConfig: {
+      title:
+        "Descubre cómo este asistente puede ayudarte a recuperar ventas automáticamente",
+      videoDescription: "Aprende a recuperar carritos abandonados.",
+      benefits: [
+        "Recupera hasta un 20% de carritos abandonados",
+        "Instalación rápida en segundos",
+        "Mensajes automáticos y personalizados",
+        "Aumenta tus ventas sin esfuerzo adicional",
+      ],
+    },
+  },
   [ASSISTANT_TEMPLATE_NS.COMMENTS]: {
     id: 4,
     template_ns: ASSISTANT_TEMPLATE_NS.COMMENTS,
@@ -146,7 +148,8 @@ export const ASSISTANT_CONFIG = {
         className="w-full h-full object-contain"
       />
     ),
-    configRoute: ASSISTANT_CONFIG_ROUTES[ASSISTANT_TEMPLATE_NS.COMMENTS],
+    configRoute: null, // No disponible aún
+    isComingSoon: true, // Marcador especial para próximamente
     installConfig: {
       title:
         "Descubre cómo este asistente puede ayudarte a gestionar comentarios automáticamente",
@@ -173,7 +176,8 @@ export const ASSISTANT_CONFIG = {
         className="w-full h-full object-contain"
       />
     ),
-    configRoute: ASSISTANT_CONFIG_ROUTES[ASSISTANT_TEMPLATE_NS.REMARKETING],
+    configRoute: null, // No disponible aún
+    isComingSoon: true, // Marcador especial para próximamente
     installConfig: {
       title:
         "Descubre cómo este asistente puede ayudarte con remarketing automático",
