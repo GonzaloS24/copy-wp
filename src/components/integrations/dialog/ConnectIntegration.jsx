@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { uploadImage } from "../../../services/uploadImageService";
 import { DialogForm } from "./form";
 import { DialogGuide } from "./guide";
@@ -20,6 +20,32 @@ export const ConnectIntegration = ({
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [error, setError] = useState("");
+
+  const modalRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        handleClose();
+      }
+    };
+
+    const handleEscapeKey = (event) => {
+      if (event.key === "Escape" && isOpen) {
+        handleClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleEscapeKey);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscapeKey);
+    };
+  }, [isOpen]);
 
   useEffect(() => {
     if (!workspaceId) {
@@ -258,10 +284,36 @@ const integrationFields = {
         },
       ],
     },
+    backblaze: {
+      video: {
+        href: "/integraciones/#",
+      },
+    },
+    dropi: {
+      video: {
+        href: "/integraciones/#",
+      },
+    },
+    openai: {
+      video: {
+        href: "/integraciones/#",
+      },
+    },
+    shopify: {
+      video: {
+        href: "/integraciones/#",
+      },
+    },
+    metaConversionsApi: {
+      video: {
+        href: "/integraciones/#",
+      },
+    },
   };
 
   const fields =
     integrationFields[integration?.id] || integrationGuide[integration?.id];
+  const videoInfo = integrationGuide[integration?.id]?.video;
 
   const handleInputChange = (fieldName, value) => {
     setFormData((prev) => ({
@@ -376,7 +428,10 @@ const integrationFields = {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden">
+      <div
+        ref={modalRef}
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[90vh] overflow-hidden"
+      >
         <div className="bg-gradient-to-r from-sky-500 to-blue-600 p-6 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -486,16 +541,29 @@ const integrationFields = {
           )}
 
           {integration.type === "form" && !!fields && (
-            <DialogForm
-              fields={fields}
-              formData={formData}
-              handleClose={handleClose}
-              handleInputChange={handleInputChange}
-              handleSubmit={handleSubmit}
-              isLoading={isLoading}
-            />
-          )}
+            <>
+              <DialogForm
+                fields={fields}
+                formData={formData}
+                handleClose={handleClose}
+                handleInputChange={handleInputChange}
+                handleSubmit={handleSubmit}
+                isLoading={isLoading}
+              />
 
+              {/* Agregar el videotutorial para integraciones de tipo form */}
+              {videoInfo && (
+                <div className="border-t border-slate-200 text-center pt-4 mt-4">
+                  <a
+                    href={videoInfo.href}
+                    className="text-sky-500 text-sm font-medium transition-colors duration-200 hover:text-sky-600 inline-flex items-center gap-2 cursor-pointer bg-none border-none"
+                  >
+                    Ver video tutorial de integración
+                  </a>
+                </div>
+              )}
+            </>
+          )}
           {integration.type === "guide" && !!fields && (
             <DialogGuide
               steps={fields.steps}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Package, ShoppingCart, Globe, MessageCircle, Zap, X, Loader } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { useProductService } from '../productInSeconds/service/productInfoService';
@@ -11,6 +11,33 @@ const ProductInfoSelector = ({ isOpen, onClose }) => {
   const [loadingState, setLoadingState] = useState(1);
   const [error, setError] = useState(null);
  const [showOpenAIWarning, setShowOpenAIWarning] = useState(false);
+
+  const modalRef = useRef(null);
+
+  // useEffect para el cierre automático
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    const handleEscapeKey = (event) => {
+      if (event.key === 'Escape' && isOpen && !isLoading) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('keydown', handleEscapeKey);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [isOpen, onClose, isLoading]);
 
   const sources = {
     dropi: {
@@ -40,15 +67,15 @@ const ProductInfoSelector = ({ isOpen, onClose }) => {
       color: 'border-indigo-400 bg-indigo-50 text-indigo-600',
       hoverColor: 'hover:border-indigo-300'
     },
-    chatea: {
-      id: 'chatea',
-      name: 'Chatea PRO',
-      icon: MessageCircle,
-      label: 'ID de Chatea PRO:',
-      placeholder: 'Ingresa el ID del producto en Chatea PRO',
-      color: 'border-purple-400 bg-purple-50 text-purple-600',
-      hoverColor: 'hover:border-purple-300'
-    }
+    // chatea: {
+    //   id: 'chatea',
+    //   name: 'Chatea PRO',
+    //   icon: MessageCircle,
+    //   label: 'ID de Chatea PRO:',
+    //   placeholder: 'Ingresa el ID del producto en Chatea PRO',
+    //   color: 'border-purple-400 bg-purple-50 text-purple-600',
+    //   hoverColor: 'hover:border-purple-300'
+    // }
   };
 
   const loadingMessages = {
@@ -108,7 +135,10 @@ const ProductInfoSelector = ({ isOpen, onClose }) => {
       className="fixed inset-0 top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 flex items-center justify-center p-4 animate-in fade-in duration-300"
       style={{ zIndex: 99999, position: 'fixed', width: '100vw', height: '100vh' }}
     >
-      <div className="max-w-md w-full mx-auto bg-white rounded-3xl shadow-2xl p-6 relative animate-in slide-in-from-bottom-4 duration-500 border border-gray-100">
+      <div 
+        ref={modalRef}
+        className="max-w-md w-full mx-auto bg-white rounded-3xl shadow-2xl p-6 relative animate-in slide-in-from-bottom-4 duration-500 border border-gray-100"
+      >
         <button 
           onClick={onClose}
           className="absolute top-4 right-4 p-2 rounded-full text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all duration-200 group"
