@@ -40,7 +40,7 @@ export const DialogGuide = ({ steps, video, handleClose }) => {
             href={video.href}
             className="text-sky-500 text-sm font-medium transition-colors duration-200 hover:text-sky-600 inline-flex items-center gap-2 cursor-pointer bg-none border-none"
           >
-            📹 Ver videotutorial de integración
+            Ver video tutorial de integración
           </a>
         </div>
       )}

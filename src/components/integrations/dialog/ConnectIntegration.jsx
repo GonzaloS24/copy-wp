@@ -277,10 +277,36 @@ export const ConnectIntegration = ({
         },
       ],
     },
+    backblaze: {
+      video: {
+        href: "/integraciones/#",
+      },
+    },
+    dropi: {
+      video: {
+        href: "/integraciones/#",
+      },
+    },
+    openai: {
+      video: {
+        href: "/integraciones/#",
+      },
+    },
+    shopify: {
+      video: {
+        href: "/integraciones/#",
+      },
+    },
+    metaConversionsApi: {
+      video: {
+        href: "/integraciones/#",
+      },
+    },
   };
 
   const fields =
     integrationFields[integration?.id] || integrationGuide[integration?.id];
+  const videoInfo = integrationGuide[integration?.id]?.video;
 
   const handleInputChange = (fieldName, value) => {
     setFormData((prev) => ({
@@ -507,16 +533,29 @@ export const ConnectIntegration = ({
           )}
 
           {integration.type === "form" && !!fields && (
-            <DialogForm
-              fields={fields}
-              formData={formData}
-              handleClose={handleClose}
-              handleInputChange={handleInputChange}
-              handleSubmit={handleSubmit}
-              isLoading={isLoading}
-            />
-          )}
+            <>
+              <DialogForm
+                fields={fields}
+                formData={formData}
+                handleClose={handleClose}
+                handleInputChange={handleInputChange}
+                handleSubmit={handleSubmit}
+                isLoading={isLoading}
+              />
 
+              {/* Agregar el videotutorial para integraciones de tipo form */}
+              {videoInfo && (
+                <div className="border-t border-slate-200 text-center pt-4 mt-4">
+                  <a
+                    href={videoInfo.href}
+                    className="text-sky-500 text-sm font-medium transition-colors duration-200 hover:text-sky-600 inline-flex items-center gap-2 cursor-pointer bg-none border-none"
+                  >
+                    Ver video tutorial de integración
+                  </a>
+                </div>
+              )}
+            </>
+          )}
           {integration.type === "guide" && !!fields && (
             <DialogGuide
               steps={fields.steps}
