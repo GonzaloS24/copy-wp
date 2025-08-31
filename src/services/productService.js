@@ -205,6 +205,10 @@ static normalizeProductDataForUpdate(productData) {
   const remarketing = productData.remarketing || {};
   const activadores = productData.activadores_del_flujo || {};
 
+   const dtaPromptValue = Array.isArray(activadores.dta_prompt)
+    ? activadores.dta_prompt.join(',')
+    : (activadores.dta_prompt || "");
+
   const multimediaData = embudo.multimedia || {};
   console.log('🔧 [NORMALIZE] Multimedia extraída:', multimediaData);
 
@@ -218,9 +222,7 @@ static normalizeProductDataForUpdate(productData) {
       variable: info.variable === "VARIABLE" ? "VARIABLE" : "SIMPLE",
       imagen: info.imagen_del_producto || info.imagen || "",
       estado: info.estado || info.estado_producto || "inactivo",
-      dta_prompt: Array.isArray(info.dta_prompt) ? 
-          activadores.dta_prompt.join(',') : 
-          (activadores.dta_prompt || ""),
+      dta_prompt: dtaPromptValue
     },
       embudo_de_ventas: {
         mensaje_inicial: embudo.mensaje_inicial || "",

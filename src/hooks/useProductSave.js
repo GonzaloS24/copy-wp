@@ -65,9 +65,6 @@ export const useProductSave = () => {
       missing.push('Pregunta de entrada');
     }
 
-    if (productData.info?.formData?.dta_prompt?.length === 0) {
-      missing.push('El campo dta_prompt no puede estar vacío');
-    }
 
     const freePromptValid = getPromptText(productData.freePrompt).trim() !== '';
 
