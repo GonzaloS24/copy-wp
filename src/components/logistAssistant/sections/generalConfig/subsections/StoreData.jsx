@@ -52,7 +52,7 @@ export const StoreData = ({ formData, setFormData }) => {
           <select
             id="storeCountry"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-            value={formData?.storeData?.storeCountry}
+            value={formData?.storeData?.storeCountry ?? ""}
             onChange={handleInputChange}
           >
             <option value="">Selecciona el país</option>
@@ -80,7 +80,7 @@ export const StoreData = ({ formData, setFormData }) => {
             id="storeName"
             type="text"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
-            value={formData?.storeData?.storeName}
+            value={formData?.storeData?.storeName ?? ""}
             placeholder="Ej. Moda Urbana Colombia"
             onChange={handleInputChange}
           />
@@ -108,7 +108,7 @@ export const StoreData = ({ formData, setFormData }) => {
             id="storeLink"
             type="url"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
-            value={formData?.storeData?.storeLink}
+            value={formData?.storeData?.storeLink ?? ""}
             placeholder="https://mitienda.com"
             onChange={handleInputChange}
           />
@@ -129,7 +129,7 @@ export const StoreData = ({ formData, setFormData }) => {
             id="storeLocation"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="4"
-            value={formData?.storeData?.storeLocation}
+            value={formData?.storeData?.storeLocation ?? ""}
             placeholder={`Ej. ${storeDataInitialValues.storeLocation}`}
             onChange={handleInputChange}
           />
@@ -156,7 +156,7 @@ export const StoreData = ({ formData, setFormData }) => {
             id="warrantyPolicies"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="4"
-            value={formData?.storeData?.warrantyPolicies}
+            value={formData?.storeData?.warrantyPolicies ?? ""}
             placeholder={`Ej. ${storeDataInitialValues.warrantyPolicies}...`}
             onChange={handleInputChange}
           />
@@ -183,7 +183,7 @@ export const StoreData = ({ formData, setFormData }) => {
           <select
             id="dataSource"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-            value={formData?.storeData?.dataSource}
+            value={formData?.storeData?.dataSource ?? ""}
             onChange={handleInputChange}
           >
             <option value="">Selecciona el origen de datos</option>

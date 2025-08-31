@@ -35,7 +35,7 @@ export const SpecialActions = ({ formData, setFormData }) => {
             /> */}
           </div>
           <ToggleSwitch
-            checked={formData?.specialActions?.autoUpdate}
+            checked={formData?.specialActions?.autoUpdate ?? false}
             onChange={(value) => handleInputChange("autoUpdate", value)}
             label="Sí"
           />

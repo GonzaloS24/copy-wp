@@ -49,7 +49,7 @@ export const AIAudio = ({ formData, setFormData }) => {
             />
           </div>
           <ToggleSwitch
-            checked={formData?.AIAudio?.useAudioAI}
+            checked={formData?.AIAudio?.useAudioAI ?? false}
             onChange={(value) => handleInputChange("useAudioAI", value)}
             label={formData?.AIAudio?.useAudioAI ? "Sí" : "No"}
           />
@@ -74,7 +74,7 @@ export const AIAudio = ({ formData, setFormData }) => {
                 </label>
                 <HiddenTextField
                   placeholder="Ingresa el token"
-                  value={formData?.AIAudio?.token}
+                  value={formData?.AIAudio?.token ?? ""}
                   onChange={(e) => handleInputChange("token", e.target.value)}
                   isDisabled={isDisabled}
                 />
@@ -90,7 +90,7 @@ export const AIAudio = ({ formData, setFormData }) => {
                       : "bg-white text-slate-700 focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
                   }`}
                   placeholder="Ingresa el ID de voz"
-                  value={formData?.AIAudio?.voiceId}
+                  value={formData?.AIAudio?.voiceId ?? ""}
                   onChange={(e) => handleInputChange("voiceId", e.target.value)}
                   disabled={isDisabled}
                 />
@@ -114,7 +114,7 @@ export const AIAudio = ({ formData, setFormData }) => {
                   />
                 </div>
                 <ToggleSwitch
-                  checked={formData?.AIAudio?.respondAudioWithAudio}
+                  checked={formData?.AIAudio?.respondAudioWithAudio ?? false}
                   onChange={(value) =>
                     handleInputChange("respondAudioWithAudio", value)
                   }
@@ -133,7 +133,7 @@ export const AIAudio = ({ formData, setFormData }) => {
                   />
                 </div>
                 <NumberInput
-                  value={formData?.AIAudio?.maxAudioCount}
+                  value={formData?.AIAudio?.maxAudioCount ?? ""}
                   onChange={(value) =>
                     handleInputChange("maxAudioCount", value)
                   }
@@ -156,7 +156,7 @@ export const AIAudio = ({ formData, setFormData }) => {
                 Estabilidad
               </label>
               <SliderInput
-                value={formData?.AIAudio?.stability ?? 0}
+                value={formData?.AIAudio?.stability ?? 0 ?? ""}
                 onChange={(value) => handleInputChange("stability", value)}
                 disabled={isDisabled}
               />
@@ -167,7 +167,7 @@ export const AIAudio = ({ formData, setFormData }) => {
                 Similaridad
               </label>
               <SliderInput
-                value={formData?.AIAudio?.similarity ?? 0}
+                value={formData?.AIAudio?.similarity ?? 0 ?? ""}
                 onChange={(value) => handleInputChange("similarity", value)}
                 disabled={isDisabled}
               />
@@ -178,7 +178,7 @@ export const AIAudio = ({ formData, setFormData }) => {
                 Estilo
               </label>
               <SliderInput
-                value={formData?.AIAudio?.style ?? 0}
+                value={formData?.AIAudio?.style ?? 0 ?? ""}
                 onChange={(value) => handleInputChange("style", value)}
                 disabled={isDisabled}
               />
@@ -190,7 +190,7 @@ export const AIAudio = ({ formData, setFormData }) => {
               </label>
               <RadioGroup
                 name="speakerBoost"
-                value={formData?.AIAudio?.useSpeakerBoost}
+                value={formData?.AIAudio?.useSpeakerBoost ?? ""}
                 onChange={(value) =>
                   handleInputChange("useSpeakerBoost", value)
                 }
@@ -219,7 +219,7 @@ export const AIAudio = ({ formData, setFormData }) => {
               }`}
               rows="4"
               placeholder="Escribe aquí el texto que quieres probar con la voz configurada..."
-              value={formData?.AIAudio?.testText}
+              value={formData?.AIAudio?.testText ?? ""}
               onChange={(e) => handleInputChange("testText", e.target.value)}
               disabled={isDisabled}
             />

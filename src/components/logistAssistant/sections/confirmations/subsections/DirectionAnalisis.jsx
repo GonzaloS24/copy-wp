@@ -36,7 +36,7 @@ export const DirectionAnalisis = ({ formData, setFormData }) => {
             />
           </div>
           <ToggleSwitch
-            checked={formData?.directionAnalisis?.evaluateAddress}
+            checked={formData?.directionAnalisis?.evaluateAddress ?? false}
             onChange={(value) => handleInputChange("evaluateAddress", value)}
             label="Sí"
           />
@@ -56,7 +56,7 @@ export const DirectionAnalisis = ({ formData, setFormData }) => {
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="12"
             placeholder={`Ej.\n${directionAnalisisInitialValues.addressPrompt}`}
-            value={formData?.directionAnalisis?.addressPrompt}
+            value={formData?.directionAnalisis?.addressPrompt ?? ""}
             onChange={(e) => handleInputChange("addressPrompt", e.target.value)}
           />
         </div>
