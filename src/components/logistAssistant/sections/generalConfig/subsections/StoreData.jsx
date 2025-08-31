@@ -1,6 +1,7 @@
 import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { Card } from "../../../generalComponents/Card";
 import { storeDataInitialValues } from "../../../../../utils/logistAssistant/initialValues/generalConfig";
+import { storeDataMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/generalConfig";
 
 const availableCountries = [
   { key: "colombia", value: "Colombia" },
@@ -14,6 +15,12 @@ const availableCountries = [
 
 export const StoreData = ({ formData, setFormData }) => {
   const handleInputChange = ({ target }) => {
+    if (
+      !!storeDataMaxSizes[target.id] &&
+      target.value.length >= storeDataMaxSizes[target.id]
+    )
+      return;
+
     setFormData((prev) => ({
       ...prev,
       storeData: {

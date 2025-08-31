@@ -1,9 +1,16 @@
 import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { Card } from "../../../generalComponents/Card";
 import { AIBehaviourInitialValues } from "../../../../../utils/logistAssistant/initialValues/generalConfig";
+import { AIBehaviourMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/generalConfig";
 
 export const AIBehaviour = ({ formData, setFormData }) => {
   const handleInputChange = ({ target }) => {
+    if (
+      !!AIBehaviourMaxSizes[target.id] &&
+      target.value.length >= AIBehaviourMaxSizes[target.id]
+    )
+      return;
+
     setFormData((prev) => ({
       ...prev,
       AIBehaviour: {

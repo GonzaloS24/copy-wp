@@ -5,6 +5,7 @@ import { updateMessagesInitialValues } from "../../../../../utils/logistAssistan
 import { EditTemplateCard } from "../../../generalComponents/EditTemplateCard";
 import { MapTemplateCard } from "../../../generalComponents/MapTemplates";
 import { MESSAGES_REINSTALL_TEMPLATE_NS } from "../../../../../utils/constants/assistants";
+import { updateMessagesMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/updates";
 
 export const UpdateMessages = ({
   formData,
@@ -13,6 +14,12 @@ export const UpdateMessages = ({
   setFlowsState,
 }) => {
   const handleInputChange = ({ target }) => {
+    if (
+      !!updateMessagesMaxSizes[target.id] &&
+      target.value.length >= updateMessagesMaxSizes[target.id]
+    )
+      return;
+
     setFormData((prev) => ({
       ...prev,
       updateMessages: {

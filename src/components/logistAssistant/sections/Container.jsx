@@ -8,8 +8,6 @@ import {
 } from "../../../services/logistAssistant";
 import { ModalContainer } from "../../modals/Container";
 import { AssistantFormModal } from "../../modals/assistantFormSave";
-import { generalConfigBotFieldSchema } from "../../../schemas/logistAssistant/botFieldData/generalConfig";
-import camelize from "camelize";
 
 export const SectionContainer = ({
   subsectionsData,

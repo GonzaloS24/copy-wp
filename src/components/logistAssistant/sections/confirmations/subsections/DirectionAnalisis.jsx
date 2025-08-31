@@ -2,9 +2,16 @@ import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { ToggleSwitch } from "../../../generalComponents/ToggleSwitch";
 import { Card } from "../../../generalComponents/Card";
 import { directionAnalisisInitialValues } from "../../../../../utils/logistAssistant/initialValues/confirmations";
+import { directionAnalisisMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/confirmations";
 
 export const DirectionAnalisis = ({ formData, setFormData }) => {
   const handleInputChange = (field, value) => {
+    if (
+      !!directionAnalisisMaxSizes[field] &&
+      value.length >= directionAnalisisMaxSizes[field]
+    )
+      return;
+
     setFormData((prev) => ({
       ...prev,
       directionAnalisis: {

@@ -1,3 +1,4 @@
+import { offerDaysMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/updates";
 import { ExampleBox } from "../../../generalComponents/ExampleBox";
 import { ExplanationBox } from "../../../generalComponents/ExplanationBox";
 import { InfoBox } from "../../../generalComponents/InfoBox";
@@ -5,6 +6,9 @@ import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 
 export const OfferDays = ({ formData, setFormData }) => {
   const handleInputChange = (field, value) => {
+    if (!!offerDaysMaxSizes[field] && value.length >= offerDaysMaxSizes[field])
+      return;
+
     setFormData((prev) => ({
       ...prev,
       offerDays: {

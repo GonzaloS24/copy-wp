@@ -1,3 +1,4 @@
+import { AIAudioMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/generalConfig";
 import { Card } from "../../../generalComponents/Card";
 import { HiddenTextField } from "../../../generalComponents/HiddenTextField";
 import { ToggleSwitch } from "../../../generalComponents/ToggleSwitch";
@@ -8,6 +9,9 @@ import { SliderInput } from "../../../generalComponents/inputs/SliderInput";
 
 export const AIAudio = ({ formData, setFormData }) => {
   const handleInputChange = (field, value) => {
+    if (!!AIAudioMaxSizes[field] && value.length >= AIAudioMaxSizes[field])
+      return;
+
     setFormData((prev) => ({
       ...prev,
       AIAudio: {
@@ -19,7 +23,7 @@ export const AIAudio = ({ formData, setFormData }) => {
 
   const handlePlayAudioTest = () => {
     if (formData?.AIAudio?.testText.trim()) {
-      alert("Reproduciendo audio de prueba: " + formData?.AIAudio?.testText);
+      alert("Esta funcionalidad aún se encuentra en desarrollo.");
     } else {
       alert("Por favor ingresa un texto para probar");
     }

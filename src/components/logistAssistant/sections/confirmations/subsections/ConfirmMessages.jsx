@@ -5,6 +5,7 @@ import { confirmMessagesInitialValues } from "../../../../../utils/logistAssista
 import { EditTemplateCard } from "../../../generalComponents/EditTemplateCard";
 import { MapTemplateCard } from "../../../generalComponents/MapTemplates";
 import { MESSAGES_REINSTALL_TEMPLATE_NS } from "../../../../../utils/constants/assistants";
+import { confirmMessagesMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/confirmations";
 
 export const ConfirmMessages = ({
   formData,
@@ -13,6 +14,12 @@ export const ConfirmMessages = ({
   setFlowsState,
 }) => {
   const handleInputChange = ({ target }) => {
+    if (
+      !!confirmMessagesMaxSizes[target.id] &&
+      target.value.length >= confirmMessagesMaxSizes[target.id]
+    )
+      return;
+
     setFormData((prev) => ({
       ...prev,
       confirmMessages: {
@@ -23,6 +30,12 @@ export const ConfirmMessages = ({
   };
 
   const handleIntInputChange = ({ target }) => {
+    if (
+      !!confirmMessagesMaxSizes[target.id] &&
+      target.value.length >= confirmMessagesMaxSizes[target.id]
+    )
+      return;
+
     setFormData((prev) => ({
       ...prev,
       confirmMessages: {

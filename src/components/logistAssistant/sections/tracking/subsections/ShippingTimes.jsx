@@ -1,9 +1,16 @@
 // import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { Card } from "../../../generalComponents/Card";
 import { shippingTimesInitialValues } from "../../../../../utils/logistAssistant/initialValues/tracking";
+import { shippingTimesMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/tracking";
 
 export const ShippingTimes = ({ formData, setFormData }) => {
   const handleInputChange = ({ target }) => {
+    if (
+      !!shippingTimesMaxSizes[target.id] &&
+      target.value.length >= shippingTimesMaxSizes[target.id]
+    )
+      return;
+
     setFormData((prev) => ({
       ...prev,
       shippingTimes: {

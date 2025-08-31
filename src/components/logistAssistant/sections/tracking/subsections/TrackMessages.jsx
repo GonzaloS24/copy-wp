@@ -1,4 +1,5 @@
 import { MESSAGES_REINSTALL_TEMPLATE_NS } from "../../../../../utils/constants/assistants";
+import { trackMessagesMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/tracking";
 import { Card } from "../../../generalComponents/Card";
 import { EditTemplateCard } from "../../../generalComponents/EditTemplateCard";
 import { MapTemplateCard } from "../../../generalComponents/MapTemplates";
@@ -12,6 +13,12 @@ export const TrackMessages = ({
   setFlowsState,
 }) => {
   const handleInputChange = (field, value) => {
+    if (
+      !!trackMessagesMaxSizes[field] &&
+      value.length >= trackMessagesMaxSizes[field]
+    )
+      return;
+
     setFormData((prev) => ({
       ...prev,
       trackMessages: {

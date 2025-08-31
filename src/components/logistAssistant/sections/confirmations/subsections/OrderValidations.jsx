@@ -3,9 +3,16 @@ import { PercentageInput } from "../../../generalComponents/PercentageInput";
 import { Card } from "../../../generalComponents/Card";
 // import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { orderValidationsInitialValues } from "../../../../../utils/logistAssistant/initialValues/confirmations";
+import { orderValidationsMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/confirmations";
 
 export const OrderValidations = ({ formData, setFormData }) => {
   const handleInputChange = (field, value) => {
+    if (
+      !!orderValidationsMaxSizes[field] &&
+      value.length >= orderValidationsMaxSizes[field]
+    )
+      return;
+
     setFormData((prev) => ({
       ...prev,
       orderValidations: {

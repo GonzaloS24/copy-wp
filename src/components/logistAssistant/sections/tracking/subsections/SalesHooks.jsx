@@ -1,9 +1,16 @@
 import { Card } from "../../../generalComponents/Card";
 import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { salesHooksInitialValues } from "../../../../../utils/logistAssistant/initialValues/tracking";
+import { salesHooksMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/tracking";
 
 export const SalesHooks = ({ formData, setFormData }) => {
   const handleInputChange = ({ target }) => {
+    if (
+      !!salesHooksMaxSizes[target.id] &&
+      target.value.length >= salesHooksMaxSizes[target.id]
+    )
+      return;
+
     setFormData((prev) => ({
       ...prev,
       salesHooks: {
