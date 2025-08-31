@@ -9,6 +9,7 @@ export const AlertDialog = ({
   confirmText = "Aceptar",
   cancelText = "Cancelar",
   showCancel = true,
+  buttons
 }) => {
   const modalRef = useRef(null);
 
@@ -63,7 +64,7 @@ export const AlertDialog = ({
 
         {/* Renderizado dinámico de los botones */}
         <div className="flex gap-3 justify-end">
-          {buttons.map((button, index) => (
+          {buttons && buttons.map((button, index) => (
             <button
               key={index}
               onClick={button.onClick}
