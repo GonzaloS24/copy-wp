@@ -37,7 +37,6 @@ export const AlertDialog = ({
     };
   }, [isOpen, onClose]);
 
-export const AlertDialog = ({ title, content, isOpen, onClose, buttons }) => {
   if (!isOpen) return null;
 
   return (
