@@ -45,7 +45,7 @@ export const ConnectIntegration = ({
     }
   }, [formData, integration]);
 
-  const integrationFields = {
+const integrationFields = {
     backblaze: [
       {
         name: "applicationKeyId",
@@ -59,6 +59,13 @@ export const ConnectIntegration = ({
         label: "Application Key",
         type: "password",
         placeholder: "Ingresa tu Application Key",
+        required: true,
+      },
+      {
+        name: "bucketId", 
+        label: "Bucket ID",
+        type: "text",
+        placeholder: "Ingresa el ID de tu bucket",
         required: true,
       },
     ],
@@ -306,19 +313,20 @@ export const ConnectIntegration = ({
     setShowConfirmation(true);
   };
 
-  const handleConfirmedConnect = async () => {
-    setIsLoading(true);
-    setShowConfirmation(false);
+    const handleConfirmedConnect = async () => {
+      setIsLoading(true);
+      setShowConfirmation(false);
 
-    try {
-      let result;
+      try {
+        let result;
 
-      if (integration.id === "backblaze") {
-        result = await uploadImage.authorize(
-          formData.applicationKeyId,
-          formData.applicationKey
-        );
-      } else {
+        if (integration.id === "backblaze") {
+          result = await uploadImage.authorize(
+            formData.applicationKeyId,
+            formData.applicationKey,
+            formData.bucketId 
+          );
+        } else {
         const createFunction =
           createIntegrations[`${integration.id}CreateIntegrations`];
         const response = await createFunction(formData);

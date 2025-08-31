@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Package, ShoppingCart, Globe, MessageCircle, Zap, X, Loader } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { useProductService } from '../productInSeconds/service/productInfoService';
+import OpenAIWarningModal from './OpenAIWarningModal'; 
 
 const ProductInfoSelector = ({ isOpen, onClose }) => {
   const [selectedSource, setSelectedSource] = useState('dropi');
@@ -9,6 +10,7 @@ const ProductInfoSelector = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingState, setLoadingState] = useState(1);
   const [error, setError] = useState(null);
+ const [showOpenAIWarning, setShowOpenAIWarning] = useState(false);
 
   const sources = {
     dropi: {
@@ -74,6 +76,7 @@ const ProductInfoSelector = ({ isOpen, onClose }) => {
     if (!inputValue.trim()) return;
 
     setError(null);
+    setShowOpenAIWarning(false);
     setIsLoading(true);
     setLoadingState(1);
 
@@ -86,7 +89,12 @@ const ProductInfoSelector = ({ isOpen, onClose }) => {
       onClose();
     } catch (err) {
       console.error('Error al obtener información del producto:', err);
-      setError('No se pudo obtener la información del producto. Verifica el ID e intenta nuevamente.');
+      
+      if (err.message.includes('OpenAI API key not found')) {
+        setShowOpenAIWarning(true);
+      } else {
+        setError('No se pudo obtener la información del producto. Verifica el ID e intenta nuevamente.');
+      }
     } finally {
       setIsLoading(false);
       setLoadingState(1);
@@ -296,7 +304,12 @@ const ProductInfoSelector = ({ isOpen, onClose }) => {
           </p>
         </div>
       </div>
+     <OpenAIWarningModal 
+     isOpen={showOpenAIWarning} 
+     onClose={() => setShowOpenAIWarning(false)} 
+     />
     </div>
+    
   );
   
   return createPortal(modalContent, document.body);

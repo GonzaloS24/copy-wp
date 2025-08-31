@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const AlertDialog = ({ title, content, isOpen, onClose, onConfirm, confirmText = "Aceptar", cancelText = "Cancelar", showCancel = true }) => {
+export const AlertDialog = ({ title, content, isOpen, onClose, buttons }) => {
   if (!isOpen) return null;
 
   return (
@@ -22,21 +22,18 @@ export const AlertDialog = ({ title, content, isOpen, onClose, onConfirm, confir
           </div>
         </div>
 
+        {/* Renderizado dinámico de los botones */}
         <div className="flex gap-3 justify-end">
-          {showCancel && (
+          {buttons.map((button, index) => (
             <button
-              onClick={onClose}
-              className="px-6 py-3 border-2 border-slate-200 bg-white text-slate-700 rounded-xl font-semibold text-base cursor-pointer transition-all duration-200 hover:border-slate-300 hover:bg-slate-50"
+              key={index}
+              onClick={button.onClick}
+              disabled={button.disabled}
+              className={`px-6 py-3 rounded-xl font-semibold text-base cursor-pointer transition-all duration-200 ${button.className} ${button.disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              {cancelText}
+              {button.text}
             </button>
-          )}
-          <button
-            onClick={onConfirm}
-            className="px-6 py-3 bg-gradient-to-br from-blue-500 to-blue-600 text-white border-none rounded-xl font-semibold text-base cursor-pointer transition-all duration-300 hover:from-blue-600 hover:to-blue-700"
-          >
-            {confirmText}
-          </button>
+          ))}
         </div>
       </div>
     </div>

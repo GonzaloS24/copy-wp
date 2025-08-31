@@ -11,9 +11,10 @@ export const ProductProvider = ({ children }) => {
         name: '',
         price: '',
         currency: 'COP',
-        productType: 'Físico',
+        productType: 'físico',
         id: '',
-        image: ''
+        image: '',
+        dta_prompt: []
       }
     },
     messageWel: {
@@ -94,7 +95,6 @@ export const ProductProvider = ({ children }) => {
       touchedFields: {
         name: false,
         price: false,
-        description: false,
         image: false
       }
     },

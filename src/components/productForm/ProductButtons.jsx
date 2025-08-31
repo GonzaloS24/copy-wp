@@ -1,229 +1,50 @@
-import React, { useContext, useState } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import { useProduct } from '../../context/ProductContext';
-import { ProductService } from '../../services/productService';
+import { useProductSave } from '../../hooks/useProductSave';
 import { AlertDialog } from './content/dialog/AlertDialog';
-
-import { mapProductDataToServiceFormat } from '../../utils/productDataMapper';
-
 import { SaveButton } from '../buttons/SaveButton';
 import { AutoAssistantButton } from './content/productInSeconds/AutoAssistantButton';
 
 export const ProductButtons = () => {
-  const { productData, validationState } = useProduct();
-  const { productName } = useParams();
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
-  const [showValidationDialog, setShowValidationDialog] = useState(false);
-  const [missingFields, setMissingFields] = useState([]);
-  const [isSecondAttempt, setIsSecondAttempt] = useState(false);
-  const [showNameRequiredDialog, setShowNameRequiredDialog] = useState(false);
+  const { productData } = useProduct();
   const [isGeneratingAssistant, setIsGeneratingAssistant] = useState(false);
+  
+  const {
+    isSaving,
+    showValidationDialog,
+    missingFields,
+    isSecondAttempt,
+    showNameRequiredDialog,
+    setShowValidationDialog,
+    setShowNameRequiredDialog,
+    setIsSecondAttempt,
+    saveProduct,
+    isEditMode,
+    navigate
+  } = useProductSave();
 
   const openAutoAssistantModal = () => {
     setIsGeneratingAssistant(true);
     console.log('Abriendo modal de asistente automático');
-  }
-
-  const isEditMode = () => {
-    return productName && location.pathname.includes(`/${productName}`);
   };
 
-  const formatPromptText = (promptText, promptType) => {
-  if (!promptText || typeof promptText !== 'string') return '';
-  
-  if (promptType === 'libre' && promptText.trim() !== '') {
-    return promptText.replace(/\n/g, '\\n');
-  }
-  
-  return promptText;
-};
-
-
-const getPromptText = () => {
-  const promptData = productData.freePrompt?.promptText || productData.freePrompt?.promptContent;
-  
-  if (!promptData) return '';
-  
-  let processedText = '';
-  
-  if (typeof promptData === 'string') {
-    processedText = promptData;
-  } else if (typeof promptData === 'object') {
-    if (promptData.text) processedText = promptData.text;
-    else if (promptData.prompt) processedText = promptData.prompt;
-    else if (promptData.content) processedText = promptData.content;
-    else if (promptData.value) processedText = promptData.value;
-    else {
-      const keys = Object.keys(promptData);
-      if (keys.length === 1) {
-        const value = promptData[keys[0]];
-        if (typeof value === 'string') processedText = value;
-      }
-    }
-  }
-  
-  return formatPromptText(
-    processedText,
-    productData.freePrompt?.promptType
-  );
-};
-
-  const validateProductData = (mappedData) => {
-    const errors = [];
+  const handleSave = async (forceInactive = false) => {
+    const result = await saveProduct(productData, forceInactive, false);
     
-    if (!mappedData || typeof mappedData !== 'object') {
-      errors.push('Datos del producto inválidos');
-      return errors;
+    if (result.success) {
+      alert(result.message);
+      if (result.navigateTo) {
+        navigate(result.navigateTo);
+      }
+    } else if (result.error) {
+      alert(result.error);
     }
-
-    if (!mappedData.informacion_de_producto) {
-      errors.push('Información del producto requerida');
-    }
-
-    return errors;
   };
-
-  const validateRequiredFields = () => {
-    const missing = [];
-
-    if (!productData.info?.formData?.name?.trim()) {
-      missing.push('Nombre del producto');
-      return missing;
-    }
-
-    if (!productData.info?.formData?.price?.trim()) {
-      missing.push('Precio del producto');
-    }
-    if (!productData.info?.formData?.description?.trim()) {
-      missing.push('Descripción del producto');
-    }
-
-    if (!productData.messageWel?.formData?.initialMessage?.trim()) {
-      missing.push('Mensaje inicial');
-    }
-    if (!productData.messageWel?.formData?.entryQuestion?.trim()) {
-      missing.push('Pregunta de entrada');
-    }
-
-    const freePromptValid = getPromptText().trim() !== '';
-    
-    const guidePromptValid = (
-      productData.freePrompt?.guidePromptData?.contextualizacion?.trim() !== '' ||
-      productData.freePrompt?.guidePromptData?.fichaTecnica?.trim() !== '' ||
-      productData.freePrompt?.guidePromptData?.guionConversacional?.trim() !== '' ||
-      productData.freePrompt?.guidePromptData?.posiblesSituaciones?.trim() !== '' ||
-      productData.freePrompt?.guidePromptData?.reglasIA?.trim() !== ''
-    );
-
-    if (productData.freePrompt?.promptType === 'libre') {
-      if (!freePromptValid) {
-        missing.push('Prompt libre');
-      }
-      if (guidePromptValid) {
-        missing.push('Conflicto: Prompt libre seleccionado pero campos de prompt guiado llenos');
-      }
-    } else if (productData.freePrompt?.promptType === 'guiado') {
-      if (!guidePromptValid) {
-        missing.push('Al menos un campo de prompt guiado');
-      }
-      if (freePromptValid) {
-        missing.push('Conflicto: Prompt guiado seleccionado pero campo de prompt libre lleno');
-      }
-    } else {
-      missing.push('Tipo de prompt (libre o guiado)');
-    }
-
-    if (!productData.reminder?.reminder1?.text?.trim()) {
-      missing.push('Mensaje del recordatorio 1');
-    }
-    if (!productData.reminder?.reminder2?.text?.trim()) {
-      missing.push('Mensaje del recordatorio 2');
-    }
-
-    if (!productData.triggers?.keywords?.trim()) {
-      missing.push('Palabras clave');
-    }
-
-    return missing;
-  };
-
-const saveAssistant = async (forceInactive = false) => {
-  const missingRequiredFields = validateRequiredFields();
-  const hasMissingFields = missingRequiredFields.length > 0;
-  
-  const isMissingName = missingRequiredFields.includes('Nombre del producto');
-  
-  if (isMissingName) {
-    setShowNameRequiredDialog(true);
-    return;
-  }
-  
-  const isInactive = forceInactive || hasMissingFields;
-  
-  if (hasMissingFields && !forceInactive) {
-    setMissingFields(missingRequiredFields);
-    setIsSecondAttempt(true);
-    setShowValidationDialog(true);
-    return;
-  }
-
-  setIsLoading(true);
-  
-  try {
-    console.log('MediaItems antes del mapeo:', productData.messageWel?.mediaItems);
-    
-    const mappedData = mapProductDataToServiceFormat(productData, isInactive);
-    const productNameFromData = productData.info?.formData?.name?.trim() || '';
-    
-    console.log('Datos completos mapeados:', mappedData);
-    
-    const validationErrors = validateProductData(mappedData);
-    if (validationErrors.length > 0) {
-      throw new Error(`Datos inválidos: ${validationErrors.join(', ')}`);
-    }
-    
-    if (isEditMode()) {
-      console.log('Modo edición - actualizando producto:', productName);
-      console.log('Datos a enviar para actualización:', mappedData);
-
-      const response = await ProductService.updateProduct(productName, mappedData);
-      console.log('Respuesta de actualización:', response);
-
-      if (response && (response.status === 'ok' || response.message || response.data)) {
-        alert(`¡Producto "${productName || 'nuevo'}" actualizado exitosamente!`);
-        navigate('/productos-config'); 
-      } else {
-        throw new Error('Error al actualizar el producto - respuesta inválida');
-      }
-    } else {
-      console.log('🆕 Modo creación - creando nuevo producto');
-      console.log('📝 Datos a enviar para creación:', mappedData);
-      
-      const response = await ProductService.createProduct(mappedData);
-      console.log('✅ Respuesta de creación:', response);
-
-      if (response && (response.status === 'ok' || response.message || response.data)) {
-        alert(`¡Asistente "${productNameFromData}" guardado exitosamente como ${isInactive ? 'inactivo' : 'activo'}!`);
-        navigate('/productos-config'); 
-      } else {
-        throw new Error('Error al guardar el asistente - respuesta inválida');
-      }
-    }
-  } catch (error) {
-    console.error('Error al guardar el asistente:', error);
-    console.error('Datos que causaron el error:', productData);
-    alert(`Error al ${isEditMode() ? 'actualizar' : 'guardar'} el asistente: ${error.message}`);
-  } finally {
-    setIsLoading(false);
-    setIsSecondAttempt(false);
-  }
-};
 
   const handleValidationDialogClose = () => {
     setShowValidationDialog(false);
     setMissingFields([]);
+    setIsSecondAttempt(false);
   };
 
   const handleNameRequiredDialogClose = () => {
@@ -232,13 +53,12 @@ const saveAssistant = async (forceInactive = false) => {
 
   const handleConfirmSecondAttempt = () => {
     setShowValidationDialog(false);
-    saveAssistant(true); 
+    handleSave(true);
   };
 
   const renderMissingFieldsContent = () => {
     const actionText = isEditMode() ? 'actualizar' : 'guardar';
     const entityText = isEditMode() ? 'producto' : 'agente';
-    
     return (
       <div>
         {isSecondAttempt ? (
@@ -274,14 +94,52 @@ const saveAssistant = async (forceInactive = false) => {
     );
   };
 
+  const getValidationDialogButtons = () => {
+    if (isSecondAttempt) {
+      return [
+        {
+          text: `Cancelar`,
+          onClick: handleValidationDialogClose,
+          className: 'px-6 py-3 border-2 border-slate-200 bg-white text-slate-700 rounded-xl font-semibold text-base transition-all duration-200 hover:border-slate-300 hover:bg-slate-50',
+          disabled: false,
+        },
+        {
+          text: `${isEditMode() ? 'Actualizar' : 'Guardar'} como inactivo`,
+          onClick: handleConfirmSecondAttempt,
+          className: 'px-6 py-3 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl font-semibold text-base transition-all duration-300 hover:from-blue-600 hover:to-blue-700',
+          disabled: false,
+        }
+      ];
+    } else {
+      return [
+        {
+          text: 'Entendido',
+          onClick: handleValidationDialogClose,
+          className: 'px-6 py-3 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl font-semibold text-base transition-all duration-300 hover:from-blue-600 hover:to-blue-700',
+          disabled: false,
+        }
+      ];
+    }
+  };
+
+  const getNameRequiredDialogButtons = () => {
+    return [
+      {
+        text: 'Entendido',
+        onClick: handleNameRequiredDialogClose,
+        className: 'px-6 py-3 bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl font-semibold text-base transition-all duration-300 hover:from-blue-600 hover:to-blue-700',
+        disabled: false,
+      }
+    ];
+  };
+
   return (
     <>
       <div className="fixed bottom-8 left-80 right-8 flex justify-between items-center">
         <SaveButton
-          isLoading={isLoading}
-          onClick={() => saveAssistant(false)}
+          isLoading={isSaving}
+          onClick={() => handleSave(false)}
         />
-        
         <AutoAssistantButton
           isLoading={isGeneratingAssistant}
           onClick={openAutoAssistantModal}
@@ -289,20 +147,11 @@ const saveAssistant = async (forceInactive = false) => {
       </div>
 
       <AlertDialog
-        title={isSecondAttempt ? 
-          `Confirmar ${isEditMode() ? 'actualización' : 'guardado'} con campos faltantes` : 
-          "Campos requeridos faltantes"
-        }
+        title={isSecondAttempt ? `Confirmar ${isEditMode() ? 'actualización' : 'guardado'} con campos faltantes` : "Campos requeridos faltantes"}
         content={renderMissingFieldsContent()}
         isOpen={showValidationDialog}
         onClose={handleValidationDialogClose}
-        onConfirm={isSecondAttempt ? handleConfirmSecondAttempt : handleValidationDialogClose}
-        confirmText={isSecondAttempt ? 
-          `${isEditMode() ? 'Actualizar' : 'Guardar'} como inactivo` : 
-          "Entendido"
-        }
-        showCancel={isSecondAttempt}
-        cancelText="Cancelar"
+        buttons={getValidationDialogButtons()}
       />
 
       <AlertDialog
@@ -317,9 +166,7 @@ const saveAssistant = async (forceInactive = false) => {
         }
         isOpen={showNameRequiredDialog}
         onClose={handleNameRequiredDialogClose}
-        onConfirm={handleNameRequiredDialogClose}
-        confirmText="Entendido"
-        showCancel={false}
+        buttons={getNameRequiredDialogButtons()}
       />
     </>
   );

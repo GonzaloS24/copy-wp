@@ -32,7 +32,7 @@ export class uploadImage {
     return lastDotIndex !== -1 ? fileName.substring(lastDotIndex) : '';
   }
 
-  static async authorize(applicationKeyId, applicationKey) {
+  static async authorize(applicationKeyId, applicationKey, bucketId) {
     try {
       const token = getAuthToken();
       if (!token) throw new Error('No authentication token found');
@@ -40,10 +40,15 @@ export class uploadImage {
       if (!applicationKeyId || !applicationKey) {
         throw new Error('Both applicationKeyId and applicationKey are required');
       }
+      
+      if (!bucketId || bucketId.trim() === '') {
+        throw new Error('bucketId is required');
+      }
 
       const payload = {
         applicationKeyId,
-        applicationKey
+        applicationKey,
+        bucketId 
       };
 
       const response = await fetch(
@@ -94,22 +99,38 @@ export class uploadImage {
         this.createUploadFetchOptions(token, formData)
       );
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(
-          errorData.message || 
-          `Error ${response.status}: ${response.statusText}`
-        );
+ if (!response.ok) {
+      // ERRORES ESPECÍFICOS DE UPLOAD
+      let errorMessage = `Error ${response.status} al subir archivo`;
+      
+      if (result.error === 'NO_FILE_PROVIDED') {
+        errorMessage = 'No se seleccionó ningún archivo';
+      } else if (result.error === 'FILE_TOO_LARGE') {
+        errorMessage = `Archivo demasiado grande. Límite: ${result.maxSize / (1024*1024)}MB`;
+      } else if (result.error === 'INVALID_FILE_EXTENSION') {
+        errorMessage = `Tipo de archivo no permitido. Extensiones válidas: ${result.allowedExtensions.join(', ')}`;
+      } else if (result.message) {
+        errorMessage = result.message;
       }
 
-      const result = await response.json();
+      throw new Error(errorMessage);
+    }
+
+     const result = await response.json();
       console.log('File uploaded successfully:', result);
       
       return result;
-      
-    } catch (error) {
-      console.error('Error in BackblazeService.uploadFile:', error);
-      throw error;
-    }
+
+  } catch (error) {
+    console.error('🚨 Error en BackblazeService.uploadFile:', {
+      fileName: originalFileName,
+      fileSize: file?.size,
+      error: error.message,
+      stack: error.stack,
+      timestamp: new Date().toISOString()
+    });
+    
+    throw new Error(error.message || 'Error al subir el archivo');
   }
+}
 }
