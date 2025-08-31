@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useApiChat } from "./ApiChatContext";
 
-const ApiChat = ({ title = "Prueba tu asistente" }) => {
+const ApiChat = ({ title = "Chat en vivo" }) => {
   const [inputValue, setInputValue] = useState("");
   const [usernameInput, setUsernameInput] = useState("");
   const messagesEndRef = useRef(null);
