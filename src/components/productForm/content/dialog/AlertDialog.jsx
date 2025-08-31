@@ -1,14 +1,53 @@
-import React from 'react';
+import { useRef, useEffect } from "react";
 
-export const AlertDialog = ({ title, content, isOpen, onClose, onConfirm, confirmText = "Aceptar", cancelText = "Cancelar", showCancel = true }) => {
+export const AlertDialog = ({
+  title,
+  content,
+  isOpen,
+  onClose,
+  onConfirm,
+  confirmText = "Aceptar",
+  cancelText = "Cancelar",
+  showCancel = true,
+}) => {
+  const modalRef = useRef(null);
+
+  // useEffect para manejar el cierre automático
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+
+    const handleEscapeKey = (event) => {
+      if (event.key === "Escape" && isOpen) {
+        onClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("keydown", handleEscapeKey);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscapeKey);
+    };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md font-sans relative mx-4">
+      <div
+        ref={modalRef}
+        className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md font-sans relative mx-4"
+      >
         <div className="flex justify-between items-start mb-6">
           <h2 className="text-xl font-bold text-slate-700 pr-4">{title}</h2>
-          <button 
+          <button
             onClick={onClose}
             className="bg-transparent border-none text-3xl cursor-pointer text-slate-500 hover:text-slate-700 w-8 h-8 flex items-center justify-center flex-shrink-0"
           >
