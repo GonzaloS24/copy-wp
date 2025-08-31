@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useApiChat } from "./ApiChatContext";
 
-const ApiChat = ({ title = "Prueba tu asistente con API Chat" }) => {
+const ApiChat = ({ title = "Prueba tu asistente" }) => {
   const [inputValue, setInputValue] = useState("");
   const [usernameInput, setUsernameInput] = useState("");
   const messagesEndRef = useRef(null);
@@ -147,10 +147,9 @@ const ApiChat = ({ title = "Prueba tu asistente con API Chat" }) => {
             )}
 
             {messages.length === 0 && !isConnected && !isConnecting && (
-              <div className="flex items-center justify-center h-full text-white/70 text-center">
+              <div className="flex p-10 items-center justify-center h-full text-white/70 text-center">
                 <div>
-                  <div className="text-2xl mb-2">🔌</div>
-                  <p>Conecta con un nombre de usuario para comenzar</p>
+                  <p>Escribe un nombre de usuario para comenzar</p>
                 </div>
               </div>
             )}
