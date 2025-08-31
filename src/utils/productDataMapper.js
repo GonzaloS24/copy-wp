@@ -34,7 +34,8 @@ export const mapProductDataToServiceFormat = (productData, isInactive = false) =
       tipo_de_producto: productData.info?.formData?.productType || '', 
       variable: productData.info?.productType === 'VARIABLE' ? "VARIABLE" : "no",
       imagen_del_producto: productData.info?.formData?.image || '', 
-      estado: isInactive ? 'inactivo' : 'activo'
+      estado: isInactive ? 'inactivo' : 'activo',
+      dta_prompt: productData.info?.formData?.dta_prompt || ''
     },
     embudo_de_ventas: {
       mensaje_inicial: productData.messageWel?.formData?.initialMessage || '',

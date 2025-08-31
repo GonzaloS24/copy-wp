@@ -24,9 +24,23 @@ export const ProductSidebar = ({
   };
 
   const handleGoToProducts = () => {
-    navigate('/productos-config'); 
+    const navigationCallback = () => {
+      navigate('/productos-config');
+    };
+    
+    // Verificar si hay función de navegación programática disponible
+    if (window.__handleProgrammaticNavigation) {
+      const hasChanges = window.__handleProgrammaticNavigation(navigationCallback);
+      
+      if (!hasChanges) {
+        // Si no hay cambios, navegar inmediatamente
+        navigationCallback();
+      }
+    } else {
+      // Fallback si no está disponible la verificación
+      navigationCallback();
+    }
   };
-
 
   return (
     <aside className="flex flex-col bg-white border-r border-slate-200 w-64 fixed left-0 top-16 bottom-0 z-10">
@@ -47,7 +61,6 @@ export const ProductSidebar = ({
           </div>
         ))}
       </div>
-
 
       <div 
         className="flex items-center justify-center gap-2 p-4 px-8 text-base font-semibold text-slate-700 cursor-pointer transition-colors duration-200 ease-in-out hover:text-blue-500 border-t border-slate-200 bg-white flex-shrink-0"
