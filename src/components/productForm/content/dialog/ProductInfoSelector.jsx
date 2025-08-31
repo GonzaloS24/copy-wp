@@ -38,15 +38,15 @@ const ProductInfoSelector = ({ isOpen, onClose }) => {
       color: 'border-indigo-400 bg-indigo-50 text-indigo-600',
       hoverColor: 'hover:border-indigo-300'
     },
-    chatea: {
-      id: 'chatea',
-      name: 'Chatea PRO',
-      icon: MessageCircle,
-      label: 'ID de Chatea PRO:',
-      placeholder: 'Ingresa el ID del producto en Chatea PRO',
-      color: 'border-purple-400 bg-purple-50 text-purple-600',
-      hoverColor: 'hover:border-purple-300'
-    }
+    // chatea: {
+    //   id: 'chatea',
+    //   name: 'Chatea PRO',
+    //   icon: MessageCircle,
+    //   label: 'ID de Chatea PRO:',
+    //   placeholder: 'Ingresa el ID del producto en Chatea PRO',
+    //   color: 'border-purple-400 bg-purple-50 text-purple-600',
+    //   hoverColor: 'hover:border-purple-300'
+    // }
   };
 
   const loadingMessages = {
