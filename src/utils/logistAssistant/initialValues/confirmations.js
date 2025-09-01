@@ -1,8 +1,8 @@
 export const confirmMessagesInitialValues = {
   imagePosition: 1,
-  reminder1Time: 30,
-  reminder1Unit: "minutos",
-  reminder2Time: 2,
+  reminder1Time: 1,
+  reminder1Unit: "horas",
+  reminder2Time: 24,
   reminder2Unit: "horas",
   thanksMessage:
     "¡Gracias por confirmar tu pedido! Estamos procesando tu solicitud y pronto recibirás actualizaciones sobre el estado de tu envío...",
