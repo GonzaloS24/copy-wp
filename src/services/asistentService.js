@@ -115,7 +115,10 @@ export const installTemplate = async (workspaceId, payload) => {
     throw new Error(
       error.response?.data?.message ||
         error.message ||
-        "Error al instalar el asistente"
+        "Error al instalar el asistente",
+      {
+        cause: error.status,
+      }
     );
   }
 };
