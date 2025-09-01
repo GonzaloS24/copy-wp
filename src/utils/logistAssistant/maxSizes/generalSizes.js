@@ -1,4 +1,4 @@
-export const maxIntSize = 10;
+export const maxIntSize = 15;
 
 export const maxTextSize = 100;
 

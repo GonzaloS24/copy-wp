@@ -1,4 +1,5 @@
 import { MESSAGES_REINSTALL_TEMPLATE_NS } from "../../../../../utils/constants/assistants";
+import { trackMessagesInitialValues } from "../../../../../utils/logistAssistant/initialValues/tracking";
 import { trackMessagesMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/tracking";
 import { Card } from "../../../generalComponents/Card";
 import { EditTemplateCard } from "../../../generalComponents/EditTemplateCard";
@@ -80,10 +81,11 @@ export const TrackMessages = ({
               type="number"
               className="w-30 p-3.5 border border-gray-300 rounded-l-lg border-r-0 text-center text-sm bg-white focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
               value={formData?.trackMessages?.officeReminderTime ?? ""}
+              placeholder={trackMessagesInitialValues.officeReminderTime ?? ""}
               onChange={(e) =>
                 handleInputChange(
                   "officeReminderTime",
-                  parseInt(e.target.value) || 1
+                  parseInt(e.target.value) || ""
                 )
               }
             />

@@ -24,6 +24,7 @@ export const AIBehaviourInitialValues = {
 };
 
 export const storeDataInitialValues = {
+  storeCountry: "",
   storeName: "",
   storeLink: "",
   storeLocation:

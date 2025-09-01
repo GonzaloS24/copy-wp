@@ -40,7 +40,7 @@ export const ConfirmMessages = ({
       ...prev,
       confirmMessages: {
         ...prev.confirmMessages,
-        [target.id]: parseInt(target.value) || 1,
+        [target.id]: Number(target.value) || "",
       },
     }));
   };
