@@ -1,9 +1,16 @@
 import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { Card } from "../../../generalComponents/Card";
 import { AIBehaviourInitialValues } from "../../../../../utils/logistAssistant/initialValues/generalConfig";
+import { AIBehaviourMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/generalConfig";
 
 export const AIBehaviour = ({ formData, setFormData }) => {
   const handleInputChange = ({ target }) => {
+    if (
+      !!AIBehaviourMaxSizes[target.id] &&
+      target.value.length >= AIBehaviourMaxSizes[target.id]
+    )
+      return;
+
     setFormData((prev) => ({
       ...prev,
       AIBehaviour: {
@@ -42,7 +49,7 @@ export const AIBehaviour = ({ formData, setFormData }) => {
           <select
             id="sendingType"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-            value={formData?.AIBehaviour?.sendingType}
+            value={formData?.AIBehaviour?.sendingType ?? ""}
             onChange={handleInputChange}
           >
             <option value="1 solo mensaje">1 solo mensaje</option>
@@ -68,7 +75,7 @@ export const AIBehaviour = ({ formData, setFormData }) => {
             id="languageAdaptation"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="4"
-            value={formData?.AIBehaviour?.languageAdaptation}
+            value={formData?.AIBehaviour?.languageAdaptation ?? ""}
             placeholder={`Ej. ${AIBehaviourInitialValues.languageAdaptation}...`}
             onChange={handleInputChange}
           />
@@ -92,7 +99,7 @@ export const AIBehaviour = ({ formData, setFormData }) => {
             id="advisorGreeting"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="3"
-            value={formData?.AIBehaviour?.advisorGreeting}
+            value={formData?.AIBehaviour?.advisorGreeting ?? ""}
             placeholder={`Ej. ${AIBehaviourInitialValues.advisorGreeting}...`}
             onChange={handleInputChange}
           />
@@ -109,7 +116,7 @@ export const AIBehaviour = ({ formData, setFormData }) => {
             id="cancellationPrevention"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="5"
-            value={formData?.AIBehaviour?.cancellationPrevention}
+            value={formData?.AIBehaviour?.cancellationPrevention ?? ""}
             placeholder={`Ej. ${AIBehaviourInitialValues.cancellationPrevention}...`}
             onChange={handleInputChange}
           />
@@ -133,7 +140,7 @@ export const AIBehaviour = ({ formData, setFormData }) => {
             id="generalRestrictions"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="6"
-            value={formData?.AIBehaviour?.generalRestrictions}
+            value={formData?.AIBehaviour?.generalRestrictions ?? ""}
             placeholder={`Ej. ${AIBehaviourInitialValues.generalRestrictions}...`}
             onChange={handleInputChange}
           />

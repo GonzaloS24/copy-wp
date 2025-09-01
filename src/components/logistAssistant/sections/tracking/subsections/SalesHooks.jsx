@@ -1,9 +1,16 @@
 import { Card } from "../../../generalComponents/Card";
 import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { salesHooksInitialValues } from "../../../../../utils/logistAssistant/initialValues/tracking";
+import { salesHooksMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/tracking";
 
 export const SalesHooks = ({ formData, setFormData }) => {
   const handleInputChange = ({ target }) => {
+    if (
+      !!salesHooksMaxSizes[target.id] &&
+      target.value.length >= salesHooksMaxSizes[target.id]
+    )
+      return;
+
     setFormData((prev) => ({
       ...prev,
       salesHooks: {
@@ -45,7 +52,7 @@ export const SalesHooks = ({ formData, setFormData }) => {
             id="generatedGuideHook"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="8"
-            value={formData?.salesHooks?.generatedGuideHook}
+            value={formData?.salesHooks?.generatedGuideHook ?? ""}
             placeholder={salesHooksInitialValues.generatedGuideHook}
             onChange={handleInputChange}
           />
@@ -72,7 +79,7 @@ export const SalesHooks = ({ formData, setFormData }) => {
             id="deliveryHook"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="8"
-            value={formData?.salesHooks?.deliveryHook}
+            value={formData?.salesHooks?.deliveryHook ?? ""}
             placeholder={salesHooksInitialValues.deliveryHook}
             onChange={handleInputChange}
           />
@@ -99,7 +106,7 @@ export const SalesHooks = ({ formData, setFormData }) => {
             id="officeHook"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="12"
-            value={formData?.salesHooks?.officeHook}
+            value={formData?.salesHooks?.officeHook ?? ""}
             placeholder={salesHooksInitialValues.officeHook}
             onChange={handleInputChange}
           />
@@ -126,7 +133,7 @@ export const SalesHooks = ({ formData, setFormData }) => {
             id="deliveredHook"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="10"
-            value={formData?.salesHooks?.deliveredHook}
+            value={formData?.salesHooks?.deliveredHook ?? ""}
             placeholder={salesHooksInitialValues.deliveredHook}
             onChange={handleInputChange}
           />

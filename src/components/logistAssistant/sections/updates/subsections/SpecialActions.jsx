@@ -1,9 +1,16 @@
 // import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { ToggleSwitch } from "../../../generalComponents/ToggleSwitch";
 import { Card } from "../../../generalComponents/Card";
+import { specialActionsMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/updates";
 
 export const SpecialActions = ({ formData, setFormData }) => {
   const handleInputChange = (field, value) => {
+    if (
+      !!specialActionsMaxSizes[field] &&
+      value.length >= specialActionsMaxSizes[field]
+    )
+      return;
+
     setFormData((prev) => ({
       ...prev,
       specialActions: {
@@ -35,7 +42,7 @@ export const SpecialActions = ({ formData, setFormData }) => {
             /> */}
           </div>
           <ToggleSwitch
-            checked={formData?.specialActions?.autoUpdate}
+            checked={formData?.specialActions?.autoUpdate ?? false}
             onChange={(value) => handleInputChange("autoUpdate", value)}
             label="Sí"
           />

@@ -1,8 +1,8 @@
 import z from "zod/v4";
 
 export const offerDaysSchema = z.object({
-  minDay: z.string(),
-  maxDay: z.string(),
+  minDay: z.coerce.number().int().positive(),
+  maxDay: z.coerce.number().int().positive(),
 });
 
 export const specialActionsSchema = z.object({

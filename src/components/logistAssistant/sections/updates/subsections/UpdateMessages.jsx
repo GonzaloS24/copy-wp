@@ -5,6 +5,7 @@ import { updateMessagesInitialValues } from "../../../../../utils/logistAssistan
 import { EditTemplateCard } from "../../../generalComponents/EditTemplateCard";
 import { MapTemplateCard } from "../../../generalComponents/MapTemplates";
 import { MESSAGES_REINSTALL_TEMPLATE_NS } from "../../../../../utils/constants/assistants";
+import { updateMessagesMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/updates";
 
 export const UpdateMessages = ({
   formData,
@@ -13,6 +14,12 @@ export const UpdateMessages = ({
   setFlowsState,
 }) => {
   const handleInputChange = ({ target }) => {
+    if (
+      !!updateMessagesMaxSizes[target.id] &&
+      target.value.length >= updateMessagesMaxSizes[target.id]
+    )
+      return;
+
     setFormData((prev) => ({
       ...prev,
       updateMessages: {
@@ -71,7 +78,7 @@ export const UpdateMessages = ({
               <input
                 id="reminder1TimeUpdate"
                 type="number"
-                value={formData?.updateMessages?.reminder1TimeUpdate}
+                value={formData?.updateMessages?.reminder1TimeUpdate ?? ""}
                 placeholder={updateMessagesInitialValues.reminder1TimeUpdate}
                 className="w-30 p-3.5 border border-gray-300 rounded-l-lg border-r-0 text-center text-sm bg-white focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
                 onChange={handleInputChange}
@@ -79,7 +86,7 @@ export const UpdateMessages = ({
               <select
                 id="reminder1Unit"
                 className="flex-1 p-3.5 border border-gray-300 rounded-r-lg text-sm bg-white cursor-pointer min-w-36 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-                value={formData?.updateMessages?.reminder1Unit}
+                value={formData?.updateMessages?.reminder1Unit ?? ""}
                 onChange={handleInputChange}
               >
                 <option value="minutos">minutos</option>
@@ -103,7 +110,7 @@ export const UpdateMessages = ({
               <input
                 id="reminder2TimeUpdate"
                 type="number"
-                value={formData?.updateMessages?.reminder2TimeUpdate}
+                value={formData?.updateMessages?.reminder2TimeUpdate ?? ""}
                 placeholder={updateMessagesInitialValues.reminder2TimeUpdate}
                 className="w-30 p-3.5 border border-gray-300 rounded-l-lg border-r-0 text-center text-sm bg-white focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
                 onChange={handleInputChange}
@@ -111,7 +118,7 @@ export const UpdateMessages = ({
               <select
                 id="reminder2Unit"
                 className="flex-1 p-3.5 border border-gray-300 rounded-r-lg text-sm bg-white cursor-pointer min-w-36 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-                value={formData?.updateMessages?.reminder2Unit}
+                value={formData?.updateMessages?.reminder2Unit ?? ""}
                 onChange={handleInputChange}
               >
                 <option value="minutos">minutos</option>

@@ -1,4 +1,6 @@
 import { MESSAGES_REINSTALL_TEMPLATE_NS } from "../../../../../utils/constants/assistants";
+import { trackMessagesInitialValues } from "../../../../../utils/logistAssistant/initialValues/tracking";
+import { trackMessagesMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/tracking";
 import { Card } from "../../../generalComponents/Card";
 import { EditTemplateCard } from "../../../generalComponents/EditTemplateCard";
 import { MapTemplateCard } from "../../../generalComponents/MapTemplates";
@@ -12,6 +14,12 @@ export const TrackMessages = ({
   setFlowsState,
 }) => {
   const handleInputChange = (field, value) => {
+    if (
+      !!trackMessagesMaxSizes[field] &&
+      value.length >= trackMessagesMaxSizes[field]
+    )
+      return;
+
     setFormData((prev) => ({
       ...prev,
       trackMessages: {
@@ -72,17 +80,18 @@ export const TrackMessages = ({
             <input
               type="number"
               className="w-30 p-3.5 border border-gray-300 rounded-l-lg border-r-0 text-center text-sm bg-white focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-              value={formData?.trackMessages?.officeReminderTime}
+              value={formData?.trackMessages?.officeReminderTime ?? ""}
+              placeholder={trackMessagesInitialValues.officeReminderTime ?? ""}
               onChange={(e) =>
                 handleInputChange(
                   "officeReminderTime",
-                  parseInt(e.target.value) || 1
+                  parseInt(e.target.value) || ""
                 )
               }
             />
             <select
               className="flex-1 p-3.5 border border-gray-300 rounded-r-lg text-sm bg-white cursor-pointer min-w-36 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-              value={formData?.trackMessages?.officeReminderUnit}
+              value={formData?.trackMessages?.officeReminderUnit ?? ""}
               onChange={(e) =>
                 handleInputChange("officeReminderUnit", e.target.value)
               }

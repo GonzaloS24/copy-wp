@@ -1,3 +1,4 @@
+import { offerDaysMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/updates";
 import { ExampleBox } from "../../../generalComponents/ExampleBox";
 import { ExplanationBox } from "../../../generalComponents/ExplanationBox";
 import { InfoBox } from "../../../generalComponents/InfoBox";
@@ -5,6 +6,9 @@ import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 
 export const OfferDays = ({ formData, setFormData }) => {
   const handleInputChange = (field, value) => {
+    if (!!offerDaysMaxSizes[field] && value.length >= offerDaysMaxSizes[field])
+      return;
+
     setFormData((prev) => ({
       ...prev,
       offerDays: {
@@ -63,7 +67,7 @@ export const OfferDays = ({ formData, setFormData }) => {
             </div>
             <select
               className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-              value={formData?.offerDays?.minDay}
+              value={formData?.offerDays?.minDay ?? ""}
               onChange={(e) => handleInputChange("minDay", e.target.value)}
             >
               {dayOptions.map((option) => (
@@ -79,7 +83,7 @@ export const OfferDays = ({ formData, setFormData }) => {
               Explicación
             </label>
             <ExplanationBox
-              selectedValue={formData?.offerDays?.minDay}
+              selectedValue={formData?.offerDays?.minDay ?? ""}
               type="min"
             />
           </div>
@@ -105,7 +109,7 @@ export const OfferDays = ({ formData, setFormData }) => {
             </div>
             <select
               className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-              value={formData?.offerDays?.maxDay}
+              value={formData?.offerDays?.maxDay ?? ""}
               onChange={(e) => handleInputChange("maxDay", e.target.value)}
             >
               {dayOptions.map((option) => (
@@ -121,7 +125,7 @@ export const OfferDays = ({ formData, setFormData }) => {
               Explicación
             </label>
             <ExplanationBox
-              selectedValue={formData?.offerDays?.maxDay}
+              selectedValue={formData?.offerDays?.maxDay ?? ""}
               type="max"
             />
           </div>

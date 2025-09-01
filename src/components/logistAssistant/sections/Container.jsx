@@ -8,8 +8,7 @@ import {
 } from "../../../services/logistAssistant";
 import { ModalContainer } from "../../modals/Container";
 import { AssistantFormModal } from "../../modals/assistantFormSave";
-import { generalConfigBotFieldSchema } from "../../../schemas/logistAssistant/botFieldData/generalConfig";
-import camelize from "camelize";
+import { updateFormData } from "../../../services/logistAssistant/updateFormData";
 
 export const SectionContainer = ({
   subsectionsData,
@@ -31,11 +30,8 @@ export const SectionContainer = ({
     setFormData(initialValues);
 
     getBotFieldData(sectionId, sectionName)
-      .then((saveData) => {
-        setFormData((prev) => ({
-          ...prev,
-          ...saveData,
-        }));
+      .then((savedData) => {
+        setFormData((prev) => updateFormData(prev, savedData));
       })
       .catch((error) =>
         console.error("Error al cargar los datos guardados.", error)
