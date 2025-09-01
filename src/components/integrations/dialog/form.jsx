@@ -8,6 +8,10 @@ export const DialogForm = ({
   handleSubmit,
   isLoading,
 }) => {
+  const handleOpenLink = (href) => {
+    window.open(href);
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <div className="space-y-4 max-h-96 overflow-y-auto">
@@ -45,6 +49,24 @@ export const DialogForm = ({
               </select>
             ) : field.type === "copyText" ? (
               <CopyTextDialog field={field} getText={field.getTextFunction} />
+            ) : field.type === "tutorialLink" ? (
+              <div className="border-t border-slate-200 text-center">
+                <span
+                  onClick={() => handleOpenLink(field.href)}
+                  className="text-sky-500 text-sm font-medium transition-colors duration-200 hover:text-sky-600 inline-flex items-center gap-2 cursor-pointer bg-none border-none"
+                >
+                  {field.text}
+                </span>
+              </div>
+            ) : field.type === "tutorialVideo" ? (
+              <div className="border-t border-slate-200 text-center">
+                <span
+                  onClick={() => handleOpenLink(field.href)}
+                  className="text-sky-500 text-sm font-medium transition-colors duration-200 hover:text-sky-600 inline-flex items-center gap-2 cursor-pointer bg-none border-none"
+                >
+                  Ver video tutorial de integración
+                </span>
+              </div>
             ) : (
               <input
                 type={field.type}
