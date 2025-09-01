@@ -2,6 +2,8 @@ import { useState } from "react";
 import { installTemplate } from "../services/asistentService";
 import { getCurrentWorkspace } from "../utils/workspace";
 import { showSuccessToast, showErrorToast } from "../utils/toastNotifications";
+import { ModalContainer } from "./modals/Container";
+import { InstallAssistantErrorModal } from "./modals/installAssistantError";
 
 const AssistantInstaller = ({
   template_ns,
@@ -11,6 +13,7 @@ const AssistantInstaller = ({
   onInstall,
 }) => {
   const [isInstalling, setIsInstalling] = useState(false);
+  const [modalInfo, setModalInfo] = useState({ open: false });
 
   const handleInstall = async () => {
     setIsInstalling(true);
@@ -41,11 +44,22 @@ const AssistantInstaller = ({
     } catch (error) {
       console.error(`[AssistantInstaller] Error en instalación:`, error);
 
+      setModalInfo((prev) => ({
+        ...prev,
+        open: true,
+        message: error.message,
+        cause: error.cause,
+        templateNs: template_ns,
+      }));
       // Mostrar toast de error
       showErrorToast(`Error al instalar: ${error.message}`);
     } finally {
       setIsInstalling(false);
     }
+  };
+
+  const handleModalClose = () => {
+    setModalInfo((prev) => ({ ...prev, open: false }));
   };
 
   return (
@@ -112,6 +126,14 @@ const AssistantInstaller = ({
           </div>
         </div>
       </div>
+      {modalInfo?.open && (
+        <ModalContainer onClose={handleModalClose}>
+          <InstallAssistantErrorModal
+            data={modalInfo}
+            onClose={handleModalClose}
+          />
+        </ModalContainer>
+      )}
     </div>
   );
 };
