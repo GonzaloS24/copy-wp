@@ -40,9 +40,9 @@ export const MediaManager = ({ mediaItems, updateProductData, parentData, showFi
     if (!allowedFileTypes[file.type]) {
       return `Tipo de archivo no permitido: ${file.type}`;
     }
-    const maxSize = 100 * 1024 * 1024;
+    const maxSize = 15 * 1024 * 1024; 
     if (file.size > maxSize) {
-      return `Archivo demasiado grande. Tamaño máximo: 100MB`;
+      return `Archivo demasiado grande. Tamaño máximo: 15MB`;
     }
     return null;
   };
@@ -257,7 +257,7 @@ export const MediaManager = ({ mediaItems, updateProductData, parentData, showFi
           </div>
           <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">
             <p className="text-sm text-amber-800">
-              <strong>Tamaño máximo:</strong> 100MB por archivo
+              <strong>Tamaño máximo:</strong> 15MB por archivo
             </p>
           </div>
           <button

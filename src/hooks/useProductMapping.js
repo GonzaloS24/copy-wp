@@ -1,35 +1,50 @@
 import { useCallback } from 'react';
 
 export const useProductMapping = () => {
-  const parseTimeAndUnit = useCallback((timeString) => {
-    if (!timeString || typeof timeString !== 'string') {
+const parseTimeAndUnit = useCallback((timeString) => {
+  if (!timeString || typeof timeString !== 'string') {
+    return { time: 0, unit: 'minutos' };
+  }
+
+  const cleanString = timeString.trim().toLowerCase();
+  
+  const parts = cleanString.split(/\s+/);
+  
+  if (parts.length >= 2) {
+    const time = parseInt(parts[0], 10);
+    const unit = parts[1];
+    
+    if (isNaN(time) || time < 0) {
       return { time: 0, unit: 'minutos' };
     }
-
-    const match = timeString.match(/^(\d+)(segundos|minutos|horas|dias)$/i);
     
-    if (match) {
-      const time = parseInt(match[1], 10);
-      let unit = match[2].toLowerCase();
-      
-      if (unit === 'segundos') unit = 'segundos';
-      else if (unit === 'minutos') unit = 'minutos'; 
-      else if (unit === 'horas') unit = 'horas';
-      else if (unit === 'dias') unit = 'dias';
-      
-      return { time, unit };
+    const validUnits = {
+      'segundo': 'segundos',
+      'segundos': 'segundos',
+      'minuto': 'minutos',
+      'minutos': 'minutos',
+      'hora': 'horas',
+      'horas': 'horas',
+      'dia': 'dias',
+      'dias': 'dias',
+      'día': 'dias',
+      'días': 'dias'
+    };
+    
+    const normalizedUnit = validUnits[unit] || 'minutos';
+    
+    return { time, unit: normalizedUnit };
+  }
+  
+  if (parts.length === 1) {
+    const time = parseInt(parts[0], 10);
+    if (!isNaN(time) && time >= 0) {
+      return { time, unit: 'minutos' };
     }
-    
-    const numberMatch = timeString.match(/\d+/);
-    if (numberMatch) {
-      return { 
-        time: parseInt(numberMatch[0], 10), 
-        unit: 'minutos'
-      };
-    }
-    
-    return { time: 0, unit: 'minutos' };
-  }, []);
+  }
+  
+  return { time: 0, unit: 'minutos' };
+}, []);
 
   const getFileType = useCallback((url) => {
     if (!url || typeof url !== 'string') return 'document';

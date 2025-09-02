@@ -119,12 +119,10 @@ export const VerificateExit = () => {
   const isEditMode = !!productName;
   const hasLoadedOriginalRef = useRef(false);
 
-  // Función para manejar navegación programática
   const handleProgrammaticNavigation = useCallback((navigationCallback) => {
     return blockProgrammaticNavigation(navigationCallback, false);
   }, [blockProgrammaticNavigation]);
 
-  // Exponer la función globalmente
   React.useEffect(() => {
     window.__handleProgrammaticNavigation = handleProgrammaticNavigation;
     
@@ -133,7 +131,6 @@ export const VerificateExit = () => {
     };
   }, [handleProgrammaticNavigation]);
 
-  // Función para cargar los datos originales del producto (solo en modo edición)
   const loadOriginalProductData = useCallback(async () => {
     if (!isEditMode || !productName || hasLoadedOriginalRef.current) return;
     
@@ -196,9 +193,8 @@ export const VerificateExit = () => {
     return fieldNames[fieldKey] || fieldKey;
   };
 
-  // Función para comparar valores, manejando casos especiales
   const areValuesDifferent = (currentValue, originalValue, fieldKey = '') => {
-    // Manejar valores null/undefined
+
     if (currentValue === null || currentValue === undefined) {
       return originalValue !== null && originalValue !== undefined;
     }
@@ -206,25 +202,21 @@ export const VerificateExit = () => {
       return currentValue !== null && currentValue !== undefined;
     }
     
-    // Comparación especial para arrays
     if (Array.isArray(currentValue) && Array.isArray(originalValue)) {
       return JSON.stringify(currentValue) !== JSON.stringify(originalValue);
     }
     
-    // Comparación especial para objetos
     if (typeof currentValue === 'object' && typeof originalValue === 'object') {
       return JSON.stringify(currentValue) !== JSON.stringify(originalValue);
     }
     
-    // Comparación especial para imágenes (pueden ser File objects)
     if (fieldKey === 'image') {
       if (currentValue instanceof File) {
-        return true; // Si es un archivo nuevo, siempre es diferente
+        return true; 
       }
       return currentValue !== originalValue;
     }
     
-    // Comparación estándar para strings, numbers, booleans
     return currentValue !== originalValue;
   };
 
@@ -237,7 +229,6 @@ export const VerificateExit = () => {
     
     const modified = [];
     
-    // Comparar info
     if (productData.info?.formData && comparisonData.info?.formData) {
       Object.keys(productData.info.formData).forEach(key => {
         const currentValue = productData.info.formData[key];
@@ -249,7 +240,6 @@ export const VerificateExit = () => {
       });
     }
     
-    // Comparar messageWel
     if (productData.messageWel?.formData && comparisonData.messageWel?.formData) {
       Object.keys(productData.messageWel.formData).forEach(key => {
         const currentValue = productData.messageWel.formData[key];
@@ -259,7 +249,6 @@ export const VerificateExit = () => {
         }
       });
       
-      // Comparar media items
       const currentMedia = productData.messageWel?.mediaItems || [];
       const comparisonMedia = comparisonData.messageWel?.mediaItems || [];
       
@@ -275,7 +264,6 @@ export const VerificateExit = () => {
       }
     }
     
-    // Comparar freePrompt
     if (productData.freePrompt && comparisonData.freePrompt) {
       if (areValuesDifferent(productData.freePrompt.promptType, comparisonData.freePrompt.promptType)) {
         modified.push('Tipo de prompt');
@@ -296,7 +284,6 @@ export const VerificateExit = () => {
       }
     }
     
-    // Comparar voice
     if (productData.voice && comparisonData.voice) {
       Object.keys(productData.voice).forEach(key => {
         const currentValue = productData.voice[key];
@@ -307,9 +294,8 @@ export const VerificateExit = () => {
       });
     }
     
-    // Comparar reminder
     if (productData.reminder && comparisonData.reminder) {
-      // Comparar reminder1
+
       if (productData.reminder.reminder1 && comparisonData.reminder.reminder1) {
         Object.keys(productData.reminder.reminder1).forEach(key => {
           const currentValue = productData.reminder.reminder1[key];
@@ -320,7 +306,6 @@ export const VerificateExit = () => {
         });
       }
       
-      // Comparar reminder2
       if (productData.reminder.reminder2 && comparisonData.reminder.reminder2) {
         Object.keys(productData.reminder.reminder2).forEach(key => {
           const currentValue = productData.reminder.reminder2[key];
@@ -331,7 +316,6 @@ export const VerificateExit = () => {
         });
       }
       
-      // Comparar timeRange
       if (productData.reminder.timeRange && comparisonData.reminder.timeRange) {
         Object.keys(productData.reminder.timeRange).forEach(key => {
           const currentValue = productData.reminder.timeRange[key];
@@ -343,9 +327,8 @@ export const VerificateExit = () => {
       }
     }
     
-    // Comparar remarketing
     if (productData.remarketing && comparisonData.remarketing) {
-      // Comparar remarketing1
+
       if (productData.remarketing.remarketing1 && comparisonData.remarketing.remarketing1) {
         Object.keys(productData.remarketing.remarketing1).forEach(key => {
           const currentValue = productData.remarketing.remarketing1[key];
@@ -356,7 +339,6 @@ export const VerificateExit = () => {
         });
       }
       
-      // Comparar remarketing2
       if (productData.remarketing.remarketing2 && comparisonData.remarketing.remarketing2) {
         Object.keys(productData.remarketing.remarketing2).forEach(key => {
           const currentValue = productData.remarketing.remarketing2[key];
@@ -368,14 +350,12 @@ export const VerificateExit = () => {
       }
     }
     
-    // Comparar activators
     if (productData.activators && comparisonData.activators) {
-      // Comparar keywords
+
       if (areValuesDifferent(productData.activators.keywords, comparisonData.activators.keywords)) {
         modified.push('Palabras clave');
       }
       
-      // Comparar adIds
       if (areValuesDifferent(productData.activators.adIds, comparisonData.activators.adIds)) {
         modified.push('IDs de anuncio');
       }

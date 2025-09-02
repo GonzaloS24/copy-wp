@@ -88,7 +88,7 @@ const useProductService = () => {
         
         await new Promise(resolve => setTimeout(resolve, 300));
         
-        const mappedData = mapApiDataToContext(data, productId, promptResult.data?.prompt);
+        const mappedData = mapApiDataToContext(data, productId, promptResult.data?.prompt, selectedSource);
         updateProductData('', mappedData);
 
         return { success: true };
@@ -103,7 +103,7 @@ const useProductService = () => {
   return { processProductInfo };
 };
 
-const mapApiDataToContext = (apiData, productId, generatedPrompt = '') => {
+const mapApiDataToContext = (apiData, productId, generatedPrompt = '', selectedSource) => {
   const parseTimeAndUnit = (timeString) => {
     if (!timeString || typeof timeString !== 'string') {
       return { time: 0, unit: 'minutos' };
@@ -160,13 +160,16 @@ const mapApiDataToContext = (apiData, productId, generatedPrompt = '') => {
     return icons[type] || '📄';
   };
 
-  const processMultimedia = (multimedia) => {
+  const processMultimedia = (multimedia, source) => {
     const mediaItems = [];
     
     if (multimedia) {
       Object.entries(multimedia).forEach(([key, url], index) => {
         if (url && typeof url === 'string' && url.trim() !== '') {
-          const fullUrl = url.startsWith('http') ? url : `${CLOUDFRONT_URL}${url}`;
+          // Si la fuente es 'url' o 'shopify', usar la URL directamente sin CLOUDFRONT_URL
+          const fullUrl = (source === 'url' || source === 'shopify') 
+            ? url 
+            : (url.startsWith('http') ? url : `${CLOUDFRONT_URL}${url}`);
           const fileType = getFileType(fullUrl);
           mediaItems.push({
             id: index + 1,
@@ -211,15 +214,24 @@ const mapApiDataToContext = (apiData, productId, generatedPrompt = '') => {
   const defaultAdIds = ['', '', '', '', '', '', ''];
   const mergedAdIds = [...adIdsFromApi, ...defaultAdIds].slice(0, 7);
 
+  // Determinar si se debe usar URL directa (para url y shopify)
+  const useDirectUrl = selectedSource === 'url' || selectedSource === 'shopify';
+  
+  // Determinar si se debe omitir el ID del producto (para url y shopify)
+  const omitProductId = selectedSource === 'url' || selectedSource === 'shopify';
+
   return {
     info: {
       formData: {
         name: apiData.informacion_de_producto?.nombre_del_producto || '',
         price: apiData.informacion_de_producto?.precio_del_producto || '',
-        description: '',
-        id: productId,
+        // Si la fuente es 'url' o 'shopify', no asignar el id del producto
+        id: omitProductId ? '' : productId,
+        // Si la fuente es 'url' o 'shopify', usar la URL directamente sin CLOUDFRONT_URL
         image: apiData.informacion_de_producto?.imagen_del_producto 
-          ? `${CLOUDFRONT_URL}${apiData.informacion_de_producto.imagen_del_producto}`
+          ? (useDirectUrl
+              ? apiData.informacion_de_producto.imagen_del_producto
+              : `${CLOUDFRONT_URL}${apiData.informacion_de_producto.imagen_del_producto}`)
           : null,
         currency: 'COP'
       },
@@ -231,8 +243,9 @@ const mapApiDataToContext = (apiData, productId, generatedPrompt = '') => {
         initialMessage: apiData.embudo_de_ventas?.mensaje_inicial || '',
         entryQuestion: apiData.embudo_de_ventas?.pregunta_de_entrada || ''
       },
-      mediaItems: processMultimedia(apiData.embudo_de_ventas?.multimedia),
-      totalFiles: processMultimedia(apiData.embudo_de_ventas?.multimedia).filter(item => item.filled).length
+      // Pasar la fuente seleccionada a processMultimedia
+      mediaItems: processMultimedia(apiData.embudo_de_ventas?.multimedia, selectedSource),
+      totalFiles: processMultimedia(apiData.embudo_de_ventas?.multimedia, selectedSource).filter(item => item.filled).length
     },
     freePrompt: {
       promptText: (generatedPrompt || '').replace(/(\\{1,2})n/g, '\n'), 
