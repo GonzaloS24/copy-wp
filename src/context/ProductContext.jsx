@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext } from "react";
 
 const ProductContext = createContext();
 
@@ -45,6 +45,7 @@ export const ProductProvider = ({ children }) => {
       similarity: 0.7,
       style: 0.5,
       useSpeakerBoost: true,
+      useVoiceAI: false,
     },
     reminder: {
       reminder1: {
@@ -95,14 +96,14 @@ export const ProductProvider = ({ children }) => {
       touchedFields: {
         name: false,
         price: false,
-        image: false
-      }
+        image: false,
+      },
     },
     messageWel: {
       touchedFields: {
         initialMessage: false,
-        entryQuestion: false
-      }
+        entryQuestion: false,
+      },
     },
     freePrompt: {
       touchedFields: {
@@ -111,85 +112,91 @@ export const ProductProvider = ({ children }) => {
         fichaTecnica: false,
         guionConversacional: false,
         posiblesSituaciones: false,
-        reglasIA: false
-      }
+        reglasIA: false,
+      },
     },
     reminder: {
       touchedFields: {
         reminder1Time: false,
         reminder1Text: false,
         reminder2Time: false,
-        reminder2Text: false
-      }
-    }
+        reminder2Text: false,
+      },
+    },
   });
 
   const updateProductData = (section, data) => {
-    if (section === '') {
-      setProductData(prev => ({
+    if (section === "") {
+      setProductData((prev) => ({
         ...prev,
-        ...data
+        ...data,
       }));
     } else {
-      setProductData(prev => ({
+      setProductData((prev) => ({
         ...prev,
         [section]: {
           ...prev[section],
-          ...data
-        }
+          ...data,
+        },
       }));
     }
   };
 
   const updateValidationState = (section, data) => {
-    setValidationState(prev => ({
+    setValidationState((prev) => ({
       ...prev,
       [section]: {
         ...prev[section],
-        ...data
-      }
+        ...data,
+      },
     }));
   };
 
   const getPromptDataForAPI = () => {
     const freePromptData = productData.freePrompt;
-    const tipoPrompt = freePromptData.promptType || 'libre';
-    
+    const tipoPrompt = freePromptData.promptType || "libre";
+
     const promptData = {
       tipo_de_prompt: tipoPrompt,
-      prompt_libre: '',
-      prompt_guiado_contextualizacion: '',
-      prompt_guiado_ficha_tecnica: '',
-      prompt_guiado_guion_conversacional: '',
-      prompt_guiado_posibles_situaciones: '',
-      prompt_guiado_reglas: ''
+      prompt_libre: "",
+      prompt_guiado_contextualizacion: "",
+      prompt_guiado_ficha_tecnica: "",
+      prompt_guiado_guion_conversacional: "",
+      prompt_guiado_posibles_situaciones: "",
+      prompt_guiado_reglas: "",
     };
 
-    if (tipoPrompt === 'libre') {
-      promptData.prompt_libre = freePromptData.promptText || freePromptData.promptContent?.text || '';
-    } else if (tipoPrompt === 'guiado') {
+    if (tipoPrompt === "libre") {
+      promptData.prompt_libre =
+        freePromptData.promptText || freePromptData.promptContent?.text || "";
+    } else if (tipoPrompt === "guiado") {
       const guideData = freePromptData.guidePromptData || {};
-      promptData.prompt_guiado_contextualizacion = guideData.contextualizacion || '';
-      promptData.prompt_guiado_ficha_tecnica = guideData.fichaTecnica || '';
-      promptData.prompt_guiado_guion_conversacional = guideData.guionConversacional || '';
-      promptData.prompt_guiado_posibles_situaciones = guideData.posiblesSituaciones || '';
-      promptData.prompt_guiado_reglas = guideData.reglasIA || '';
+      promptData.prompt_guiado_contextualizacion =
+        guideData.contextualizacion || "";
+      promptData.prompt_guiado_ficha_tecnica = guideData.fichaTecnica || "";
+      promptData.prompt_guiado_guion_conversacional =
+        guideData.guionConversacional || "";
+      promptData.prompt_guiado_posibles_situaciones =
+        guideData.posiblesSituaciones || "";
+      promptData.prompt_guiado_reglas = guideData.reglasIA || "";
     }
 
-    console.log('Datos del prompt para API:', promptData);
-    console.log('Datos del contexto completo:', freePromptData);
-    
+    console.log("Datos del prompt para API:", promptData);
+    console.log("Datos del contexto completo:", freePromptData);
+
     return promptData;
   };
 
   return (
-    <ProductContext.Provider value={{ 
-      productData, 
-      updateProductData,
-      validationState,
-      updateValidationState,
-      getPromptDataForAPI
-    }}>
+    <ProductContext.Provider
+      value={{
+        productData,
+        updateProductData,
+        validationState,
+        updateValidationState,
+        getPromptDataForAPI,
+      }}
+    >
       {children}
     </ProductContext.Provider>
   );
