@@ -2,6 +2,7 @@ import { createContext, useState, useContext, useRef, useEffect } from "react";
 import { io } from "socket.io-client";
 import { getAuthToken } from "../../utils/authCookies";
 import { getCurrentWorkspace } from "../../utils/workspace";
+import { TestRestartService } from "../../services/apichat/testRestartService";
 
 const ApiChatContext = createContext();
 
@@ -13,6 +14,7 @@ export const ApiChatProvider = ({ children, productId = null, ASSISTANT_TEMPLATE
   const [username, setUsername] = useState("");
   const [error, setError] = useState(null);
   const [currentProductId, setCurrentProductId] = useState(productId);
+  const [isRestartingTest, setIsRestartingTest] = useState(false);
 
   const socketRef = useRef(null);
   const API_CHAT_URL = "https://api-chat-service-26551171030.us-east1.run.app";
@@ -40,7 +42,7 @@ export const ApiChatProvider = ({ children, productId = null, ASSISTANT_TEMPLATE
     return `${hours}:${minutes}`;
   };
 
-  const initializeChat = (chatUsername) => {
+  const initializeChat = (chatUsername = "prueba") => {
     if (isConnecting || isConnected) return;
 
     setIsConnecting(true);
@@ -189,6 +191,82 @@ export const ApiChatProvider = ({ children, productId = null, ASSISTANT_TEMPLATE
     }
   };
 
+  // Función para reiniciar la prueba completamente
+  const restartTest = async () => {
+    if (isRestartingTest) return Promise.resolve();
+
+    setIsRestartingTest(true);
+    setError(null);
+
+    try {
+      console.log("Iniciando reinicio de prueba...");
+
+      // 1. Desconectar chat actual
+      disconnectChat();
+
+      // 2. Limpiar mensajes
+      setMessages([]);
+
+      // 3. Llamar al servicio para reiniciar la prueba
+      const result = await TestRestartService.restartTest(currentProductId);
+
+      if (result.success) {
+        console.log("✅ Prueba reiniciada exitosamente");
+        
+        // 4. Actualizar botCode si viene en la respuesta
+        if (result.botCode) {
+          setBotCode(result.botCode);
+        }
+        
+        // 5. Inicializar nuevo chat con usuario "prueba"
+        const newUsername = result.newUsername || "prueba";
+        
+        // Pequeña pausa para asegurar que la desconexión anterior se completó
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        initializeChat(newUsername);
+        
+        addMessage("system", "🔄 Prueba reiniciada. Nueva conversación iniciada automáticamente...");
+        
+        // 6. Esperar a que se conecte y enviar palabra clave automáticamente
+        return new Promise((resolve) => {
+          const checkConnection = async () => {
+            if (isConnected && !isConnecting) {
+              try {
+                const keywordResult = await TestRestartService.getProductKeywords(currentProductId);
+                if (keywordResult.success && keywordResult.primaryKeyword) {
+                  console.log("🔑 Enviando palabra clave automáticamente:", keywordResult.primaryKeyword);
+                  
+                  setTimeout(() => {
+                    sendMessage(keywordResult.primaryKeyword);
+                    resolve();
+                  }, 1000);
+                } else {
+                  resolve();
+                }
+              } catch (keywordError) {
+                console.error("❌ Error obteniendo palabra clave:", keywordError);
+                resolve();
+              }
+            } else {
+              setTimeout(checkConnection, 1000);
+            }
+          };
+        
+          setTimeout(checkConnection, 2000);
+        });
+      } else {
+        throw new Error(result.message || "Error al reiniciar la prueba");
+      }
+    } catch (error) {
+      console.error("❌ Error al reiniciar prueba:", error);
+      setError(`Error al reiniciar la prueba: ${error.message}`);
+      throw error;
+    } finally {
+      setIsRestartingTest(false);
+    }
+  };
+
   // Cleanup al desmontar
   useEffect(() => {
     return () => {
@@ -210,6 +288,8 @@ export const ApiChatProvider = ({ children, productId = null, ASSISTANT_TEMPLATE
         sendMessage,
         disconnectChat,
         resetChat,
+        restartTest,
+        isRestartingTest,
         productId: currentProductId,
         setProductId: setCurrentProductId,
       }}
