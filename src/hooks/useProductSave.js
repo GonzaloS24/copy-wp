@@ -49,6 +49,8 @@ export const useProductSave = () => {
     return formatPromptText(processedText, freePrompt?.promptType);
   };
 
+
+
   const validateRequiredFields = (productData) => {
     const missing = [];
     if (!productData.info?.formData?.name?.trim()) {
@@ -64,7 +66,10 @@ export const useProductSave = () => {
     if (!productData.messageWel?.formData?.entryQuestion?.trim()) {
       missing.push('Pregunta de entrada');
     }
-
+    
+    const hasValidKeywords = productData.activators?.keywords?.some(keyword => 
+    keyword && keyword.trim() !== ''
+    );
 
     const freePromptValid = getPromptText(productData.freePrompt).trim() !== '';
 
@@ -97,7 +102,7 @@ export const useProductSave = () => {
     if (!productData.reminder?.reminder2?.text?.trim()) {
       missing.push('Mensaje del recordatorio 2');
     }
-    if (!productData.triggers?.keywords?.trim()) {
+    if (!hasValidKeywords) {
       missing.push('Palabras clave');
     }
     return missing;

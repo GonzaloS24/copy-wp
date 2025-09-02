@@ -182,9 +182,8 @@ export const ProductReminder = () => {
     });
   };
 
-  // Variables para las horas
-  const hora_min = reminderData.timeRange?.minTime || "09:00";
-  const hora_max = reminderData.timeRange?.maxTime || "20:00";
+  const hora_min = reminderData.timeRange?.minTime || '09:00';
+  const hora_max = reminderData.timeRange?.maxTime || '20:00';
 
   return (
     <div className="p-6 bg-white">
@@ -392,7 +391,6 @@ export const ProductReminder = () => {
             </button>
           </div>
         </div>
-        {/* Toggle para rango de horas */}
         <div className="mb-8 p-4 bg-gray-50 rounded-lg">
           <div className="flex items-center gap-3 mb-4">
             <label className="relative inline-flex items-center cursor-pointer">

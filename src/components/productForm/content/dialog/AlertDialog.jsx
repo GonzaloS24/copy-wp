@@ -62,7 +62,6 @@ export const AlertDialog = ({
           </div>
         </div>
 
-        {/* Renderizado dinámico de los botones */}
         <div className="flex gap-3 justify-end">
           {buttons && buttons.map((button, index) => (
             <button
