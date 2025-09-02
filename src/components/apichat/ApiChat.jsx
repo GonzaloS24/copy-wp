@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useApiChat } from "./ApiChatContext";
 
-const ApiChat = ({ title = "Chat en vivo" }) => {
+const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
   const [inputValue, setInputValue] = useState("");
   const [usernameInput, setUsernameInput] = useState("");
   const messagesEndRef = useRef(null);
@@ -16,6 +16,7 @@ const ApiChat = ({ title = "Chat en vivo" }) => {
     sendMessage,
     disconnectChat,
     resetChat,
+    productId: contextProductId,
   } = useApiChat();
 
   const scrollToBottom = () => {
@@ -25,6 +26,16 @@ const ApiChat = ({ title = "Chat en vivo" }) => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // Log del productId para debug
+  useEffect(() => {
+    if (productId || contextProductId) {
+      console.log(
+        "🆔 ProductId disponible en ApiChat:",
+        productId || contextProductId
+      );
+    }
+  }, [productId, contextProductId]);
 
   const handleConnect = () => {
     if (!usernameInput.trim()) {
@@ -69,9 +80,11 @@ const ApiChat = ({ title = "Chat en vivo" }) => {
     <div className="bg-white rounded-2xl p-10 shadow-xl border border-slate-200 w-full relative z-5">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-4xl text-sky-500 font-bold tracking-tight">
-          {title}
-        </h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-4xl text-sky-500 font-bold tracking-tight">
+            {title}
+          </h1>
+        </div>
         <div className="flex gap-3">
           {isConnected && (
             <button
@@ -124,6 +137,11 @@ const ApiChat = ({ title = "Chat en vivo" }) => {
       {isConnected && (
         <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl text-green-700 text-sm">
           <strong>Conectado como:</strong> {username}
+          {(productId || contextProductId) && (
+            <span className="ml-2 text-green-600">
+              (Producto: {productId || contextProductId})
+            </span>
+          )}
         </div>
       )}
 

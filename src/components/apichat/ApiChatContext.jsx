@@ -5,16 +5,22 @@ import { getCurrentWorkspace } from "../../utils/workspace";
 
 const ApiChatContext = createContext();
 
-export const ApiChatProvider = ({ children }) => {
+export const ApiChatProvider = ({ children, productId = null, ASSISTANT_TEMPLATE_NS }) => {
   const [messages, setMessages] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
   const [botCode, setBotCode] = useState("");
   const [username, setUsername] = useState("");
   const [error, setError] = useState(null);
+  const [currentProductId, setCurrentProductId] = useState(productId);
 
   const socketRef = useRef(null);
   const API_CHAT_URL = "https://api-chat-service-26551171030.us-east1.run.app";
+
+  // Actualizar productId cuando cambie desde props
+  useEffect(() => {
+    setCurrentProductId(productId);
+  }, [productId]);
 
   const addMessage = (type, content, time = null) => {
     const newMessage = {
@@ -56,6 +62,12 @@ export const ApiChatProvider = ({ children }) => {
       return;
     }
 
+    if (!ASSISTANT_TEMPLATE_NS) {
+      setError("No se encontró el template del asistente");
+      setIsConnecting(false);
+      return;
+    }
+
     // Limpiar socket anterior si existe
     if (socketRef.current) {
       socketRef.current.disconnect();
@@ -66,14 +78,15 @@ export const ApiChatProvider = ({ children }) => {
       username: chatUsername,
       workspaceId: Number(workspaceId),
       hasToken: !!token,
+      productId: currentProductId,
     });
 
     // Crear conexión socket con la configuración correcta
     socketRef.current = io(API_CHAT_URL, {
       auth: {
-        token: `Bearer ${token}`, // Formato correcto del token
+        token: `Bearer ${token}`,
         name: chatUsername,
-        workspaceId: Number(workspaceId), // Convertir a número
+        workspaceId: Number(workspaceId),
       },
     });
 
@@ -84,7 +97,7 @@ export const ApiChatProvider = ({ children }) => {
       // Enviar evento de inicialización
       socketRef.current.emit("initialize_chat", {
         username: chatUsername,
-        workspaceId: Number(workspaceId), // Asegurar que sea número
+        workspaceId: Number(workspaceId),
       });
     });
 
@@ -105,7 +118,6 @@ export const ApiChatProvider = ({ children }) => {
 
     socketRef.current.on("new_message", (data) => {
       console.log("📨 Nuevo mensaje recibido:", data);
-      // Manejar tanto el formato con username como sin username
       const messageContent = data.message || data;
       const sender = data.username || "AI";
       addMessage("ai", messageContent);
@@ -141,6 +153,8 @@ export const ApiChatProvider = ({ children }) => {
     console.log("📤 Enviando mensaje:", {
       message: message,
       botCode: botCode,
+      productId: currentProductId,
+      templateNs: ASSISTANT_TEMPLATE_NS,
     });
 
     // Agregar mensaje del usuario
@@ -150,6 +164,8 @@ export const ApiChatProvider = ({ children }) => {
     socketRef.current.emit("send_message", {
       message: message,
       botCode: botCode,
+      productId: currentProductId,
+      templateNs: ASSISTANT_TEMPLATE_NS,
     });
   };
 
@@ -194,6 +210,8 @@ export const ApiChatProvider = ({ children }) => {
         sendMessage,
         disconnectChat,
         resetChat,
+        productId: currentProductId,
+        setProductId: setCurrentProductId,
       }}
     >
       {children}
