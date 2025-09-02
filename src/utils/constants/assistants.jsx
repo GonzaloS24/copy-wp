@@ -121,9 +121,9 @@ export const ASSISTANT_CONFIG = {
         className="w-full h-full object-contain"
       />
     ),
-    // configRoute: ASSISTANT_CONFIG_ROUTES[ASSISTANT_TEMPLATE_NS.CARTS],
-    configRoute: null, // No disponible aún
-    isComingSoon: true, // Marcador especial para próximamente
+    configRoute: ASSISTANT_CONFIG_ROUTES[ASSISTANT_TEMPLATE_NS.CARTS],
+    // configRoute: null, // No disponible aún
+    // isComingSoon: true, // Marcador especial para próximamente
     installConfig: {
       title:
         "Descubre cómo este asistente puede ayudarte a recuperar ventas automáticamente",
