@@ -6,6 +6,8 @@ import { BACK_BASE_URL } from "../../utils/backendUrl";
 import { getAuthToken } from "../../utils/authCookies";
 
 const autoCreateFormService = {
+
+  
   async getProductById(productId) {
     try {
       const credentials = await dropiCredentials.getCredentials();
@@ -28,8 +30,9 @@ const autoCreateFormService = {
 
       return response.data;
     } catch (error) {
-      console.error("Error fetching product from Dropi:", error);
-      throw error;
+      const detailedError = parseBackendError(error);
+      console.error("Error detallado fetching product from Dropi:", detailedError);
+      throw new Error(`Error al obtener producto: ${detailedError}`);
     }
   },
 
@@ -61,8 +64,9 @@ const autoCreateFormService = {
 
       return response.data;
     } catch (error) {
-      console.error("Error generating JSON with OpenAI:", error);
-      throw error;
+      const detailedError = parseBackendError(error);
+      console.error("Error detallado fetching product from Dropi:", detailedError);
+      throw new Error(`Error al obtener producto: ${detailedError}`);
     }
   },
 
@@ -92,8 +96,16 @@ const autoCreateFormService = {
 
       return response.data;
     } catch (error) {
-      console.error("Error generating prompt with OpenAI:", error);
-      throw error;
+      const detailedError = parseBackendError(error);
+      console.error("Error detallado generating prompt with OpenAI:", {
+        error: detailedError,
+        requestData: {
+          nombre: promptData.nombre,
+          precio: promptData.precio,
+          producto_json_type: typeof promptData.producto_json
+        }
+      });
+      throw new Error(`Error al generar prompt: ${detailedError}`);
     }
   },
 
@@ -139,8 +151,16 @@ const autoCreateFormService = {
 
       return response.data;
     } catch (error) {
-      console.error("Error getting products by URL with OpenAI:", error);
-      throw new Error(`Error al extraer producto de la URL: ${error.message}`);
+      const detailedError = parseBackendError(error);
+      console.error("Error detallado generating prompt with OpenAI:", {
+        error: detailedError,
+        requestData: {
+          nombre: promptData.nombre,
+          precio: promptData.precio,
+          producto_json_type: typeof promptData.producto_json
+        }
+      });
+      throw new Error(`Error al generar prompt: ${detailedError}`);
     }
   },
 
@@ -168,10 +188,63 @@ const autoCreateFormService = {
 
       return response.data;
     } catch (error) {
-      console.error("Error fetching Shopify product:", error);
-      throw error;
+      const detailedError = parseBackendError(error);
+      console.error("Error detallado generating prompt with OpenAI:", {
+        error: detailedError,
+        requestData: {
+          nombre: promptData.nombre,
+          precio: promptData.precio,
+          producto_json_type: typeof promptData.producto_json
+        }
+      });
+      throw new Error(`Error al generar prompt: ${detailedError}`);
     }
   },
 };
 
 export default autoCreateFormService;
+const parseBackendError = (error) => {
+  if (error.response?.data) {
+    if (typeof error.response.data === 'string' && error.response.data.includes('<!DOCTYPE html>')) {
+      const errorMatch = error.response.data.match(/<pre>Error: ([^<]+)</);
+      if (errorMatch && errorMatch[1]) {
+        return errorMatch[1].replace(/<br\s*\/?>/g, '\n');
+      }
+    }
+    
+    if (typeof error.response.data === 'object' && error.response.data.message) {
+      return error.response.data.message;
+    }
+    
+    if (typeof error.response.data === 'string') {
+      return error.response.data;
+    }
+  }
+  
+  if (error.response?.status) {
+    switch (error.response.status) {
+      case 400:
+        return 'Solicitud incorrecta. Verifica los datos enviados.';
+      case 401:
+        return 'No autorizado. Token de acceso inválido o expirado.';
+      case 403:
+        return 'Acceso prohibido. No tienes permisos para esta acción.';
+      case 404:
+        return 'Recurso no encontrado.';
+      case 500:
+        return 'Error interno del servidor. Por favor, intenta nuevamente.';
+      case 502:
+        return 'Error de conexión con el servidor.';
+      case 503:
+        return 'Servicio no disponible temporalmente.';
+      default:
+        return `Error del servidor (${error.response.status}).`;
+    }
+  }
+  
+  if (error.code === 'NETWORK_ERROR' || error.code === 'ECONNABORTED') {
+    return 'Error de conexión. Verifica tu internet e intenta nuevamente.';
+  }
+  
+  return error.message || 'Error desconocido al procesar la solicitud.';
+};

@@ -35,7 +35,8 @@ const useProductService = () => {
           );
         }
 
-        productObject = response.data;
+        productObject = response.data.output[1].content[0].text;
+
         productId = productObject.id || productId;
       } else if (selectedSource === "shopify") {
         console.log("Buscando producto en Shopify con ID:", productId);
@@ -91,6 +92,8 @@ const useProductService = () => {
         pregunta_entrada,
         producto_json,
       };
+
+      console.log('prompt data enviada al backend', promptData)
 
       setLoadingState && setLoadingState(3);
 
@@ -189,7 +192,6 @@ const mapApiDataToContext = (apiData, productId, generatedPrompt = '', selectedS
     if (multimedia) {
       Object.entries(multimedia).forEach(([key, url], index) => {
         if (url && typeof url === "string" && url.trim() !== "") {
-          // Si la fuente es 'url' o 'shopify', usar la URL directamente sin CLOUDFRONT_URL
           const fullUrl =
             source === "url" || source === "shopify"
               ? url
@@ -251,10 +253,8 @@ const mapApiDataToContext = (apiData, productId, generatedPrompt = '', selectedS
   const mergedAdIds = [...adIdsFromApi, ...defaultAdIds].slice(0, 7);
 
 
-  // Determinar si se debe usar URL directa (para url y shopify)
   const useDirectUrl = selectedSource === "url" || selectedSource === "shopify";
 
-  // Determinar si se debe omitir el ID del producto (para url y shopify)
   const omitProductId =
     selectedSource === "url" || selectedSource === "shopify";
 
@@ -263,9 +263,7 @@ const mapApiDataToContext = (apiData, productId, generatedPrompt = '', selectedS
       formData: {
         name: apiData.informacion_de_producto?.nombre_del_producto || "",
         price: apiData.informacion_de_producto?.precio_del_producto || "",
-        // Si la fuente es 'url' o 'shopify', no asignar el id del producto
         id: omitProductId ? "" : productId,
-        // Si la fuente es 'url' o 'shopify', usar la URL directamente sin CLOUDFRONT_URL
         image: apiData.informacion_de_producto?.imagen_del_producto
           ? useDirectUrl
             ? apiData.informacion_de_producto.imagen_del_producto
@@ -281,7 +279,6 @@ const mapApiDataToContext = (apiData, productId, generatedPrompt = '', selectedS
         initialMessage: apiData.embudo_de_ventas?.mensaje_inicial || "",
         entryQuestion: apiData.embudo_de_ventas?.pregunta_de_entrada || "",
       },
-      // Pasar la fuente seleccionada a processMultimedia
       mediaItems: processMultimedia(
         apiData.embudo_de_ventas?.multimedia,
         selectedSource
