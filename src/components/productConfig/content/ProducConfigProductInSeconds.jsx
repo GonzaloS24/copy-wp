@@ -1,6 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback  } from 'react';
 import { useConfig } from '../../../context/ConfigContext';
 import { predefinedStructureText, predefinedPromptText } from './tools/predefinedTexts';
+
+
+const STRUCTURE_MAX_LENGTH = 4000;
+const PROMPT_MAX_LENGTH = 12000;
 
 export const ProductConfigProductInSeconds = () => {
   const { dropiConfig, updateDropiConfig } = useConfig();
@@ -8,8 +12,18 @@ export const ProductConfigProductInSeconds = () => {
   const [promptHistory, setPromptHistory] = useState([]);
   const isInitialMount = useRef(true);
   
-  const STRUCTURE_MAX_LENGTH = 4000;
-  const PROMPT_MAX_LENGTH = 12000;
+   const validateAndTruncateText = useCallback((text, maxLength) => {
+    if (typeof text !== 'string') return '';
+    
+    const sanitizedText = text.slice(0, maxLength);
+
+    if (sanitizedText.length > maxLength) {
+      console.warn('Intento de exceder límite de caracteres detectado');
+      return sanitizedText.slice(0, maxLength);
+    }
+    
+    return sanitizedText;
+  }, []);
 
   useEffect(() => {
     if (isInitialMount.current) {
@@ -95,10 +109,35 @@ export const ProductConfigProductInSeconds = () => {
     }
   };
   
-  const structureCharCount = (dropiConfig.productStructureRules || '').length;
-  const promptCharCount = (dropiConfig.productPromptRules || '').length;
+  const structureCharCount = validateAndTruncateText(dropiConfig.productStructureRules || '', STRUCTURE_MAX_LENGTH).length;
+  const promptCharCount = validateAndTruncateText(dropiConfig.productPromptRules || '', PROMPT_MAX_LENGTH).length;
 
-  return (
+
+  useEffect(() => {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'maxlength') {
+   
+          const textareas = document.querySelectorAll('textarea');
+          textareas.forEach((textarea, index) => {
+            const expectedMaxLength = index === 0 ? STRUCTURE_MAX_LENGTH : PROMPT_MAX_LENGTH;
+            if (textarea.getAttribute('maxlength') !== String(expectedMaxLength)) {
+              textarea.setAttribute('maxlength', expectedMaxLength);
+            }
+          });
+        }
+      });
+    });
+
+    const textareas = document.querySelectorAll('textarea');
+    textareas.forEach((textarea) => {
+      observer.observe(textarea, { attributes: true, attributeFilter: ['maxlength'] });
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+return (
     <div className="block">
       <div className="bg-white rounded-2xl p-10 shadow-lg border border-slate-200 w-full relative z-10">
         <h1 className="text-2xl font-bold text-gray-900 mb-8">
@@ -148,10 +187,16 @@ export const ProductConfigProductInSeconds = () => {
           <textarea
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-colors bg-white resize-vertical min-h-32"
             placeholder="Ingresa las reglas para la estructura del producto..."
-            value={dropiConfig.productStructureRules || ''}
+            value={validateAndTruncateText(dropiConfig.productStructureRules || '', STRUCTURE_MAX_LENGTH)}
             onChange={handleStructureChange}
             rows={4}
             maxLength={STRUCTURE_MAX_LENGTH}
+            onKeyDown={(e) => {
+              const currentText = e.target.value;
+              if (currentText.length >= STRUCTURE_MAX_LENGTH && e.key !== 'Backspace' && e.key !== 'Delete') {
+                e.preventDefault();
+              }
+            }}
           />
         </div>
 
@@ -198,10 +243,16 @@ export const ProductConfigProductInSeconds = () => {
           <textarea
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-colors bg-white resize-vertical min-h-32"
             placeholder="Ingresa las reglas del prompt para el producto..."
-            value={dropiConfig.productPromptRules || ''}
+            value={validateAndTruncateText(dropiConfig.productPromptRules || '', PROMPT_MAX_LENGTH)}
             onChange={handlePromptChange}
             rows={4}
             maxLength={PROMPT_MAX_LENGTH}
+            onKeyDown={(e) => {
+              const currentText = e.target.value;
+              if (currentText.length >= PROMPT_MAX_LENGTH && e.key !== 'Backspace' && e.key !== 'Delete') {
+                e.preventDefault();
+              }
+            }}
           />
         </div>
       </div>

@@ -96,23 +96,17 @@ const useProductService = () => {
 
       await new Promise((resolve) => setTimeout(resolve, 300));
 
-      const mappedData = mapApiDataToContext(
-        data,
-        productId,
-        promptResult.data?.prompt,
-        selectedSource
-      );
-
       const promptResult = await autoCreateFormService.generatePrompt(
         promptData
       );
       console.log("Resultado del prompt:", promptResult);
 
-      setLoadingState && setLoadingState(3);
-
-      await new Promise((resolve) => setTimeout(resolve, 300));
-
-      updateProductData("", mappedData);
+        setLoadingState && setLoadingState(3);
+        
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        const mappedData = mapApiDataToContext(data, productId, promptResult.data?.prompt, selectedSource);
+        updateProductData('', mappedData);
 
       return { success: true };
     } catch (error) {
@@ -124,12 +118,7 @@ const useProductService = () => {
   return { processProductInfo };
 };
 
-const mapApiDataToContext = (
-  apiData,
-  productId,
-  generatedPrompt = "",
-  selectedSource
-) => {
+const mapApiDataToContext = (apiData, productId, generatedPrompt = '', selectedSource) => {
   const parseTimeAndUnit = (timeString) => {
     if (!timeString || typeof timeString !== "string") {
       return { time: 0, unit: "minutos" };
@@ -260,6 +249,7 @@ const mapApiDataToContext = (
 
   const defaultAdIds = ["", "", "", "", "", "", ""];
   const mergedAdIds = [...adIdsFromApi, ...defaultAdIds].slice(0, 7);
+
 
   // Determinar si se debe usar URL directa (para url y shopify)
   const useDirectUrl = selectedSource === "url" || selectedSource === "shopify";

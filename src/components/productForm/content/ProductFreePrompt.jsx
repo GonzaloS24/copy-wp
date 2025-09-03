@@ -1,8 +1,10 @@
-
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import { useProduct } from '../../../context/ProductContext';
 import { ProductGuidePrompt } from './ProductGuidePrompt';
 import { ProductService } from '../../../services/productService'; 
+
+// CONSTANTES INMUTABLES fuera del componente
+const MAX_CHARACTERS = 10000;
 
 export const ProductFreePrompt = ({ productName }) => {
   const {
@@ -11,6 +13,8 @@ export const ProductFreePrompt = ({ productName }) => {
     validationState,
     updateValidationState
   } = useProduct();
+
+  const [localText, setLocalText] = useState('');
 
   const freePromptData = productData.freePrompt || {
     promptType: 'libre',
@@ -25,11 +29,23 @@ export const ProductFreePrompt = ({ productName }) => {
     }
   };
 
-  if (!freePromptData.promptType) {
-    freePromptData.promptType = 'libre';
-  }
+  // Función de validación robusta
+  const validateAndTruncateText = useCallback((text) => {
+    if (typeof text !== 'string') return '';
+    
+    // Validación adicional por si el usuario manipula el DOM
+    const sanitizedText = text.slice(0, MAX_CHARACTERS);
+    
+    // Doble verificación de longitud
+    if (sanitizedText.length > MAX_CHARACTERS) {
+      console.warn('Intento de exceder límite de caracteres detectado');
+      return sanitizedText.slice(0, MAX_CHARACTERS);
+    }
+    
+    return sanitizedText;
+  }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!productData.freePrompt || !productData.freePrompt.promptType) {
       updateProductData('freePrompt', {
         ...freePromptData,
@@ -47,38 +63,44 @@ export const ProductFreePrompt = ({ productName }) => {
     }
   }, [productData.freePrompt, updateProductData]);
 
-  const getPromptText = () => {
+  const getPromptText = useCallback(() => {
     const promptData = productData.freePrompt?.promptText || productData.freePrompt?.promptContent;
     
     if (!promptData) return '';
     
-    if (typeof promptData === 'string') return promptData;
+    if (typeof promptData === 'string') return validateAndTruncateText(promptData);
     
     if (typeof promptData === 'object') {
-      if (promptData.text) return promptData.text;
-      if (promptData.prompt) return promptData.prompt;
-      if (promptData.content) return promptData.content;
-      if (promptData.value) return promptData.value;
-      
-      const keys = Object.keys(promptData);
-      if (keys.length === 1) {
-        const value = promptData[keys[0]];
-        if (typeof value === 'string') return value;
+      let text = '';
+      if (promptData.text) text = promptData.text;
+      else if (promptData.prompt) text = promptData.prompt;
+      else if (promptData.content) text = promptData.content;
+      else if (promptData.value) text = promptData.value;
+      else {
+        const keys = Object.keys(promptData);
+        if (keys.length === 1) {
+          const value = promptData[keys[0]];
+          if (typeof value === 'string') text = value;
+        }
       }
+      return validateAndTruncateText(text);
     }
     
     return '';
-  };
+  }, [productData.freePrompt, validateAndTruncateText]);
 
   const currentText = getPromptText();
+  const isExceeded = currentText.length > MAX_CHARACTERS;
 
-  const maxCharacters = 10000;
-  const isExceeded = currentText.length > maxCharacters;
+  // Sincronizar el texto local con el texto validado
+  useEffect(() => {
+    setLocalText(currentText);
+  }, [currentText]);
 
   const isFieldValid = (field) => {
     if (field === 'promptText') {
       if (!validationState.freePrompt.touchedFields?.[field]) return true;
-      return !!currentText && currentText.length <= maxCharacters;
+      return !!currentText && currentText.length <= MAX_CHARACTERS;
     }
     return true;
   };
@@ -103,6 +125,10 @@ export const ProductFreePrompt = ({ productName }) => {
 
   const handlePromptTextChange = (e) => {
     const newText = e.target.value;
+    const validatedText = validateAndTruncateText(newText);
+    
+    // Actualizar estado local para respuesta inmediata
+    setLocalText(validatedText);
     
     if (!validationState.freePrompt.touchedFields?.promptText) {
       updateValidationState('freePrompt', {
@@ -113,13 +139,14 @@ export const ProductFreePrompt = ({ productName }) => {
       });
     }
     
+    // Actualizar estado global con texto validado
     updateProductData('freePrompt', {
       ...freePromptData,
       promptContent: {
         ...freePromptData.promptContent,
-        text: newText
+        text: validatedText
       },
-      promptText: newText
+      promptText: validatedText
     });
   };
 
@@ -133,6 +160,27 @@ export const ProductFreePrompt = ({ productName }) => {
       });
     }
   };
+
+  // Protección contra manipulación del DOM
+  useEffect(() => {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'maxlength') {
+          const textarea = document.querySelector('textarea[data-free-prompt]');
+          if (textarea && textarea.getAttribute('maxlength') !== String(MAX_CHARACTERS)) {
+            textarea.setAttribute('maxlength', MAX_CHARACTERS);
+          }
+        }
+      });
+    });
+
+    const textarea = document.querySelector('textarea[data-free-prompt]');
+    if (textarea) {
+      observer.observe(textarea, { attributes: true, attributeFilter: ['maxlength'] });
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   const handleCreadorPrompts = () => console.log('Abrir creador de prompts');
   const handleClasesPrompts = () => console.log('Abrir clases para crear prompts');
@@ -211,7 +259,7 @@ export const ProductFreePrompt = ({ productName }) => {
           </div>
         </div>
         
-        {freePromptData.promptType === 'libre' && (
+         {freePromptData.promptType === 'libre' && (
           <div>
             <div className="mb-6 flex flex-col">
               <label className={`text-base font-semibold mb-2 ${
@@ -221,6 +269,7 @@ export const ProductFreePrompt = ({ productName }) => {
               </label>
               <div className="relative">
                 <textarea
+                  data-free-prompt
                   className={`w-full p-4 border-2 rounded-xl text-base bg-white text-slate-700 focus:outline-none focus:ring-4 focus:ring-sky-500/10 transition-all resize-vertical ${
                     !isFieldValid('promptText') 
                       ? 'border-red-500 focus:border-red-500' 
@@ -228,9 +277,15 @@ export const ProductFreePrompt = ({ productName }) => {
                   }`}
                   rows="12"
                   placeholder="Aquí puedes crear tu prompt personalizado..."
-                  value={currentText}
+                  value={localText}
                   onChange={handlePromptTextChange}
                   onBlur={() => handleBlur('promptText')}
+                  maxLength={MAX_CHARACTERS}
+                  onKeyDown={(e) => {
+                    if (currentText.length >= MAX_CHARACTERS && e.key !== 'Backspace' && e.key !== 'Delete') {
+                      e.preventDefault();
+                    }
+                  }}
                 />
                 <div className={`absolute bottom-3 right-4 text-xs px-2 py-1 rounded transition-colors duration-300 pointer-events-none select-none ${
                   isExceeded 
@@ -239,15 +294,15 @@ export const ProductFreePrompt = ({ productName }) => {
                       ? 'text-red-500 bg-red-50/90'
                       : 'text-slate-400 bg-slate-50/90'
                 }`}>
-                  {currentText.length}/{maxCharacters}
+                  {currentText.length}/{MAX_CHARACTERS}
                 </div>
               </div>
               {!isFieldValid('promptText') && (
                 <span className="text-red-500 text-sm mt-1">
                   {!currentText 
                     ? 'Este campo es obligatorio' 
-                    : currentText.length > maxCharacters 
-                      ? `El texto excede el límite de ${maxCharacters} caracteres` 
+                    : currentText.length > MAX_CHARACTERS 
+                      ? `El texto excede el límite de ${MAX_CHARACTERS} caracteres` 
                       : 'Este campo es obligatorio'}
                 </span>
               )}

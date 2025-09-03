@@ -1,5 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useProduct } from '../../../context/ProductContext';
+
+// CONSTANTES INMUTABLES para los límites de caracteres
+const CHARACTER_LIMITS = {
+  contextualizacion: 1000,
+  fichaTecnica: 2000,
+  guionConversacional: 4000,
+  posiblesSituaciones: 4000,
+  reglasIA: 2000
+};
 
 export const ProductGuidePrompt = ({ guideData, onGuideDataChange }) => {
   const { validationState, updateValidationState } = useProduct();
@@ -11,15 +20,49 @@ export const ProductGuidePrompt = ({ guideData, onGuideDataChange }) => {
     reglasIA: ''
   });
 
+  const [localTexts, setLocalTexts] = useState({
+    contextualizacion: '',
+    fichaTecnica: '',
+    guionConversacional: '',
+    posiblesSituaciones: '',
+    reglasIA: ''
+  });
+
+  // Función de validación robusta
+  const validateAndTruncateText = useCallback((text, field) => {
+    if (typeof text !== 'string') return '';
+    
+    const maxLength = CHARACTER_LIMITS[field] || 1000;
+    const sanitizedText = text.slice(0, maxLength);
+    
+    if (sanitizedText.length > maxLength) {
+      console.warn(`Intento de exceder límite de caracteres en ${field}`);
+      return sanitizedText.slice(0, maxLength);
+    }
+    
+    return sanitizedText;
+  }, []);
+
   useEffect(() => {
-    setFormData(guideData || {
+    const initialData = guideData || {
       contextualizacion: '',
       fichaTecnica: '',
       guionConversacional: '',
       posiblesSituaciones: '',
       reglasIA: ''
-    });
-  }, [guideData]);
+    };
+
+    // Validar y truncar los datos iniciales
+    const validatedData = Object.keys(initialData).reduce((acc, field) => {
+      acc[field] = validateAndTruncateText(initialData[field], field);
+      return acc;
+    }, {});
+
+    setFormData(validatedData);
+    
+    // Inicializar textos locales
+    setLocalTexts(validatedData);
+  }, [guideData, validateAndTruncateText]);
 
   const isFieldValid = (field) => {
     const requiredFields = [
@@ -36,7 +79,19 @@ export const ProductGuidePrompt = ({ guideData, onGuideDataChange }) => {
     return !!formData[field];
   };
 
+  const isFieldExceeded = (field) => {
+    return formData[field]?.length > CHARACTER_LIMITS[field];
+  };
+
   const handleInputChange = (field, value) => {
+    const validatedValue = validateAndTruncateText(value, field);
+    
+    // Actualizar texto local para respuesta inmediata
+    setLocalTexts(prev => ({
+      ...prev,
+      [field]: validatedValue
+    }));
+
     if (!validationState.freePrompt.touchedFields?.[field]) {
       updateValidationState('freePrompt', {
         touchedFields: {
@@ -48,7 +103,7 @@ export const ProductGuidePrompt = ({ guideData, onGuideDataChange }) => {
     
     const newData = {
       ...formData,
-      [field]: value
+      [field]: validatedValue
     };
     setFormData(newData);
     
@@ -68,6 +123,31 @@ export const ProductGuidePrompt = ({ guideData, onGuideDataChange }) => {
     }
   };
 
+  // Protección contra manipulación del DOM
+  useEffect(() => {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'maxlength') {
+          const textareas = document.querySelectorAll('textarea[data-guide-prompt]');
+          textareas.forEach((textarea) => {
+            const field = textarea.getAttribute('data-field');
+            const expectedMaxLength = CHARACTER_LIMITS[field];
+            if (textarea.getAttribute('maxlength') !== String(expectedMaxLength)) {
+              textarea.setAttribute('maxlength', expectedMaxLength);
+            }
+          });
+        }
+      });
+    });
+
+    const textareas = document.querySelectorAll('textarea[data-guide-prompt]');
+    textareas.forEach((textarea) => {
+      observer.observe(textarea, { attributes: true, attributeFilter: ['maxlength'] });
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   const insertExample = (field) => {
     const examples = {
       contextualizacion: 'Eres María, una asesora de ventas especializada en productos de belleza. Te diriges a mujeres jóvenes de 18-35 años con un tono amigable y cercano, pero profesional. Evita ser demasiado formal y usa un lenguaje natural que genere confianza.',
@@ -77,12 +157,15 @@ export const ProductGuidePrompt = ({ guideData, onGuideDataChange }) => {
       reglasIA: 'Nunca presionar agresivamente para la venta\nResponder con empatía ante dudas\nNo prometer resultados no respaldados\nMantener conversación natural y fluida\nSiempre ofrecer información de contacto adicional'
     };
     
+    const exampleText = validateAndTruncateText(examples[field] || '...', field);
+    
     const newData = {
       ...formData,
-      [field]: examples[field] || '...'
+      [field]: exampleText
     };
     
     setFormData(newData);
+    setLocalTexts(prev => ({ ...prev, [field]: exampleText }));
     
     if (onGuideDataChange) {
       onGuideDataChange(newData);
@@ -108,7 +191,8 @@ export const ProductGuidePrompt = ({ guideData, onGuideDataChange }) => {
           required: true,
           placeholder: "Ingresa el nombre del asesor, el rol que representa, a qué tipo de audiencia se dirige, y cómo debería adaptar su lenguaje (formal, cercano, técnico, etc).",
           field: "contextualizacion",
-          numberClass: "from-blue-500 to-blue-600"
+          numberClass: "from-blue-500 to-blue-600",
+          maxLength: CHARACTER_LIMITS.contextualizacion
         },
         {
           number: 2,
@@ -116,7 +200,8 @@ export const ProductGuidePrompt = ({ guideData, onGuideDataChange }) => {
           required: true,
           placeholder: "Ingresa el nombre del producto, el precio o promoción, los tiempos de envío y las características más importantes del producto.",
           field: "fichaTecnica",
-          numberClass: "from-blue-500 to-blue-600"
+          numberClass: "from-blue-500 to-blue-600",
+          maxLength: CHARACTER_LIMITS.fichaTecnica
         }
       ]
     },
@@ -131,7 +216,8 @@ export const ProductGuidePrompt = ({ guideData, onGuideDataChange }) => {
           required: true,
           placeholder: "Describe la secuencia ideal de interacciones para llevar al cliente desde el primer contacto hasta la venta.",
           field: "guionConversacional",
-          numberClass: "from-green-500 to-green-600"
+          numberClass: "from-green-500 to-green-600",
+          maxLength: CHARACTER_LIMITS.guionConversacional
         },
         {
           number: 4,
@@ -139,7 +225,8 @@ export const ProductGuidePrompt = ({ guideData, onGuideDataChange }) => {
           required: true,
           placeholder: "¿Qué dudas o preguntas podría tener el cliente durante la conversación? ¿Cómo debería responder la IA ante cada una de ellas?",
           field: "posiblesSituaciones",
-          numberClass: "from-green-500 to-green-600"
+          numberClass: "from-green-500 to-green-600",
+          maxLength: CHARACTER_LIMITS.posiblesSituaciones
         }
       ]
     },
@@ -154,7 +241,8 @@ export const ProductGuidePrompt = ({ guideData, onGuideDataChange }) => {
           required: true,
           placeholder: "Especifica qué cosas debe tener en cuenta la IA durante toda la interacción.",
           field: "reglasIA",
-          numberClass: "from-amber-500 to-amber-600"
+          numberClass: "from-amber-500 to-amber-600",
+          maxLength: CHARACTER_LIMITS.reglasIA
         }
       ]
     }
@@ -178,46 +266,82 @@ export const ProductGuidePrompt = ({ guideData, onGuideDataChange }) => {
             </div>
 
             <div>
-              {stage.sections.map((section, sectionIndex) => (
-                <div
-                  key={sectionIndex}
-                  className={`p-8 ${sectionIndex < stage.sections.length - 1 ? 'border-b border-slate-100' : ''}`}
-                >
-                  <h3 className="text-lg font-semibold text-slate-700 mb-6 flex items-center gap-4">
-                    <span className={`w-8 h-8 bg-gradient-to-r ${section.numberClass} text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0`}>
-                      {section.number}
-                    </span>
-                    {section.title}
-                    {section.required && <span className="text-red-500">*</span>}
-                  </h3>
-                  
-                  <div className="flex flex-col w-full">
-                    <textarea
-                      className={`min-h-[120px] font-sans leading-6 resize-y border-2 rounded-xl p-4 px-5 transition-all duration-300 focus:outline-none focus:ring-3 focus:ring-sky-500/10 placeholder-slate-400 placeholder:leading-6 ${
-                        !isFieldValid(section.field) 
-                          ? 'border-red-500 bg-red-50 focus:border-red-500' 
-                          : 'border-slate-200 bg-slate-50 focus:bg-white focus:border-sky-500'
-                      }`}
-                      rows="6"
-                      placeholder={section.placeholder}
-                      value={formData[section.field] || ''}
-                      onChange={(e) => handleInputChange(section.field, e.target.value)}
-                      onBlur={() => section.required && handleBlur(section.field)}
-                    />
-                    {!isFieldValid(section.field) && section.required && (
-                      <span className="text-red-500 text-sm mt-1">Este campo es obligatorio</span>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => insertExample(section.field)}
-                      className="flex items-center gap-2 text-sm text-sky-500 cursor-pointer transition-all duration-200 no-underline mt-3 self-end font-medium hover:text-sky-600 hover:underline"
-                    >
-                      <span className="text-base transition-transform duration-200 hover:scale-110">👁️</span>
-                      <span>Ver texto de ejemplo</span>
-                    </button>
+              {stage.sections.map((section, sectionIndex) => {
+                const charCount = formData[section.field]?.length || 0;
+                const maxLength = CHARACTER_LIMITS[section.field];
+                const isExceeded = charCount > maxLength;
+                const isValid = isFieldValid(section.field);
+                
+                return (
+                  <div
+                    key={sectionIndex}
+                    className={`p-8 ${sectionIndex < stage.sections.length - 1 ? 'border-b border-slate-100' : ''}`}
+                  >
+                    <h3 className="text-lg font-semibold text-slate-700 mb-6 flex items-center gap-4">
+                      <span className={`w-8 h-8 bg-gradient-to-r ${section.numberClass} text-white rounded-full flex items-center justify-center font-bold text-sm flex-shrink-0`}>
+                        {section.number}
+                      </span>
+                      {section.title}
+                      {section.required && <span className="text-red-500">*</span>}
+                    </h3>
+                    
+                    <div className="flex flex-col w-full">
+                      <div className="relative">
+                        <textarea
+                          data-guide-prompt
+                          data-field={section.field}
+                          className={`min-h-[120px] w-full p-4 border-2 rounded-xl text-base bg-white text-slate-700 focus:outline-none focus:ring-4 focus:ring-sky-500/10 transition-all resize-vertical ${
+                            !isValid 
+                              ? 'border-red-500 focus:border-red-500' 
+                              : isExceeded
+                                ? 'border-orange-500 focus:border-orange-500'
+                                : 'border-slate-200 focus:border-sky-500'
+                          }`}
+                          rows="6"
+                          placeholder={section.placeholder}
+                          value={localTexts[section.field] || ''}
+                          onChange={(e) => handleInputChange(section.field, e.target.value)}
+                          onBlur={() => section.required && handleBlur(section.field)}
+                          maxLength={maxLength}
+                          onKeyDown={(e) => {
+                            if (charCount >= maxLength && e.key !== 'Backspace' && e.key !== 'Delete') {
+                              e.preventDefault();
+                            }
+                          }}
+                        />
+                        <div className={`absolute bottom-3 right-4 text-xs px-2 py-1 rounded transition-colors duration-300 pointer-events-none select-none ${
+                          isExceeded 
+                            ? 'text-red-500 bg-red-50/90' 
+                            : !isValid 
+                              ? 'text-red-500 bg-red-50/90'
+                              : 'text-slate-400 bg-slate-50/90'
+                        }`}>
+                          {charCount}/{maxLength}
+                        </div>
+                      </div>
+                      
+                      {!isValid && section.required && (
+                        <span className="text-red-500 text-sm mt-1">Este campo es obligatorio</span>
+                      )}
+                      
+                      {isExceeded && (
+                        <span className="text-orange-500 text-sm mt-1">
+                          Límite excedido en {charCount - maxLength} caracteres
+                        </span>
+                      )}
+                      
+                      <button
+                        type="button"
+                        onClick={() => insertExample(section.field)}
+                        className="flex items-center gap-2 text-sm text-sky-500 cursor-pointer transition-all duration-200 no-underline mt-3 self-end font-medium hover:text-sky-600 hover:underline"
+                      >
+                        <span className="text-base transition-transform duration-200 hover:scale-110">👁️</span>
+                        <span>Ver texto de ejemplo</span>
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         ))}
