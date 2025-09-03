@@ -13,6 +13,7 @@ const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
     isConnecting,
     username,
     error,
+    hasMessagesSent,
     initializeChat,
     sendMessage,
     restartTest,
@@ -54,7 +55,7 @@ const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
 
       if (keywordResult.success && keywordResult.primaryKeyword) {
         console.log("🔑 Palabra clave obtenida:", keywordResult.primaryKeyword);
-        
+
         // 2. Rellenar el input con la palabra clave
         setInputValue(keywordResult.primaryKeyword);
 
@@ -88,17 +89,28 @@ const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
     }
   };
 
-  const handleRestartTest = () => {
-    // Al reiniciar, también pre-cargar la palabra clave en el input
-    restartTest().then(() => {
-      TestRestartService.getProductKeywords(productId || contextProductId)
-        .then(result => {
-          if (result.success && result.primaryKeyword) {
-            setInputValue(result.primaryKeyword);
-          }
-        })
-        .catch(err => console.error("Error obteniendo palabra clave post-reinicio:", err));
-    });
+  const handleRestartTest = async () => {
+    try {
+      // Ejecutar reinicio
+      await restartTest();
+
+      // Pre-cargar la palabra clave en el input después del reinicio
+      try {
+        const keywordResult = await TestRestartService.getProductKeywords(
+          productId || contextProductId
+        );
+        if (keywordResult.success && keywordResult.primaryKeyword) {
+          setInputValue(keywordResult.primaryKeyword);
+        }
+      } catch (keywordError) {
+        console.error(
+          "Error obteniendo palabra clave post-reinicio:",
+          keywordError
+        );
+      }
+    } catch (error) {
+      console.error("Error en handleRestartTest:", error);
+    }
   };
 
   const getMessageStyle = (messageType) => {
@@ -113,6 +125,9 @@ const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
         return "bg-gray-100 text-gray-700 rounded-lg mx-auto";
     }
   };
+
+  // Determinar si el botón de reiniciar debe estar habilitado
+  const isRestartEnabled = isConnected && hasMessagesSent && !isRestartingTest;
 
   return (
     <div className="bg-white rounded-2xl p-10 shadow-xl border border-slate-200 w-full relative z-5">
@@ -141,21 +156,26 @@ const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
                   Iniciando...
                 </>
               ) : (
-                <>
-                  🚀 Iniciar prueba
-                </>
+                <>🚀 Iniciar prueba</>
               )}
             </button>
           ) : (
             // Botón "Reiniciar Prueba" cuando está conectado
             <button
-              className={`border-none rounded-lg py-3 px-6 text-sm font-medium cursor-pointer transition-all duration-200 font-inherit shadow-sm hover:-translate-y-1 hover:shadow-lg flex items-center gap-2 ${
-                isRestartingTest
-                  ? "bg-gray-400 text-white cursor-not-allowed"
-                  : "bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 hover:shadow-red-200"
+              className={`border-none rounded-lg py-3 px-6 text-sm font-medium cursor-pointer transition-all duration-200 font-inherit shadow-sm flex items-center gap-2 ${
+                isRestartEnabled
+                  ? "bg-gradient-to-r from-red-500 to-red-600 text-white hover:from-red-600 hover:to-red-700 hover:shadow-red-200 hover:-translate-y-1 hover:shadow-lg"
+                  : "bg-gray-400 text-white cursor-not-allowed"
               }`}
               onClick={handleRestartTest}
-              disabled={isRestartingTest}
+              disabled={!isRestartEnabled}
+              title={
+                !hasMessagesSent
+                  ? "Envía al menos un mensaje antes de reiniciar"
+                  : isRestartingTest
+                  ? "Reiniciando..."
+                  : "Reiniciar prueba"
+              }
             >
               {isRestartingTest ? (
                 <>
@@ -163,9 +183,7 @@ const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
                   Reiniciando...
                 </>
               ) : (
-                <>
-                  Reiniciar prueba
-                </>
+                <>Reiniciar prueba</>
               )}
             </button>
           )}
@@ -209,7 +227,7 @@ const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
             <strong>Reiniciando prueba...</strong>
           </div>
           <p className="mt-2 text-xs text-red-600">
-            Eliminando usuario anterior, creando nuevo usuario de prueba e insertando palabra clave automáticamente...
+            Eliminando conversación anterior y preparando nueva prueba...
           </p>
         </div>
       )}
@@ -224,21 +242,34 @@ const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
               backgroundImage: `url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' opacity='0.05'><defs><pattern id='whatsapp-pattern' x='0' y='0' width='20' height='20' patternUnits='userSpaceOnUse'><circle cx='10' cy='10' r='1' fill='%23ffffff'/></pattern></defs><rect width='100' height='100' fill='url(%23whatsapp-pattern)'/></svg>")`,
             }}
           >
-            {messages.length === 0 && !isConnected && !isConnecting && !isStartingTest && !isRestartingTest && (
-              <div className="flex p-10 items-center justify-center h-full text-white/70 text-center">
-                <div>
-                  <p className="text-lg mb-2">¿Listo para probar tu asistente?</p>
-                  <p className="text-sm opacity-75">Presiona "Iniciar prueba" para comenzar</p>
+            {messages.length === 0 &&
+              !isConnected &&
+              !isConnecting &&
+              !isStartingTest &&
+              !isRestartingTest && (
+                <div className="flex p-10 items-center justify-center h-full text-white/70 text-center">
+                  <div>
+                    <p className="text-lg mb-2">
+                      ¿Listo para probar tu asistente?
+                    </p>
+                    <p className="text-sm opacity-75">
+                      Presiona "Iniciar prueba" para comenzar
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
 
             {messages.length === 0 && isConnected && !isRestartingTest && (
               <div className="flex items-center justify-center h-full text-white/70 text-center">
                 <div>
                   <div className="text-2xl mb-2">💬</div>
-                  <p>El chat está listo. La palabra clave está pre-cargada en el input.</p>
-                  <p className="text-sm mt-2 opacity-75">Presiona Enter o el botón de envío para comenzar</p>
+                  <p>
+                    El chat está listo. La palabra clave está pre-cargada en el
+                    input.
+                  </p>
+                  <p className="text-sm mt-2 opacity-75">
+                    Presiona Enter o el botón de envío para comenzar
+                  </p>
                 </div>
               </div>
             )}
@@ -248,12 +279,11 @@ const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
                 <div>
                   <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white/70 mx-auto mb-4"></div>
                   <p>
-                    {isStartingTest 
-                      ? "Preparando prueba..." 
-                      : isRestartingTest 
-                      ? "Reiniciando prueba..." 
-                      : "Conectando con el servidor..."
-                    }
+                    {isStartingTest
+                      ? "Preparando prueba..."
+                      : isRestartingTest
+                      ? "Reiniciando prueba..."
+                      : "Conectando con el servidor..."}
                   </p>
                 </div>
               </div>
@@ -310,12 +340,20 @@ const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
             />
             <button
               className={`w-12 h-12 border-none rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 shadow-lg hover:scale-105 hover:shadow-xl active:scale-95 ${
-                isConnected && inputValue.trim() && !isRestartingTest && !isStartingTest
+                isConnected &&
+                inputValue.trim() &&
+                !isRestartingTest &&
+                !isStartingTest
                   ? "bg-gradient-to-r from-sky-500 to-sky-600 text-white"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }`}
               onClick={handleSendMessage}
-              disabled={!isConnected || !inputValue.trim() || isRestartingTest || isStartingTest}
+              disabled={
+                !isConnected ||
+                !inputValue.trim() ||
+                isRestartingTest ||
+                isStartingTest
+              }
             >
               <svg
                 width="20"

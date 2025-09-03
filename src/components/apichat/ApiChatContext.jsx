@@ -6,7 +6,11 @@ import { TestRestartService } from "../../services/apichat/testRestartService";
 
 const ApiChatContext = createContext();
 
-export const ApiChatProvider = ({ children, productId = null, ASSISTANT_TEMPLATE_NS }) => {
+export const ApiChatProvider = ({
+  children,
+  productId = null,
+  ASSISTANT_TEMPLATE_NS,
+}) => {
   const [messages, setMessages] = useState([]);
   const [isConnected, setIsConnected] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -15,6 +19,7 @@ export const ApiChatProvider = ({ children, productId = null, ASSISTANT_TEMPLATE
   const [error, setError] = useState(null);
   const [currentProductId, setCurrentProductId] = useState(productId);
   const [isRestartingTest, setIsRestartingTest] = useState(false);
+  const [hasMessagesSent, setHasMessagesSent] = useState(false);
 
   const socketRef = useRef(null);
   const API_CHAT_URL = "https://api-chat-service-26551171030.us-east1.run.app";
@@ -48,6 +53,7 @@ export const ApiChatProvider = ({ children, productId = null, ASSISTANT_TEMPLATE
     setIsConnecting(true);
     setError(null);
     setUsername(chatUsername);
+    setHasMessagesSent(false);
 
     const workspaceId = getCurrentWorkspace();
     const token = getAuthToken();
@@ -162,6 +168,9 @@ export const ApiChatProvider = ({ children, productId = null, ASSISTANT_TEMPLATE
     // Agregar mensaje del usuario
     addMessage("user", message);
 
+    // Marcar que se ha enviado al menos un mensaje
+    setHasMessagesSent(true);
+
     // Enviar mensaje al servidor
     socketRef.current.emit("send_message", {
       message: message,
@@ -181,17 +190,19 @@ export const ApiChatProvider = ({ children, productId = null, ASSISTANT_TEMPLATE
     setBotCode("");
     setUsername("");
     setError(null);
+    setHasMessagesSent(false);
   };
 
   const resetChat = () => {
     setMessages([]);
     setError(null);
+    setHasMessagesSent(false);
     if (isConnected) {
       addMessage("system", `Chat reiniciado como ${username}`);
     }
   };
 
-  // Función para reiniciar la prueba completamente
+  // Función para reiniciar la prueba
   const restartTest = async () => {
     if (isRestartingTest) return Promise.resolve();
 
@@ -199,7 +210,21 @@ export const ApiChatProvider = ({ children, productId = null, ASSISTANT_TEMPLATE
     setError(null);
 
     try {
-      console.log("Iniciando reinicio de prueba...");
+      console.log("🔄 Iniciando reinicio de prueba...");
+
+      // Obtener el token de autenticación
+      const token = getAuthToken();
+      if (!token) {
+        throw new Error("No se encontró token de autenticación");
+      }
+
+      if (!ASSISTANT_TEMPLATE_NS) {
+        throw new Error("No se encontró el template del asistente");
+      }
+
+      if (!currentProductId) {
+        throw new Error("No se encontró ID del producto");
+      }
 
       // 1. Desconectar chat actual
       disconnectChat();
@@ -208,59 +233,44 @@ export const ApiChatProvider = ({ children, productId = null, ASSISTANT_TEMPLATE
       setMessages([]);
 
       // 3. Llamar al servicio para reiniciar la prueba
-      const result = await TestRestartService.restartTest(currentProductId);
+      const result = await TestRestartService.restartTest(
+        currentProductId,
+        ASSISTANT_TEMPLATE_NS,
+        token
+      );
 
       if (result.success) {
-        console.log("✅ Prueba reiniciada exitosamente");
-        
-        // 4. Actualizar botCode si viene en la respuesta
-        if (result.botCode) {
-          setBotCode(result.botCode);
-        }
-        
-        // 5. Inicializar nuevo chat con usuario "prueba"
+        console.log("✅ Prueba reiniciada exitosamente:", result);
+
+        // 4. Inicializar nuevo chat con usuario "prueba"
         const newUsername = result.newUsername || "prueba";
-        
+
         // Pequeña pausa para asegurar que la desconexión anterior se completó
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
         initializeChat(newUsername);
-        
-        addMessage("system", "🔄 Prueba reiniciada. Nueva conversación iniciada automáticamente...");
-        
-        // 6. Esperar a que se conecte y enviar palabra clave automáticamente
-        return new Promise((resolve) => {
-          const checkConnection = async () => {
-            if (isConnected && !isConnecting) {
-              try {
-                const keywordResult = await TestRestartService.getProductKeywords(currentProductId);
-                if (keywordResult.success && keywordResult.primaryKeyword) {
-                  console.log("🔑 Enviando palabra clave automáticamente:", keywordResult.primaryKeyword);
-                  
-                  setTimeout(() => {
-                    sendMessage(keywordResult.primaryKeyword);
-                    resolve();
-                  }, 1000);
-                } else {
-                  resolve();
-                }
-              } catch (keywordError) {
-                console.error("❌ Error obteniendo palabra clave:", keywordError);
-                resolve();
-              }
-            } else {
-              setTimeout(checkConnection, 1000);
-            }
-          };
-        
-          setTimeout(checkConnection, 2000);
-        });
+
+        // Mensaje de exito
+        addMessage(
+          "system",
+          "✅ Prueba reiniciada exitosamente. Nueva conversación iniciada."
+        );
+
+        return Promise.resolve(result);
       } else {
         throw new Error(result.message || "Error al reiniciar la prueba");
       }
     } catch (error) {
       console.error("❌ Error al reiniciar prueba:", error);
-      setError(`Error al reiniciar la prueba: ${error.message}`);
+      const errorMessage = `Error al reiniciar la prueba: ${error.message}`;
+      setError(errorMessage);
+
+      // Intentar reconectar después de un error
+      setTimeout(() => {
+        console.log("🔄 Intentando reconectar después del error...");
+        initializeChat("prueba");
+      }, 1000);
+
       throw error;
     } finally {
       setIsRestartingTest(false);
@@ -284,6 +294,7 @@ export const ApiChatProvider = ({ children, productId = null, ASSISTANT_TEMPLATE
         isConnecting,
         username,
         error,
+        hasMessagesSent,
         initializeChat,
         sendMessage,
         disconnectChat,
