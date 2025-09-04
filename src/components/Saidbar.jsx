@@ -15,7 +15,7 @@ export const Sidebar = ({ isOpen, onClose }) => {
       title: "Integraciones",
       description:
         "Conecta Chatea PRO con Shopify, Open IA, Google Sheets y más",
-      href: "/integraciones",
+      href: "/integraciones", 
     },
     {
       icon: FiBookOpen,
@@ -39,6 +39,29 @@ export const Sidebar = ({ isOpen, onClose }) => {
     }
   };
 
+  const handleNavigation = (e, item) => {
+    e.preventDefault();
+    
+    // Verificar si hay cambios sin guardar usando el método global
+    if (window.__handleProgrammaticNavigation) {
+      window.__handleProgrammaticNavigation(() => {
+        if (item.title === "Academia") {
+          window.open(item.href, '_blank');
+        } else {
+          window.location.href = item.href;
+        }
+      });
+    } else {
+      // Fallback si la verificación no está disponible
+      if (item.title === "Academia") {
+        window.open(item.href, '_blank');
+      } else {
+        window.location.href = item.href;
+      }
+    }
+  };
+
+
   return (
     <div
       className={`fixed inset-0 bg-black/50 z-[2000] transition-opacity duration-300 ease-in-out ${
@@ -59,12 +82,13 @@ export const Sidebar = ({ isOpen, onClose }) => {
 
         <div className="flex-1 p-6 overflow-y-auto">
           <div className="space-y-2">
-            {menuItems.map((item, index) => {
+          {menuItems.map((item, index) => {
               const IconComponent = item.icon;
               return (
                 <a
                   key={index}
                   href={item.href}
+                  onClick={(e) => handleNavigation(e, item)}
                   {...(item.title === "Academia" && {
                     target: "_blank",
                     rel: "noopener noreferrer",

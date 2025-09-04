@@ -13,7 +13,6 @@ export const AlertDialog = ({
 }) => {
   const modalRef = useRef(null);
 
-  // useEffect para manejar el cierre automático
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
@@ -30,18 +29,20 @@ export const AlertDialog = ({
     if (isOpen) {
       document.addEventListener("mousedown", handleClickOutside);
       document.addEventListener("keydown", handleEscapeKey);
+      document.body.style.overflow = 'hidden';
     }
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleEscapeKey);
+      document.body.style.overflow = 'auto';
     };
   }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[3000]"> {/* Aumentado a 3000 */}
       <div
         ref={modalRef}
         className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md font-sans relative mx-4"

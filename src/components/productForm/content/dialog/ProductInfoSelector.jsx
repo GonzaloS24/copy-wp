@@ -14,7 +14,6 @@ const ProductInfoSelector = ({ isOpen, onClose }) => {
 
   const modalRef = useRef(null);
 
-  // useEffect para el cierre automático
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (modalRef.current && !modalRef.current.contains(event.target)) {
