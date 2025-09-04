@@ -22,6 +22,14 @@ export const OrderValidations = ({ formData, setFormData }) => {
     }));
   };
 
+  const handleIntInputChange = (field, value) => {
+    const newValue = parseInt(Number(value));
+
+    if (!newValue) return handleInputChange(field, "");
+
+    handleInputChange(field, newValue);
+  };
+
   const handleNumberInputChange = (field, value) => {
     const newValue = Number(value);
 
@@ -74,9 +82,7 @@ export const OrderValidations = ({ formData, setFormData }) => {
           </label>
           <ToggleSwitch
             checked={formData?.orderValidations?.validateDeliveries ?? false}
-            onChange={(value) =>
-              handleNumberInputChange("validateDeliveries", value)
-            }
+            onChange={(value) => handleInputChange("validateDeliveries", value)}
             label={formData?.orderValidations?.validateDeliveries ? "Sí" : "No"}
           />
         </div>
@@ -90,7 +96,7 @@ export const OrderValidations = ({ formData, setFormData }) => {
               value={formData?.orderValidations?.minSuccessPercentage ?? ""}
               placeholder={`Ej. ${orderValidationsInitialValues.minSuccessPercentage}`}
               onChange={(value) =>
-                handleNumberInputChange("minSuccessPercentage", value)
+                handleIntInputChange("minSuccessPercentage", value)
               }
             />
           </div>
@@ -106,7 +112,7 @@ export const OrderValidations = ({ formData, setFormData }) => {
               placeholder={`Ej. ${orderValidationsInitialValues.minOrdersValidation}`}
               min="1"
               onChange={({ target }) =>
-                handleNumberInputChange("minOrdersValidation", target.value)
+                handleIntInputChange("minOrdersValidation", target.value)
               }
             />
           </div>

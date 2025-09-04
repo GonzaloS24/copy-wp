@@ -1,6 +1,6 @@
 export const offerDaysInitialValues = {
-  minDay: "1",
-  maxDay: "3",
+  minDay: "1 día hábil",
+  maxDay: "3 días hábiles",
 };
 
 export const specialActionsInitialValues = {

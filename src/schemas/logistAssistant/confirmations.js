@@ -20,7 +20,7 @@ const orderValidationsSchema = z.object({
   minSuccessPercentage: z.coerce.number().int().positive(),
   minOrdersValidation: z.coerce.number().int().positive(),
   validateShipping: z.boolean(),
-  minShippingValue: z.coerce.number().int().positive(),
+  minShippingValue: z.coerce.number().positive(),
 });
 
 const shippingTimesSchema = z.object({

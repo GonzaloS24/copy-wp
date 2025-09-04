@@ -19,11 +19,11 @@ export const OfferDays = ({ formData, setFormData }) => {
   };
 
   const dayOptions = [
-    { key: "1", value: "1 día hábil" },
-    { key: "2", value: "2 días hábiles" },
-    { key: "3", value: "3 días hábiles" },
-    { key: "4", value: "4 días hábiles" },
-    { key: "5", value: "5 días hábiles" },
+    { key: "1 día hábil", value: "1 día hábil" },
+    { key: "2 días hábiles", value: "2 días hábiles" },
+    { key: "3 días hábiles", value: "3 días hábiles" },
+    { key: "4 días hábiles", value: "4 días hábiles" },
+    { key: "5 días hábiles", value: "5 días hábiles" },
   ];
 
   return (

@@ -20,6 +20,22 @@ export const ShippingTimes = ({ formData, setFormData }) => {
     }));
   };
 
+  const handleIntInputChange = ({ target }) => {
+    if (
+      !!updateMessagesMaxSizes[target.id] &&
+      target.value.length >= updateMessagesMaxSizes[target.id]
+    )
+      return;
+
+    setFormData((prev) => ({
+      ...prev,
+      updateMessages: {
+        ...prev.updateMessages,
+        [target.id]: parseInt(Number(target.value)) || "",
+      },
+    }));
+  };
+
   return (
     <div className="flex flex-col flex-1">
       <h2 className="text-3xl font-bold text-sky-500 mb-4 tracking-tight">
@@ -47,7 +63,7 @@ export const ShippingTimes = ({ formData, setFormData }) => {
             rows="4"
             value={formData?.shippingTimes?.deliveryTimesGuide ?? ""}
             placeholder={`Ej. ${shippingTimesInitialValues.deliveryTimesGuide}`}
-            onChange={handleInputChange}
+            onChange={handleIntInputChange}
           />
         </div>
         <div className="mb-5">

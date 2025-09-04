@@ -14,8 +14,8 @@ export const updatesSerializer = (formData) => {
     },
 
     diasDeOfrecimiento: {
-      diaMinimo: `${updateData.offerDays.minDay} días hábiles`,
-      diaMaximo: `${updateData.offerDays.maxDay} días hábiles`, // Formato en texto: "2 días hábiles"
+      diaMinimo: updateData.offerDays.minDay,
+      diaMaximo: updateData.offerDays.maxDay, // Formato en texto: "2 días hábiles"
     },
 
     accionesEspeciales: {
