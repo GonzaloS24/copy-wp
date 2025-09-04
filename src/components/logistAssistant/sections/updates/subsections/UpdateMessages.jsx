@@ -29,6 +29,22 @@ export const UpdateMessages = ({
     }));
   };
 
+  const handleIntInputChange = ({ target }) => {
+    if (
+      !!updateMessagesMaxSizes[target.id] &&
+      target.value.length >= updateMessagesMaxSizes[target.id]
+    )
+      return;
+
+    setFormData((prev) => ({
+      ...prev,
+      updateMessages: {
+        ...prev.updateMessages,
+        [target.id]: parseInt(Number(target.value)) || "",
+      },
+    }));
+  };
+
   return (
     <div className="flex flex-col flex-1">
       <h2 className="text-3xl font-bold text-sky-500 mb-4 tracking-tight">
@@ -81,7 +97,7 @@ export const UpdateMessages = ({
                 value={formData?.updateMessages?.reminder1TimeUpdate ?? ""}
                 placeholder={updateMessagesInitialValues.reminder1TimeUpdate}
                 className="w-30 p-3.5 border border-gray-300 rounded-l-lg border-r-0 text-center text-sm bg-white focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-                onChange={handleInputChange}
+                onChange={handleIntInputChange}
               />
               <select
                 id="reminder1Unit"
@@ -113,7 +129,7 @@ export const UpdateMessages = ({
                 value={formData?.updateMessages?.reminder2TimeUpdate ?? ""}
                 placeholder={updateMessagesInitialValues.reminder2TimeUpdate}
                 className="w-30 p-3.5 border border-gray-300 rounded-l-lg border-r-0 text-center text-sm bg-white focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
-                onChange={handleInputChange}
+                onChange={handleIntInputChange}
               />
               <select
                 id="reminder2Unit"
