@@ -14,7 +14,7 @@ const baseToastConfig = {
 export const showSuccessToast = (message) => {
   toast.success(message, {
     ...baseToastConfig,
-    autoClose: 3000,
+    autoClose: 6000,
     style: {
       ...baseToastConfig.style,
     },
@@ -27,7 +27,7 @@ export const showSuccessToast = (message) => {
 export const showErrorToast = (message) => {
   toast.error(message, {
     ...baseToastConfig,
-    autoClose: 3000,
+    autoClose: 6000,
     style: {
       ...baseToastConfig.style,
     },
@@ -40,7 +40,7 @@ export const showErrorToast = (message) => {
 export const showInfoToast = (message) => {
   toast.info(message, {
     ...baseToastConfig,
-    autoClose: 3000,
+    autoClose: 6000,
     style: {
       ...baseToastConfig.style,
     },
@@ -53,7 +53,7 @@ export const showInfoToast = (message) => {
 export const showWarningToast = (message) => {
   toast.warning(message, {
     ...baseToastConfig,
-    autoClose: 3000,
+    autoClose: 6000,
     style: {
       ...baseToastConfig.style,
     },
