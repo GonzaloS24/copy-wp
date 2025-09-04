@@ -95,6 +95,8 @@ export const ApiChatProvider = ({
         token: `Bearer ${token}`,
         name: chatUsername,
         workspaceId: Number(workspaceId),
+        templateNs: ASSISTANT_TEMPLATE_NS,
+        productId: currentProductId,
       },
     });
 
@@ -175,8 +177,6 @@ export const ApiChatProvider = ({
     socketRef.current.emit("send_message", {
       message: message,
       botCode: botCode,
-      productId: currentProductId,
-      templateNs: ASSISTANT_TEMPLATE_NS,
     });
   };
 
