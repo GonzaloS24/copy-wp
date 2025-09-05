@@ -225,7 +225,6 @@ export const MediaManager = ({ mediaItems, updateProductData, parentData, showFi
               <div className="text-sm text-slate-600 space-y-1 ml-6">
                 <p>• JPEG (.jpg, .jpeg)</p>
                 <p>• PNG (.png)</p>
-                <p>• WebP (.webp)</p>
               </div>
             </div>
             <div>
