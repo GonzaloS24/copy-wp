@@ -14,6 +14,7 @@ const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
     username,
     error,
     hasMessagesSent,
+    isAutoClearing,
     initializeChat,
     sendMessage,
     restartTest,
@@ -137,18 +138,25 @@ const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
           <h1 className="text-4xl text-sky-500 font-bold tracking-tight">
             {title}
           </h1>
+          {/* Indicador de auto-limpieza */}
+          {isAutoClearing && (
+            <div className="flex items-center gap-2 text-slate-500 text-sm">
+              <div className="w-3 h-3 border border-slate-400 border-t-transparent rounded-full animate-spin"></div>
+              <span>Preparando...</span>
+            </div>
+          )}
         </div>
         <div className="flex gap-3">
           {!isConnected ? (
             // Botón "Iniciar Prueba" cuando no está conectado
             <button
               className={`border-none rounded-lg py-3 px-6 text-sm font-medium cursor-pointer transition-all duration-200 font-inherit shadow-sm hover:-translate-y-1 hover:shadow-lg flex items-center gap-2 ${
-                isStartingTest
+                isStartingTest || isAutoClearing
                   ? "bg-gray-400 text-white cursor-not-allowed"
                   : "bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 hover:shadow-green-200"
               }`}
               onClick={handleStartTest}
-              disabled={isStartingTest || isConnecting}
+              disabled={isStartingTest || isConnecting || isAutoClearing}
             >
               {isStartingTest ? (
                 <>
@@ -246,7 +254,8 @@ const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
               !isConnected &&
               !isConnecting &&
               !isStartingTest &&
-              !isRestartingTest && (
+              !isRestartingTest &&
+              !isAutoClearing && (
                 <div className="flex p-10 items-center justify-center h-full text-white/70 text-center">
                   <div>
                     <p className="text-lg mb-2">
@@ -274,12 +283,17 @@ const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
               </div>
             )}
 
-            {(isConnecting || isStartingTest || isRestartingTest) && (
+            {(isConnecting ||
+              isStartingTest ||
+              isRestartingTest ||
+              isAutoClearing) && (
               <div className="flex items-center justify-center h-full text-white/70 text-center">
                 <div>
                   <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white/70 mx-auto mb-4"></div>
                   <p>
-                    {isStartingTest
+                    {isAutoClearing
+                      ? "Preparando chat..."
+                      : isStartingTest
                       ? "Preparando prueba..."
                       : isRestartingTest
                       ? "Reiniciando prueba..."
@@ -336,14 +350,20 @@ const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
-              disabled={!isConnected || isRestartingTest || isStartingTest}
+              disabled={
+                !isConnected ||
+                isRestartingTest ||
+                isStartingTest ||
+                isAutoClearing
+              }
             />
             <button
               className={`w-12 h-12 border-none rounded-full flex items-center justify-center cursor-pointer transition-all duration-200 shadow-lg hover:scale-105 hover:shadow-xl active:scale-95 ${
                 isConnected &&
                 inputValue.trim() &&
                 !isRestartingTest &&
-                !isStartingTest
+                !isStartingTest &&
+                !isAutoClearing
                   ? "bg-gradient-to-r from-sky-500 to-sky-600 text-white"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
               }`}
@@ -352,7 +372,8 @@ const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
                 !isConnected ||
                 !inputValue.trim() ||
                 isRestartingTest ||
-                isStartingTest
+                isStartingTest ||
+                isAutoClearing
               }
             >
               <svg

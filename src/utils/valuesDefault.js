@@ -36,6 +36,7 @@ export const DEFAULT_VALUES = {
     similarity: 0.7,
     style: 0.5,
     useSpeakerBoost: true,
+    useVoiceAI: false,
   },
   reminder: {
     reminder1: {

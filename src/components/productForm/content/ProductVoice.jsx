@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useProduct } from "../../../context/ProductContext";
 
 export const ProductVoice = () => {
@@ -15,6 +15,25 @@ export const ProductVoice = () => {
   };
 
   const [testText, setTestText] = useState("");
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    if (!isInitialized) {
+      const needsInitialization =
+        voiceData.useVoiceAI === undefined || voiceData.useVoiceAI === null;
+
+      if (needsInitialization) {
+        console.log(
+          "[ProductVoice] Inicializando useVoiceAI con valor por defecto"
+        );
+        updateProductData("voice", {
+          ...voiceData,
+          useVoiceAI: false,
+        });
+      }
+      setIsInitialized(true);
+    }
+  }, [isInitialized, voiceData, updateProductData]);
 
   const increaseValue = (param) => {
     const step = 0.1;
@@ -64,6 +83,12 @@ export const ProductVoice = () => {
   };
 
   const handleUseVoiceAIChange = (value) => {
+    console.log(
+      "[ProductVoice] Cambiando useVoiceAI de",
+      voiceData.useVoiceAI,
+      "a",
+      value
+    );
     updateProductData("voice", {
       useVoiceAI: value,
     });
