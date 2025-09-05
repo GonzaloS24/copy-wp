@@ -91,6 +91,7 @@ export const ProductInfo = () => {
     { value: 'UYU', label: 'UYU' },
     { value: 'BOB', label: 'BOB' },
     { value: 'PYG', label: 'PYG' },
+    { value: 'USD', label: 'USD' },
   ];
 
   const productTypes = [
