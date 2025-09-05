@@ -20,14 +20,53 @@ export const ApiChatProvider = ({
   const [currentProductId, setCurrentProductId] = useState(productId);
   const [isRestartingTest, setIsRestartingTest] = useState(false);
   const [hasMessagesSent, setHasMessagesSent] = useState(false);
+  const [isAutoClearing, setIsAutoClearing] = useState(false);
 
   const socketRef = useRef(null);
+  const hasAutoCleared = useRef(false);
   const API_CHAT_URL = "https://api-chat-service-26551171030.us-east1.run.app";
 
   // Actualizar productId cuando cambie desde props
   useEffect(() => {
     setCurrentProductId(productId);
   }, [productId]);
+
+  // Borrar chat al cargar el componente
+  useEffect(() => {
+    const performAutoClear = async () => {
+      // Solo ejecutar una vez por sesión del componente
+      if (hasAutoCleared.current || !currentProductId || !ASSISTANT_TEMPLATE_NS) return;
+      
+      hasAutoCleared.current = true;
+      setIsAutoClearing(true);
+
+      try {
+        console.log("🧹 Ejecutando auto-limpieza del chat al cargar componente...");
+        
+        const token = getAuthToken();
+        if (!token) {
+          console.log("⚠️ No hay token, saltando auto-limpieza");
+          return;
+        }
+
+        // Ejecutar limpieza en segundo plano
+        await TestRestartService.restartTest(
+          currentProductId,
+          ASSISTANT_TEMPLATE_NS,
+          token
+        );
+
+        console.log("✅ Auto-limpieza completada exitosamente");
+      } catch (error) {
+        console.log("⚠️ Auto-limpieza falló (continuando normalmente):", error.message);
+        // No mostramos error al usuario, solo log interno
+      } finally {
+        setIsAutoClearing(false);
+      }
+    };
+
+    performAutoClear();
+  }, [currentProductId, ASSISTANT_TEMPLATE_NS]);
 
   const addMessage = (type, content, time = null) => {
     const newMessage = {
@@ -295,6 +334,7 @@ export const ApiChatProvider = ({
         username,
         error,
         hasMessagesSent,
+        isAutoClearing,
         initializeChat,
         sendMessage,
         disconnectChat,
