@@ -1,11 +1,12 @@
 import { AIAudioMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/generalConfig";
 import { Card } from "../../../generalComponents/Card";
-import { HiddenTextField } from "../../../generalComponents/HiddenTextField";
+import { HiddenTextField } from "../../../generalComponents/inputs/HiddenTextField";
 import { ToggleSwitch } from "../../../generalComponents/ToggleSwitch";
 import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { NumberInput } from "../../../generalComponents/inputs/NumberInput";
 import { RadioGroup } from "../../../generalComponents/inputs/RadioGroup";
 import { SliderInput } from "../../../generalComponents/inputs/SliderInput";
+import { LimitedTextInput } from "../../../generalComponents/inputs/LimitedTextInput";
 
 export const AIAudio = ({ formData, setFormData }) => {
   const handleInputChange = (field, value) => {
@@ -81,12 +82,14 @@ export const AIAudio = ({ formData, setFormData }) => {
                   value={formData?.AIAudio?.token ?? ""}
                   onChange={(e) => handleInputChange("token", e.target.value)}
                   isDisabled={isDisabled}
+                  limit={AIAudioMaxSizes.token}
                 />
 
                 <label className="font-medium text-slate-700 text-sm block mb-2">
                   ID de voz
                 </label>
-                <input
+                <LimitedTextInput
+                  id="voiceId"
                   type="text"
                   className={`w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 font-inherit leading-relaxed focus:outline-none placeholder:text-slate-400 placeholder:text-sm ${
                     isDisabled
@@ -97,6 +100,7 @@ export const AIAudio = ({ formData, setFormData }) => {
                   value={formData?.AIAudio?.voiceId ?? ""}
                   onChange={(e) => handleInputChange("voiceId", e.target.value)}
                   disabled={isDisabled}
+                  limit={AIAudioMaxSizes.voiceId}
                 />
               </div>
             </div>

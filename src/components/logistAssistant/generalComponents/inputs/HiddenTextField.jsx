@@ -1,11 +1,15 @@
 import { useState } from "react";
 import { LuEye, LuEyeClosed } from "react-icons/lu";
+import { LimitedTextInput } from "./LimitedTextInput";
+import { maxTextSize } from "../../../../utils/logistAssistant/maxSizes/generalSizes";
 
 export const HiddenTextField = ({
+  id,
   placeholder = "Ingresa tu contraseña",
   value = "",
   onChange = () => {},
   isDisabled = false,
+  limit = maxTextSize,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -15,7 +19,8 @@ export const HiddenTextField = ({
 
   return (
     <div className="relative w-full mb-6">
-      <input
+      <LimitedTextInput
+        id={id}
         type={showPassword ? "text" : "password"}
         className={`w-full p-3.5 pr-12 border border-gray-300 rounded-xl text-sm transition-all duration-200 font-inherit leading-relaxed focus:outline-none placeholder:text-slate-400 placeholder:text-sm ${
           isDisabled
@@ -26,10 +31,11 @@ export const HiddenTextField = ({
         value={value}
         onChange={onChange}
         disabled={isDisabled}
+        limit={limit}
       />
       <button
         type="button"
-        className={`absolute right-3 top-1/2 transform -translate-y-1/2 transition-colors duration-200 ${
+        className={`absolute right-3 top-2/3 transform -translate-y-1/2 transition-colors duration-200 ${
           isDisabled
             ? "text-slate-300 cursor-not-allowed"
             : "text-slate-500 hover:text-slate-700"

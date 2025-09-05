@@ -1,8 +1,8 @@
 import { maxIntSize, maxTextAreaSize, maxTextSize } from "./generalSizes";
 
 export const AIAudioMaxSizes = {
-  token: maxIntSize,
-  voiceId: maxIntSize,
+  token: maxTextSize,
+  voiceId: maxTextSize,
   maxAudioCount: maxIntSize,
   stability: maxIntSize,
   similarity: maxIntSize,

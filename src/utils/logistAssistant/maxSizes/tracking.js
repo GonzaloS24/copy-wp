@@ -1,10 +1,10 @@
 import { maxIntSize, maxTextAreaSize, maxTextSize } from "./generalSizes";
 
 export const salesHooksMaxSizes = {
-  generatedGuideHook: maxTextAreaSize,
-  deliveryHook: maxTextAreaSize,
-  officeHook: maxTextAreaSize,
-  deliveredHook: maxTextAreaSize,
+  generatedGuideHook: 3000,
+  deliveryHook: 3000,
+  officeHook: 3000,
+  deliveredHook: 3000,
 };
 
 export const shippingTimesMaxSizes = {

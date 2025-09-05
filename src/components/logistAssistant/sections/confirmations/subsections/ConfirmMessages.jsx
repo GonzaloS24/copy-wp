@@ -6,6 +6,7 @@ import { EditTemplateCard } from "../../../generalComponents/EditTemplateCard";
 import { MapTemplateCard } from "../../../generalComponents/MapTemplates";
 import { MESSAGES_REINSTALL_TEMPLATE_NS } from "../../../../../utils/constants/assistants";
 import { confirmMessagesMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/confirmations";
+import { LimitedTextArea } from "../../../generalComponents/inputs/LimitedTextArea";
 
 export const ConfirmMessages = ({
   formData,
@@ -16,7 +17,7 @@ export const ConfirmMessages = ({
   const handleInputChange = ({ target }) => {
     if (
       !!confirmMessagesMaxSizes[target.id] &&
-      target.value.length >= confirmMessagesMaxSizes[target.id]
+      target.value.length > confirmMessagesMaxSizes[target.id]
     )
       return;
 
@@ -32,7 +33,7 @@ export const ConfirmMessages = ({
   const handleIntInputChange = ({ target }) => {
     if (
       !!confirmMessagesMaxSizes[target.id] &&
-      target.value.length >= confirmMessagesMaxSizes[target.id]
+      target.value.length > confirmMessagesMaxSizes[target.id]
     )
       return;
 
@@ -189,13 +190,14 @@ export const ConfirmMessages = ({
               content="Mensaje de agradecimiento personalizado"
             />
           </div>
-          <textarea
+          <LimitedTextArea
             id="thanksMessage"
-            className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
+            className="w-full p-3.5 pr-16 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="4"
-            value={formData?.confirmMessages?.thanksMessage ?? ""}
+            value={formData?.confirmMessages?.thanksMessage}
             placeholder={`Ej. ${confirmMessagesInitialValues.thanksMessage}...`}
             onChange={handleInputChange}
+            limit={confirmMessagesMaxSizes.thanksMessage}
           />
         </div>
       </Card>

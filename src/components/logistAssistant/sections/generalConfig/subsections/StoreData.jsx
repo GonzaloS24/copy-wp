@@ -2,6 +2,8 @@ import { TooltipIcon } from "../../../generalComponents/TooltipIcon";
 import { Card } from "../../../generalComponents/Card";
 import { storeDataInitialValues } from "../../../../../utils/logistAssistant/initialValues/generalConfig";
 import { storeDataMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/generalConfig";
+import { LimitedTextArea } from "../../../generalComponents/inputs/LimitedTextArea";
+import { LimitedTextInput } from "../../../generalComponents/inputs/LimitedTextInput";
 
 const availableCountries = [
   { key: "colombia", value: "Colombia" },
@@ -17,7 +19,7 @@ export const StoreData = ({ formData, setFormData }) => {
   const handleInputChange = ({ target }) => {
     if (
       !!storeDataMaxSizes[target.id] &&
-      target.value.length >= storeDataMaxSizes[target.id]
+      target.value.length > storeDataMaxSizes[target.id]
     )
       return;
 
@@ -83,13 +85,14 @@ export const StoreData = ({ formData, setFormData }) => {
             Nombre de la tienda{" "}
             <span className="text-red-500 font-bold">*</span>
           </label>
-          <input
+          <LimitedTextInput
             id="storeName"
             type="text"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             value={formData?.storeData?.storeName ?? ""}
             placeholder="Ej. Moda Urbana Colombia"
             onChange={handleInputChange}
+            limit={storeDataMaxSizes.storeName}
           />
         </div>
       </Card>
@@ -111,13 +114,14 @@ export const StoreData = ({ formData, setFormData }) => {
               content="Indica que el enlace de tu página web. En caso de no tenerla, podrías agregar cualquier otro enlace en el que el cliente pueda conocer más información sobre tu tienda. Si prefieres, lo puedes dejar en blanco. La IA usará esta información para redireccionar a tus clientes hacia ver tus otros productos"
             />
           </div>
-          <input
+          <LimitedTextInput
             id="storeLink"
             type="url"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             value={formData?.storeData?.storeLink ?? ""}
             placeholder="https://mitienda.com"
             onChange={handleInputChange}
+            limit={storeDataMaxSizes.storeLink}
           />
         </div>
 
@@ -132,13 +136,14 @@ export const StoreData = ({ formData, setFormData }) => {
               content="En caso de tener un local físico, puedes indicarle a la IA la dirección para que esta se la pueda dar a tus clientes. En caso de no tener, podrías indicar que es una tienda virtual con algunos detalles adicionales que eleven la confianza del cliente"
             />
           </div>
-          <textarea
+          <LimitedTextArea
             id="storeLocation"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="4"
             value={formData?.storeData?.storeLocation ?? ""}
             placeholder={`Ej. ${storeDataInitialValues.storeLocation}`}
             onChange={handleInputChange}
+            limit={storeDataMaxSizes.storeLocation}
           />
         </div>
       </Card>
@@ -159,13 +164,14 @@ export const StoreData = ({ formData, setFormData }) => {
               content="Ingresa las políticas de garantía de tu tienda a nivel general. La IA utilizará esta información para indicarle a tus clientes cómo se manejan las garantía en caso de que los clientes manifiesten inquietudes sobre el tema"
             />
           </div>
-          <textarea
+          <LimitedTextArea
             id="warrantyPolicies"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="4"
             value={formData?.storeData?.warrantyPolicies ?? ""}
             placeholder={`Ej. ${storeDataInitialValues.warrantyPolicies}...`}
             onChange={handleInputChange}
+            limit={storeDataMaxSizes.warrantyPolicies}
           />
         </div>
       </Card>
