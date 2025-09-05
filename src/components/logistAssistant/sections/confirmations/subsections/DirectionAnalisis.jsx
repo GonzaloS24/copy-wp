@@ -3,12 +3,13 @@ import { ToggleSwitch } from "../../../generalComponents/ToggleSwitch";
 import { Card } from "../../../generalComponents/Card";
 import { directionAnalisisInitialValues } from "../../../../../utils/logistAssistant/initialValues/confirmations";
 import { directionAnalisisMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/confirmations";
+import { LimitedTextArea } from "../../../generalComponents/inputs/LimitedTextArea";
 
 export const DirectionAnalisis = ({ formData, setFormData }) => {
   const handleInputChange = (field, value) => {
     if (
       !!directionAnalisisMaxSizes[field] &&
-      value.length >= directionAnalisisMaxSizes[field]
+      value.length > directionAnalisisMaxSizes[field]
     )
       return;
 
@@ -59,12 +60,14 @@ export const DirectionAnalisis = ({ formData, setFormData }) => {
               content="Instrucciones para que la IA analice direcciones"
             />
           </div>
-          <textarea
+          <LimitedTextArea
+            id={"addressPrompt"}
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="12"
             placeholder={`Ej.\n${directionAnalisisInitialValues.addressPrompt}`}
             value={formData?.directionAnalisis?.addressPrompt ?? ""}
             onChange={(e) => handleInputChange("addressPrompt", e.target.value)}
+            limit={directionAnalisisMaxSizes.addressPrompt}
           />
         </div>
       </Card>

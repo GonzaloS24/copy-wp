@@ -2,6 +2,7 @@
 import { Card } from "../../../generalComponents/Card";
 import { shippingTimesInitialValues } from "../../../../../utils/logistAssistant/initialValues/tracking";
 import { shippingTimesMaxSizes } from "../../../../../utils/logistAssistant/maxSizes/tracking";
+import { LimitedTextArea } from "../../../generalComponents/inputs/LimitedTextArea";
 
 export const ShippingTimes = ({ formData, setFormData }) => {
   const handleInputChange = ({ target }) => {
@@ -16,22 +17,6 @@ export const ShippingTimes = ({ formData, setFormData }) => {
       shippingTimes: {
         ...prev.shippingTimes,
         [target.id]: target.value,
-      },
-    }));
-  };
-
-  const handleIntInputChange = ({ target }) => {
-    if (
-      !!updateMessagesMaxSizes[target.id] &&
-      target.value.length >= updateMessagesMaxSizes[target.id]
-    )
-      return;
-
-    setFormData((prev) => ({
-      ...prev,
-      updateMessages: {
-        ...prev.updateMessages,
-        [target.id]: parseInt(Number(target.value)) || "",
       },
     }));
   };
@@ -57,13 +42,14 @@ export const ShippingTimes = ({ formData, setFormData }) => {
               content="Mensaje que indica los tiempos que normalmente demoran tus pedidos en llegar a tus clientes"
             /> */}
           </div>
-          <textarea
+          <LimitedTextArea
             id="deliveryTimesGuide"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="4"
             value={formData?.shippingTimes?.deliveryTimesGuide ?? ""}
             placeholder={`Ej. ${shippingTimesInitialValues.deliveryTimesGuide}`}
-            onChange={handleIntInputChange}
+            onChange={handleInputChange}
+            limit={shippingTimesMaxSizes.deliveryTimesGuide}
           />
         </div>
         <div className="mb-5">
@@ -76,13 +62,14 @@ export const ShippingTimes = ({ formData, setFormData }) => {
               content="Mensaje que indica los tiempos que normalmente demoran tus pedidos en llegar a tus clientes"
             /> */}
           </div>
-          <textarea
+          <LimitedTextArea
             id="deliveryTimesDistribution"
             className="w-full p-3.5 border border-gray-300 rounded-xl text-sm transition-all duration-200 bg-white text-slate-700 font-inherit leading-relaxed resize-y min-h-[100px] focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg placeholder:text-slate-400 placeholder:text-sm"
             rows="4"
             value={formData?.shippingTimes?.deliveryTimesDistribution ?? ""}
             placeholder={`Ej. ${shippingTimesInitialValues.deliveryTimesDistribution}`}
             onChange={handleInputChange}
+            limit={shippingTimesMaxSizes.deliveryTimesDistribution}
           />
         </div>
       </Card>
