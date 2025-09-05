@@ -116,7 +116,7 @@ export const ProductMessageWel = () => {
             <span className="text-red-500 text-sm mt-1">Este campo es obligatorio</span>
           )}
           <div className="text-xs text-slate-400 mt-2 leading-relaxed flex items-start gap-1.5">
-            <span>¿Sabías que? Los enlaces de audio se convierten automáticamente en notas de voz</span>
+            <span> Consejo: Si quieres que la pregunta de entrada sea un audio en lugar de un texto, solo ingresa el URL del archivo de audio en ese campo y la IA lo enviará como mensaje de audio.</span>
           </div>
         </div>
       </div>
