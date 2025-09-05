@@ -37,7 +37,7 @@ export const mapProductDataToServiceFormat = (
     informacion_de_producto: {
       nombre_del_producto: productData.info?.formData?.name || "",
       precio_del_producto: productData.info?.formData?.price || "",
-      id_del_producto_en_dropi: productData.info?.formData?.dropiId || "",
+      id_del_producto_en_dropi: productData.info?.formData?.id || "",
       tipo_de_producto: productData.info?.formData?.productType || "",
       variable:
         productData.info?.productType === "VARIABLE" ? "VARIABLE" : "no",

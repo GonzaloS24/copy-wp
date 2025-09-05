@@ -1,7 +1,10 @@
 import { FiX, FiUsers, FiZap, FiBookOpen, FiHelpCircle } from "react-icons/fi";
+import { useNavigate } from 'react-router-dom';
 import chatea from "../assets/chatea.png";
 
 export const Sidebar = ({ isOpen, onClose }) => {
+  const navigate = useNavigate();
+
   const menuItems = [
     {
       icon: FiUsers,
@@ -42,22 +45,23 @@ export const Sidebar = ({ isOpen, onClose }) => {
   const handleNavigation = (e, item) => {
     e.preventDefault();
     
-    // Verificar si hay cambios sin guardar usando el método global
-    if (window.__handleProgrammaticNavigation) {
-      window.__handleProgrammaticNavigation(() => {
-        if (item.title === "Academia") {
-          window.open(item.href, '_blank');
-        } else {
-          window.location.href = item.href;
-        }
-      });
-    } else {
-      // Fallback si la verificación no está disponible
+    const navigationAction = () => {
       if (item.title === "Academia") {
         window.open(item.href, '_blank');
       } else {
-        window.location.href = item.href;
+        navigate(item.href);
       }
+      onClose();
+    };
+    
+    if (window.__checkNavigationBlocked) {
+      const navigationWasBlocked = window.__checkNavigationBlocked(navigationAction);
+      
+      if (!navigationWasBlocked) {
+        navigationAction();
+      }
+    } else {
+      navigationAction();
     }
   };
 

@@ -132,13 +132,6 @@ export const useProductMapping = () => {
       const recordatorios = apiData.recordatorios || {};
       const remarketing = apiData.remarketing || {};
 
-      const prompKeyWordFromtApi = infoProducto.dta_prompt
-        ? infoProducto.dta_prompt
-            .split(",")
-            .map((id) => id.trim())
-            .filter((id) => id)
-        : [];
-
       const reminder1Data = parseTimeAndUnit(recordatorios.tiempo_1);
       const reminder2Data = parseTimeAndUnit(recordatorios.tiempo_2);
       const remarketing1Data = parseTimeAndUnit(remarketing.tiempo_1);
@@ -184,7 +177,7 @@ export const useProductMapping = () => {
             image:
               infoProducto.imagen_del_producto || infoProducto.imagen || null,
             currency: "COP",
-            dta_prompt: prompKeyWordFromtApi,
+            dta_prompt: infoProducto.dta_prompt || "",
           },
           productType:
             infoProducto.variable === "VARIABLE" ? "VARIABLE" : "SIMPLE",

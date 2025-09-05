@@ -13,13 +13,6 @@ export const ProductInfo = () => {
   const [showTooltip, setShowTooltip] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState(null);
-  const [keywordsInput, setKeywordsInput] = useState('');
-  
-  const keywords = productData.info.formData.dta_prompt || [];
-
-  useEffect(() => {
-    setKeywordsInput('');
-  }, [keywords]);
 
   const touchedFields = validationState.info?.touchedFields || {
     name: false,
@@ -47,55 +40,6 @@ export const ProductInfo = () => {
       formData: {
         ...productData.info.formData,
         [field]: value
-      }
-    });
-  };
-
-  const handleKeywordsInputChange = (value) => {
-    setKeywordsInput(value);
-    
-    if (value.includes(',')) {
-      const parts = value.split(',');
-      const newKeywords = parts.slice(0, -1)
-        .map(k => k.trim())
-        .filter(k => k.length > 0 && !keywords.includes(k));
-      
-      if (newKeywords.length > 0) {
-        const updatedKeywords = [...keywords, ...newKeywords];
-        updateKeywords(updatedKeywords);
-      }
-      
-      setKeywordsInput(parts[parts.length - 1].trim());
-    }
-  };
-
-  const removeKeyword = (indexToRemove) => {
-    const updatedKeywords = keywords.filter((_, index) => index !== indexToRemove);
-    updateKeywords(updatedKeywords);
-  };
-
-  const handleKeywordsKeyDown = (e) => {
-    if ((e.key === 'Enter' || e.key === ',') && keywordsInput.trim()) {
-      e.preventDefault();
-      addKeyword(keywordsInput.trim());
-    } else if (e.key === 'Backspace' && !keywordsInput && keywords.length > 0) {
-      removeKeyword(keywords.length - 1);
-    }
-  };
-
-  const addKeyword = (keyword) => {
-    if (keyword && !keywords.includes(keyword)) {
-      const updatedKeywords = [...keywords, keyword];
-      updateKeywords(updatedKeywords);
-      setKeywordsInput('');
-    }
-  };
-
-  const updateKeywords = (updatedKeywords) => {
-    updateProductData('info', {
-      formData: {
-        ...productData.info.formData,
-        dta_prompt: updatedKeywords
       }
     });
   };
@@ -269,38 +213,19 @@ export const ProductInfo = () => {
             <label className="text-base font-semibold mb-2 text-slate-700">
               Datos que serán solicitados al cliente
             </label>
-            <div className="min-h-[50px] border-2 border-slate-200 rounded-xl p-3 bg-white focus-within:border-sky-500 focus-within:ring-4 focus-within:ring-sky-500/10 transition-all">
-              <div className="flex flex-wrap gap-2 items-center">
-                  {keywords.map((keyword, index) => (
-                    <div
-                      key={index}
-                      className="inline-flex items-center gap-1 bg-sky-500 text-white px-3 py-1.5 rounded-md text-sm font-medium animate-fade-in"
-                    >
-                      <span>{keyword}</span>
-                      <button
-                        onClick={() => removeKeyword(index)}
-                        className="ml-1 text-white hover:text-sky-200 transition-colors text-xs"
-                        title="Eliminar"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                <input
-                  type="text"
-                  className="flex-1 min-w-[120px] outline-none bg-transparent text-slate-700 placeholder-slate-400"
-                  placeholder={keywords.length === 0 ? "Escribe palabras clave y presiona coma (,) o Enter para agregarlas" : "Agregar más palabras..."}
-                  value={keywordsInput}
-                  onChange={(e) => handleKeywordsInputChange(e.target.value)}
-                  onKeyDown={handleKeywordsKeyDown}
-                />
-              </div>
-            </div>
+            <input
+              type="text"
+              className="p-4 border-2 rounded-xl text-base bg-white text-slate-700 focus:outline-none focus:ring-4 focus:ring-sky-500/10 transition-all border-slate-200 focus:border-sky-500"
+              placeholder="Ej: nombre, correo, teléfono"
+              value={productData.info.formData.dta_prompt || ''}
+              onChange={(e) => handleInputChange('dta_prompt', e.target.value)}
+            />
             <div className="text-xs text-slate-500 mt-1">
-              Tip: Puedes escribir varias palabras y presionar coma (,) o Enter para agregarlas como una keyword
+              Escribe los datos que necesitas.
             </div>
           </div>
         )}
+        
 
         <div className="mb-6 flex flex-col">
           <label className="text-base font-semibold text-slate-700 mb-2">

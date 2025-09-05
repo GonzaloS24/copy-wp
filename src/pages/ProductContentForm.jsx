@@ -17,6 +17,18 @@ import { ProductProvider, useProduct } from '../context/ProductContext';
 import { ProductService } from '../services/productService';
 import { VerificateExit } from '../components/productForm/VerificateExit';
 import { useProductMapping } from '../hooks/useProductMapping'; 
+import { NavigationBlockProvider } from '../context/NavigationBlockContext'; 
+import { useVerificationExit } from '../hooks/useVerificationExit'; 
+
+const NavigationBlockWrapper = ({ children }) => {
+  const { blockProgrammaticNavigation } = useVerificationExit();
+  
+  return (
+    <NavigationBlockProvider blockProgrammaticNavigation={blockProgrammaticNavigation}>
+      {children}
+    </NavigationBlockProvider>
+  );
+};
 
 const ProductContentFormInner = () => {
   const [activeSection, setActiveSection] = React.useState('info-producto');
@@ -130,7 +142,9 @@ const ProductContentFormInner = () => {
 export const ProductContentForm = () => {
   return (
     <ProductProvider>
-      <ProductContentFormInner />
+      <NavigationBlockWrapper> 
+        <ProductContentFormInner />
+      </NavigationBlockWrapper>
     </ProductProvider>
   );
 };

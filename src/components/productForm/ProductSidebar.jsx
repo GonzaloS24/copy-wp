@@ -1,4 +1,6 @@
+// ProductSidebar.js
 import { useNavigate, useParams } from "react-router-dom";
+import { navigationEvents } from "../../utils/ventasWp/navigationEvents";
 
 export const ProductSidebar = ({ activeSection, onSectionChange }) => {
   const navigate = useNavigate();
@@ -19,7 +21,6 @@ export const ProductSidebar = ({ activeSection, onSectionChange }) => {
       id: "prueba-flujo",
       emoji: "🧪",
       label: "Prueba tu asistente",
-      // Para productos nuevos, permitir acceso pero con funcionalidad limitada
       disabled: false,
       isLimited: isCreatingProduct,
     },
@@ -34,17 +35,9 @@ export const ProductSidebar = ({ activeSection, onSectionChange }) => {
       navigate("/productos-config");
     };
 
-    // Verificar si hay función de navegación programática disponible
-    if (window.__handleProgrammaticNavigation) {
-      const hasChanges =
-        window.__handleProgrammaticNavigation(navigationCallback);
-
-      if (!hasChanges) {
-        // Si no hay cambios, navegar inmediatamente
-        navigationCallback();
-      }
-    } else {
-      // Fallback si no está disponible la verificación
+    const isBlocked = navigationEvents.triggerNavigationBlock(navigationCallback);
+    
+    if (!isBlocked) {
       navigationCallback();
     }
   };

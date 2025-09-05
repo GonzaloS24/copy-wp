@@ -7,12 +7,12 @@ import { MediaPreview } from './MediaPreview';
 const allowedFileTypes = {
   'image/jpeg': { extensions: ['.jpg', '.jpeg'], icon: '📷', label: 'JPEG' },
   'image/png': { extensions: ['.png'], icon: '🖼️', label: 'PNG' },
-  'image/webp': { extensions: ['.webp'], icon: '🌐', label: 'WebP' },
   'video/mp4': { extensions: ['.mp4'], icon: '🎬', label: 'MP4' },
   'application/pdf': { extensions: ['.pdf'], icon: '📄', label: 'PDF' },
   'audio/mp3': { extensions: ['.mp3'], icon: '🎵', label: 'MP3' },
   'audio/wav': { extensions: ['.wav'], icon: '🎤', label: 'WAV' },
-  'audio/ogg': { extensions: ['.ogg'], icon: '🔊', label: 'OGG' }
+  'audio/ogg': { extensions: ['.ogg'], icon: '🔊', label: 'OGG' },
+  'audio/mpeg': { extensions: ['.mp3'], icon: '🎵', label: 'MP3' },
 };
 
 const getMediaTypeFromFile = (file) => {
