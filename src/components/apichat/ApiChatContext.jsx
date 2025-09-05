@@ -68,43 +68,6 @@ export const ApiChatProvider = ({
     performAutoClear();
   }, [currentProductId, ASSISTANT_TEMPLATE_NS]);
 
-  // Cleanup al desmontar - NUEVA FUNCIONALIDAD
-  useEffect(() => {
-    return () => {
-      // Cleanup del socket
-      if (socketRef.current) {
-        socketRef.current.disconnect();
-      }
-
-      // Ejecutar limpieza solo si hay datos válidos y se enviaron mensajes
-      if (currentProductId && ASSISTANT_TEMPLATE_NS && hasMessagesSent) {
-        const performCleanupRestart = async () => {
-          try {
-            console.log("🧹 Ejecutando limpieza del chat al desmontar componente...");
-            
-            const token = getAuthToken();
-            if (!token) {
-              console.log("⚠️ No hay token para limpieza al desmontar");
-              return;
-            }
-
-            await TestRestartService.restartTest(
-              currentProductId,
-              ASSISTANT_TEMPLATE_NS,
-              token
-            );
-
-            console.log("✅ Limpieza al desmontar completada");
-          } catch (error) {
-            console.log("⚠️ Error en limpieza al desmontar:", error.message);
-          }
-        };
-
-        performCleanupRestart();
-      }
-    };
-  }, [currentProductId, ASSISTANT_TEMPLATE_NS, hasMessagesSent]);
-
   const addMessage = (type, content, time = null) => {
     const newMessage = {
       id: Date.now(),
@@ -352,6 +315,15 @@ export const ApiChatProvider = ({
       setIsRestartingTest(false);
     }
   };
+
+  // Cleanup al desmontar
+  useEffect(() => {
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+    };
+  }, []);
 
   return (
     <ApiChatContext.Provider
