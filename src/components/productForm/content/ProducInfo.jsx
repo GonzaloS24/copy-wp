@@ -18,10 +18,11 @@ export const ProductInfo = () => {
     name: false,
     price: false,
     productType: false,
-    image: false
+    image: false,
+    dta_prompt: false
   };
 
-  const requiredFields = ['name', 'price', 'productType', 'image'];
+  const requiredFields = ['name', 'price', 'productType', 'image', 'dta_prompt'];
 
   const setTouchedField = (field) => {
     updateValidationState('info', {
@@ -43,6 +44,7 @@ export const ProductInfo = () => {
       }
     });
   };
+  
 
   const handleImageUpload = () => {
     const input = document.createElement('input');
@@ -70,16 +72,24 @@ export const ProductInfo = () => {
     input.click();
   };
 
-  const isFieldValid = (field) => {
-    if (!requiredFields.includes(field)) return true;
-    if (!touchedFields[field]) return true;
-
-    if (field === 'image') {
-      return !!productData.info.formData.image;
+const isFieldValid = (field) => {
+  if (field === 'dta_prompt') {
+    if (shouldShowKeywordsField()) {
+      const dtaPromptValue = productData.info.formData.dta_prompt;
+      return typeof dtaPromptValue === 'string' && dtaPromptValue.trim() !== '';
     }
+    return true;
+  }
 
-    return !!productData.info.formData[field];
-  };
+  if (!requiredFields.includes(field)) return true;
+  if (!touchedFields[field]) return true;
+
+  if (field === 'image') {
+    return !!productData.info.formData.image;
+  }
+
+  return !!productData.info.formData[field];
+};
 
   const currencies = [
     { value: 'COP', label: 'COP' },
@@ -211,22 +221,28 @@ export const ProductInfo = () => {
 
         {shouldShowKeywordsField() && (
           <div className="mb-6 flex flex-col">
-            <label className="text-base font-semibold mb-2 text-slate-700">
-              Datos que serán solicitados al cliente
+            <label className={`text-base font-semibold mb-2 ${
+                !isFieldValid('dta_prompt') ? 'text-red-500' : 'text-slate-700'
+            }`}>
+              Datos que serán solicitados al cliente<span className="text-red-500">*</span>
             </label>
             <input
               type="text"
-              className="p-4 border-2 rounded-xl text-base bg-white text-slate-700 focus:outline-none focus:ring-4 focus:ring-sky-500/10 transition-all border-slate-200 focus:border-sky-500"
+              className={`p-4 border-2 rounded-xl text-base bg-white text-slate-700 focus:outline-none focus:ring-4 focus:ring-sky-500/10 transition-all ${
+                  !isFieldValid('dta_prompt')
+                      ? 'border-red-500 focus:border-red-500'
+                      : 'border-slate-200 focus:border-sky-500'
+              }`}
               placeholder="Ej: nombre, correo, teléfono"
               value={productData.info.formData.dta_prompt || ''}
               onChange={(e) => handleInputChange('dta_prompt', e.target.value)}
+              onBlur={() => setTouchedField('dta_prompt')}
             />
-            <div className="text-xs text-slate-500 mt-1">
-              Escribe los datos que necesitas.
-            </div>
+            {!isFieldValid('dta_prompt') && (
+              <span className="text-red-500 text-sm mt-1">Este campo es obligatorio</span>
+            )}
           </div>
-        )}
-        
+        )}        
 
         <div className="mb-6 flex flex-col">
           <label className="text-base font-semibold text-slate-700 mb-2">

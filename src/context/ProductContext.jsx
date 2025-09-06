@@ -19,7 +19,7 @@ export const ProductProvider = ({ children }) => {
     },
     messageWel: {
       formData: {
-        initialMessage: "¡Hola! Soy Laura, bienvenida a Master Shop.",
+        initialMessage: "¡Hola! Soy Laura, bienvenida a Dropi.",
         entryQuestion:
           "Gracias por interesarte en nuestro producto. Cuéntanos, ¿desde qué ciudad nos escribes?",
       },

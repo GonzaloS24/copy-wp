@@ -60,6 +60,21 @@ export const useProductSave = () => {
     if (!productData.info?.formData?.price?.trim()) {
       missing.push('Precio del producto');
     }
+    if (!productData.info?.formData?.productType?.trim()) {
+        missing.push('Tipo de producto');
+    }
+
+    const productType = productData.info?.formData?.productType;
+    const shouldValidateDtaPrompt = productType === 'digital' || productType === 'servicio';
+
+ if (shouldValidateDtaPrompt) {
+        const dtaPromptValue = productData.info?.formData?.dta_prompt;
+        if (typeof dtaPromptValue !== 'string' || dtaPromptValue.trim() === '') {
+            missing.push('Datos solicitados al cliente para producto '+ productType);
+        }
+    }
+    
+
     if (!productData.messageWel?.formData?.initialMessage?.trim()) {
       missing.push('Mensaje inicial');
     }
