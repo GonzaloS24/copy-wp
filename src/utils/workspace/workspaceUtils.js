@@ -1,18 +1,55 @@
 import { getCurrentWorkspace, setCurrentWorkspace } from "./workspaceStorage";
 
+/**
+ * Rutas que NO deben ser consideradas para extraer workspace ID
+ */
+const EXCLUDED_ROUTES = [
+  "/producto/",
+  "/productos-config",
+  "/agregando",
+  "/asistente-carritos",
+  "/asistente-logistico",
+  "/integraciones",
+  "/configurar/",
+];
+
+/**
+ * Verifica si una URL corresponde a una ruta excluida
+ */
+const isExcludedRoute = (url) => {
+  try {
+    const urlObj = new URL(url);
+    const pathname = urlObj.pathname;
+
+    return EXCLUDED_ROUTES.some((route) => pathname.startsWith(route));
+  } catch (error) {
+    console.error("[Workspace] Error verificando ruta excluida:", error);
+    return false;
+  }
+};
+
 const extractWorkspaceIdFromUrl = (url) => {
   try {
     const urlObj = new URL(url);
     const fullUrl = urlObj.pathname + urlObj.search + urlObj.hash;
 
+    // Si es una ruta excluida, no extraer workspace ID
+    if (isExcludedRoute(url)) {
+      console.log(`[Workspace] Ruta excluida detectada: ${urlObj.pathname}`);
+      return null;
+    }
+
     const patterns = [
+      // Patrones específicos para workspace
       /\/accounts\/(\d+)#?/,
       /[?&]workspaceId[=:](\d+)/i,
       /[?&]workspace[=:](\d+)/i,
       /\/workspace\/(\d+)#?/,
       /\/workspaces\/(\d+)#?/,
-      /#(\d+)/,
-      /\/(\d+)(?:[#?]|$)/,
+      // Solo buscar en hash si no hay pathname específico
+      /#(\d+)$/,
+      // Solo buscar números al final si la URL es muy simple (sin rutas específicas)
+      /^\/(\d+)(?:[#?]|$)/,
     ];
 
     for (let i = 0; i < patterns.length; i++) {
@@ -20,10 +57,20 @@ const extractWorkspaceIdFromUrl = (url) => {
       const match = fullUrl.match(pattern);
 
       if (match && match[1]) {
+        // Validación adicional: el workspace ID debe ser de cierta longitud
+        const workspaceId = match[1];
+
+        if (workspaceId.length < 3) {
+          console.log(`[Workspace] ID muy corto ignorado: ${workspaceId}`);
+          continue;
+        }
+
         console.log(
-          `[Workspace] WorkspaceId encontrado con patrón ${i + 1}: ${match[1]}`
+          `[Workspace] WorkspaceId encontrado con patrón ${
+            i + 1
+          }: ${workspaceId}`
         );
-        return match[1];
+        return workspaceId;
       }
     }
 
@@ -154,6 +201,20 @@ export const initializeWorkspaceFromParent = () => {
 export const initializeWorkspace = async () => {
   try {
     console.log("[Workspace] Inicializando workspace...");
+
+    // Si estamos en una ruta excluida, usar localStorage directamente
+    if (isExcludedRoute(window.location.href)) {
+      console.log(
+        "[Workspace] Ruta de aplicación detectada, usando localStorage"
+      );
+      const existingWorkspaceId = getCurrentWorkspace();
+      if (existingWorkspaceId) {
+        console.log(
+          `[Workspace] Usando workspace existente: ${existingWorkspaceId}`
+        );
+        return existingWorkspaceId;
+      }
+    }
 
     const workspaceId = await initializeWorkspaceFromParent();
 
