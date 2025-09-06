@@ -10,7 +10,7 @@ import { detectModifiedFields } from '../utils/ventasWp/modifiedFieldsDetector';
 
 export const useVerificationExit = () => {
   const { productName } = useParams();
-  const { productData } = useProduct();
+  const { productData, updateProductData } = useProduct();
   const { isSaving, saveProduct, navigate } = useProductSave();
   const { mapApiDataToProductData } = useProductMapping();
 
@@ -49,6 +49,48 @@ export const useVerificationExit = () => {
     }
   }, [isEditMode, productName, mapApiDataToProductData]);
 
+  // función de reset
+  const resetProductState = useCallback(async () => {
+    console.log('🔄 Reseteando estado del producto...');
+    
+    try {
+      if (isEditMode && productName) {
+        setIsLoadingOriginal(true);
+        const response = await ProductService.getProductConfiguration(productName);
+        
+        if (response?.data?.length) {
+          const productInfo = response.data[0];
+          const freshData = mapApiDataToProductData(productInfo.value);
+          
+          // Actualizar datos originales
+          setOriginalProductData(freshData);
+          
+          // Actualizar el contexto con los datos frescos del servidor
+          updateProductData('', freshData);
+          
+          console.log('✅ Estado reseteado con datos del servidor');
+        }
+      }
+    } catch (error) {
+      console.error('❌ Error al resetear estado:', error);
+    } finally {
+      setIsLoadingOriginal(false);
+    }
+  }, [isEditMode, productName, mapApiDataToProductData, updateProductData]);
+
+  // Listener para el reset automático después de guardar
+  useEffect(() => {
+    const handleReset = () => {
+      resetProductState();
+    };
+
+    window.addEventListener('resetProductState', handleReset);
+    
+    return () => {
+      window.removeEventListener('resetProductState', handleReset);
+    };
+  }, [resetProductState]);
+
   useEffect(() => {
     loadOriginalProductData();
   }, [loadOriginalProductData]);
@@ -82,6 +124,7 @@ export const useVerificationExit = () => {
     saveProduct,
     navigate,
     getModifiedFields,
+    resetProductState,
     blockProgrammaticNavigation: navigationBlocker.blockProgrammaticNavigation, 
     ...navigationBlocker
   };

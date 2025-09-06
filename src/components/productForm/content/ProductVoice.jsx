@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useProduct } from "../../../context/ProductContext";
+import { showWarning } from "../../../utils/sweetAlerts/sweetAlertUtils";
 
 export const ProductVoice = () => {
   const { productData, updateProductData } = useProduct();
@@ -62,7 +63,10 @@ export const ProductVoice = () => {
         testText,
       });
     } else {
-      alert("Por favor ingresa un texto para probar");
+      showWarning(
+        '¡Campo requerido!', 
+        'Por favor ingresa un texto para probar'
+      );
     }
   };
 
