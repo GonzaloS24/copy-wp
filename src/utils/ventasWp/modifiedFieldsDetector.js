@@ -72,7 +72,7 @@ export const detectModifiedFields = (productData, comparisonData, isEditMode) =>
 
   if (productData.reminder && comparisonData.reminder) {
     if (productData.reminder.reminder1 && comparisonData.reminder.reminder1) {
-      Object.keys(productData.reminder.reminder1).forEach(key => {
+      Object.keys(productData.reminder.reminder1).forEach((key) => {
         const currentValue = productData.reminder.reminder1[key];
         const comparisonValue = comparisonData.reminder.reminder1[key];
         if (areValuesDifferent(currentValue, comparisonValue)) {
@@ -80,9 +80,9 @@ export const detectModifiedFields = (productData, comparisonData, isEditMode) =>
         }
       });
     }
-    
+
     if (productData.reminder.reminder2 && comparisonData.reminder.reminder2) {
-      Object.keys(productData.reminder.reminder2).forEach(key => {
+      Object.keys(productData.reminder.reminder2).forEach((key) => {
         const currentValue = productData.reminder.reminder2[key];
         const comparisonValue = comparisonData.reminder.reminder2[key];
         if (areValuesDifferent(currentValue, comparisonValue)) {
@@ -90,21 +90,26 @@ export const detectModifiedFields = (productData, comparisonData, isEditMode) =>
         }
       });
     }
-    
+
     if (productData.reminder.timeRange && comparisonData.reminder.timeRange) {
-      Object.keys(productData.reminder.timeRange).forEach(key => {
+      Object.keys(productData.reminder.timeRange).forEach((key) => {
         const currentValue = productData.reminder.timeRange[key];
         const comparisonValue = comparisonData.reminder.timeRange[key];
         if (areValuesDifferent(currentValue, comparisonValue)) {
-          modified.push(`Rango horario: ${getFieldDisplayName(key)}`);
+          modified.push(
+            `Rango horario recordatorios: ${getFieldDisplayName(key)}`
+          );
         }
       });
     }
   }
 
   if (productData.remarketing && comparisonData.remarketing) {
-    if (productData.remarketing.remarketing1 && comparisonData.remarketing.remarketing1) {
-      Object.keys(productData.remarketing.remarketing1).forEach(key => {
+    if (
+      productData.remarketing.remarketing1 &&
+      comparisonData.remarketing.remarketing1
+    ) {
+      Object.keys(productData.remarketing.remarketing1).forEach((key) => {
         const currentValue = productData.remarketing.remarketing1[key];
         const comparisonValue = comparisonData.remarketing.remarketing1[key];
         if (areValuesDifferent(currentValue, comparisonValue)) {
@@ -112,13 +117,31 @@ export const detectModifiedFields = (productData, comparisonData, isEditMode) =>
         }
       });
     }
-    
-    if (productData.remarketing.remarketing2 && comparisonData.remarketing.remarketing2) {
-      Object.keys(productData.remarketing.remarketing2).forEach(key => {
+
+    if (
+      productData.remarketing.remarketing2 &&
+      comparisonData.remarketing.remarketing2
+    ) {
+      Object.keys(productData.remarketing.remarketing2).forEach((key) => {
         const currentValue = productData.remarketing.remarketing2[key];
         const comparisonValue = comparisonData.remarketing.remarketing2[key];
         if (areValuesDifferent(currentValue, comparisonValue)) {
           modified.push(`Remarketing 2: ${getFieldDisplayName(key)}`);
+        }
+      });
+    }
+
+    if (
+      productData.remarketing.timeRange &&
+      comparisonData.remarketing.timeRange
+    ) {
+      Object.keys(productData.remarketing.timeRange).forEach((key) => {
+        const currentValue = productData.remarketing.timeRange[key];
+        const comparisonValue = comparisonData.remarketing.timeRange[key];
+        if (areValuesDifferent(currentValue, comparisonValue)) {
+          modified.push(
+            `Rango horario remarketing: ${getFieldDisplayName(key)}`
+          );
         }
       });
     }

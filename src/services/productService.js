@@ -273,12 +273,10 @@ export class ProductService {
       remarketing: {
         tiempo_1:
           remarketing.tiempo_remarketing_1 || remarketing.tiempo_1 || "",
-        plantilla_1:
-          remarketing.plantilla_remarketing_1 || remarketing.plantilla_1 || "",
         tiempo_2:
           remarketing.tiempo_remarketing_2 || remarketing.tiempo_2 || "",
-        plantilla_2:
-          remarketing.plantilla_remarketing_2 || remarketing.plantilla_2 || "",
+        hora_min: remarketing.hora_min || remarketing.horario_minimo || "",
+        hora_max: remarketing.hora_max || remarketing.horario_maximo || "",
       },
       activadores_del_flujo: {
         palabras_clave: Array.isArray(activadores.palabras_clave)

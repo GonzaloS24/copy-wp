@@ -109,15 +109,17 @@ export const mapProductDataToServiceFormat = (
     },
     remarketing: {
       tiempo_remarketing_1: productData.remarketing?.remarketing1?.time
-        ? `${productData.remarketing.remarketing1.time}${productData.remarketing.remarketing1.unit}`
+        ? `${productData.remarketing.remarketing1.time} ${productData.remarketing.remarketing1.unit}`
         : "",
-      plantilla_remarketing_1:
-        productData.remarketing?.remarketing1?.template || "",
       tiempo_remarketing_2: productData.remarketing?.remarketing2?.time
-        ? `${productData.remarketing.remarketing2.time}${productData.remarketing.remarketing2.unit}`
+        ? `${productData.remarketing.remarketing2.time} ${productData.remarketing.remarketing2.unit}`
         : "",
-      plantilla_remarketing_2:
-        productData.remarketing?.remarketing2?.template || "",
+      hora_min: productData.remarketing?.timeRange?.enabled
+        ? productData.remarketing.timeRange.minTime
+        : "",
+      hora_max: productData.remarketing?.timeRange?.enabled
+        ? productData.remarketing.timeRange.maxTime
+        : "",
     },
     activadores_del_flujo: {
       palabras_clave:

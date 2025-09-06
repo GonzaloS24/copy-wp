@@ -1,88 +1,38 @@
 import React, { useState } from 'react';
 import { useProduct } from '../../../context/ProductContext';
-
+import { EditTemplateCard } from "../../logistAssistant/generalComponents/EditTemplateCard";
+import { MapTemplateCard } from "../../logistAssistant/generalComponents/MapTemplates";
+import { TooltipIcon } from "../../logistAssistant/generalComponents/TooltipIcon";
 
 export const ProductRemarketing = () => {
   const { productData, updateProductData } = useProduct();
-  
-  const remarketingData = productData.remarketing || {
-    remarketing1: {
-      time: 3,
-      unit: "dias",
-      template: "",
-    },
-    remarketing2: {
-      time: 5,
-      unit: "dias",
-      template: "",
-    },
-    templates: [
-      { value: "plantilla1", label: "Plantilla 1" },
-      { value: "plantilla2", label: "Plantilla 2" },
-      { value: "plantilla3", label: "Plantilla 3" },
-    ],
-  };
 
-  const handleRemarketing1TimeChange = (value) => {
+  const [flowsState, setFlowsState] = useState();
+
+  const handleInputChange = ({ target }) => {
+    const fieldId = target.id.split("-")[0];
+    const fieldPart = target.id.split("-")[1];
+
     updateProductData("remarketing", {
-      remarketing1: {
-        ...remarketingData.remarketing1,
-        time: parseInt(value) || 0,
+      [fieldId]: {
+        ...(productData?.remarketing?.[fieldId] ?? {}),
+        [fieldPart]: target.value,
       },
     });
   };
 
-  const handleRemarketing1UnitChange = (value) => {
+  const handleIntInputChange = ({ target }) => {
+    const fieldId = target.id.split("-")[0];
+    const fieldPart = target.id.split("-")[1];
+
+    if (parseInt(Number(target.value)) < 0) return;
+
     updateProductData("remarketing", {
-      remarketing1: {
-        ...remarketingData.remarketing1,
-        unit: value,
+      [fieldId]: {
+        ...(productData?.remarketing?.[fieldId] ?? {}),
+        [fieldPart]: parseInt(Number(target.value)) || "",
       },
     });
-  };
-
-  const handleRemarketing1TemplateChange = (value) => {
-    updateProductData("remarketing", {
-      remarketing1: {
-        ...remarketingData.remarketing1,
-        template: value,
-      },
-    });
-  };
-
-  const handleRemarketing2TimeChange = (value) => {
-    updateProductData("remarketing", {
-      remarketing2: {
-        ...remarketingData.remarketing2,
-        time: parseInt(value) || 0,
-      },
-    });
-  };
-
-  const handleRemarketing2UnitChange = (value) => {
-    updateProductData("remarketing", {
-      remarketing2: {
-        ...remarketingData.remarketing2,
-        unit: value,
-      },
-    });
-  };
-
-  const handleRemarketing2TemplateChange = (value) => {
-    updateProductData("remarketing", {
-      remarketing2: {
-        ...remarketingData.remarketing2,
-        template: value,
-      },
-    });
-  };
-
-  const crearPlantilla = () => {
-    console.log("Creando nueva plantilla...");
-  };
-
-  const recargarPlantillas = () => {
-    console.log("Recargando plantillas...");
   };
 
   return (
@@ -92,112 +42,139 @@ export const ProductRemarketing = () => {
           Remarketing
         </h1>
 
-        {/* Remarketing 1 */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 items-start">
-          <div className="flex flex-col">
-            <label className="text-sm font-medium text-slate-700 mb-3">
-              Tiempo Remarketing 1
-            </label>
-            <div className="flex mt-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-start">
+          <div className="mb-5">
+            <div className="flex items-center gap-2 mb-2">
+              <label className="font-medium text-slate-700 text-sm">
+                Tiempo Remarketing 1
+              </label>
+              {/* <TooltipIcon
+                tooltipId="remarketing1"
+                content="Tiempo de espera antes del primer recordatorio"
+              /> */}
+            </div>
+            <div className="flex gap-0 w-full">
               <input
+                id="remarketing1-time"
                 type="number"
-                value={remarketingData.remarketing1?.time || 3}
-                onChange={(e) => handleRemarketing1TimeChange(e.target.value)}
-                placeholder="0"
-                min="1"
-                className="flex-1 p-4 border-2 border-slate-200 border-r-0 rounded-l-xl text-base text-center bg-white focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 min-w-[100px]"
+                value={productData?.remarketing?.remarketing1?.time ?? ""}
+                placeholder={1}
+                className="w-30 p-3.5 border border-gray-300 rounded-l-lg border-r-0 text-center text-sm bg-white focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
+                onChange={handleIntInputChange}
               />
               <select
-                value={remarketingData.remarketing1?.unit || "dias"}
-                onChange={(e) => handleRemarketing1UnitChange(e.target.value)}
-                className="flex-[2] p-4 border-2 border-slate-200 rounded-r-xl text-base bg-white cursor-pointer focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 min-w-[140px]"
+                id="remarketing1-unit"
+                className="flex-1 p-3.5 border border-gray-300 rounded-r-lg text-sm bg-white cursor-pointer min-w-36 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
+                value={productData?.remarketing?.remarketing1.unit ?? "dias"}
+                onChange={handleInputChange}
               >
-                <option value="minutos">minutos</option>
-                <option value="segundos">segundos</option>
                 <option value="horas">horas</option>
                 <option value="dias">días</option>
               </select>
             </div>
           </div>
 
-          <div className="flex flex-col">
-            <label className="text-sm font-medium text-slate-700 mb-3">
-              Plantilla de Remarketing 1
-            </label>
-            <select
-              value={remarketingData.remarketing1?.template || ""}
-              onChange={(e) => handleRemarketing1TemplateChange(e.target.value)}
-              className="mt-3 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-600"
-            >
-              <option value="">Selecciona una plantilla</option>
-              {remarketingData.templates?.map((template) => (
-                <option key={template.value} value={template.value}>
-                  {template.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 items-start">
-          <div className="flex flex-col">
-            <label className="text-sm font-medium text-slate-700 mb-3">
-              Tiempo Remarketing 2
-            </label>
-            <div className="flex mt-3">
+          <div className="mb-5">
+            <div className="flex items-center gap-2 mb-2">
+              <label className="font-medium text-slate-700 text-sm">
+                Tiempo Remarketing 2
+              </label>
+              {/* <TooltipIcon
+                tooltipId="remarketing2"
+                content="Tiempo de espera antes del segundo recordatorio"
+              /> */}
+            </div>
+            <div className="flex gap-0 w-full">
               <input
+                id="remarketing2-time"
                 type="number"
-                value={remarketingData.remarketing2?.time || 5}
-                onChange={(e) => handleRemarketing2TimeChange(e.target.value)}
-                placeholder="0"
-                min="1"
-                className="flex-1 p-4 border-2 border-slate-200 border-r-0 rounded-l-xl text-base text-center bg-white focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 min-w-[100px]"
+                placeholder={1}
+                value={productData?.remarketing?.remarketing2.time ?? ""}
+                className="w-30 p-3.5 border border-gray-300 rounded-l-lg border-r-0 text-center text-sm bg-white focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
+                onChange={handleIntInputChange}
               />
               <select
-                value={remarketingData.remarketing2?.unit || "dias"}
-                onChange={(e) => handleRemarketing2UnitChange(e.target.value)}
-                className="flex-[2] p-4 border-2 border-slate-200 rounded-r-xl text-base bg-white cursor-pointer focus:outline-none focus:border-sky-500 focus:ring-4 focus:ring-sky-500/10 min-w-[140px]"
+                id="remarketing2-unit"
+                className="flex-1 p-3.5 border border-gray-300 rounded-r-lg text-sm bg-white cursor-pointer min-w-36 focus:outline-none focus:border-sky-500 focus:shadow-sky-100 focus:shadow-lg"
+                value={productData?.remarketing?.remarketing2.unit ?? "dias"}
+                onChange={handleInputChange}
               >
-                <option value="minutos">minutos</option>
-                <option value="segundos">segundos</option>
                 <option value="horas">horas</option>
                 <option value="dias">días</option>
               </select>
             </div>
-          </div>
-
-          <div className="flex flex-col">
-            <label className="text-sm font-medium text-slate-700 mb-3">
-              Plantilla de Remarketing 2
-            </label>
-            <select
-              value={remarketingData.remarketing2?.template || ""}
-              onChange={(e) => handleRemarketing2TemplateChange(e.target.value)}
-              className="mt-3 p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-slate-600"
-            >
-              <option value="">Selecciona una plantilla</option>
-              {remarketingData.templates?.map((template) => (
-                <option key={template.value} value={template.value}>
-                  {template.label}
-                </option>
-              ))}
-            </select>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 pt-8 border-t border-slate-200">
-          <button
-            onClick={crearPlantilla}
-            className="px-8 py-5 bg-gradient-to-br from-sky-500 to-sky-600 text-white rounded-xl text-base font-semibold cursor-pointer transition-all duration-300 ease-in-out hover:from-sky-600 hover:to-sky-700 hover:-translate-y-0.5 shadow-lg shadow-sky-500/25 hover:shadow-xl hover:shadow-sky-500/30"
-          >
-            Crear plantilla
-          </button>
-          <button
-            onClick={recargarPlantillas}
-            className="px-8 py-5 bg-gradient-to-br from-sky-500 to-sky-600 text-white rounded-xl text-base font-semibold cursor-pointer transition-all duration-300 ease-in-out hover:from-sky-600 hover:to-sky-700 hover:-translate-y-0.5 shadow-lg shadow-sky-500/25 hover:shadow-xl hover:shadow-sky-500/30"
-          >
-            Recargar plantillas
-          </button>
+          <EditTemplateCard
+            number={1}
+            flowsState={flowsState}
+            setFlowsState={setFlowsState}
+          />
+
+          <MapTemplateCard
+            number={2}
+            subflowName={"⚙️ Personalización de Remarketing"}
+            flowsState={flowsState}
+            setFlowsState={setFlowsState}
+          />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 pt-8 border-t border-slate-200">
+          <div className="mb-8 p-4 bg-gray-50 rounded-lg">
+            <div className="flex items-center gap-3 mb-4">
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  id="timeRange-enabled"
+                  type="checkbox"
+                  checked={
+                    productData?.remarketing?.timeRange?.enabled || false
+                  }
+                  onChange={handleInputChange}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+              </label>
+              <span className="text-slate-700 font-medium">
+                ¿Deseas definir un rango de horas para enviar los recordatorios?
+              </span>
+            </div>
+
+            {productData?.remarketing?.timeRange?.enabled && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Hora mínima
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="timeRange-minTime"
+                      type="time"
+                      value={productData?.remarketing?.timeRange?.minTime}
+                      onChange={handleInputChange}
+                      className="w-full p-3 border-2 border-slate-200 rounded-lg text-base bg-white focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
+                    Hora máxima
+                  </label>
+                  <div className="relative">
+                    <input
+                      id="timeRange-maxTime"
+                      type="time"
+                      value={productData?.remarketing?.timeRange?.maxTime}
+                      onChange={handleInputChange}
+                      className="w-full p-3 border-2 border-slate-200 rounded-lg text-base bg-white focus:outline-none focus:ring-4 focus:ring-sky-500/10 focus:border-sky-500"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
