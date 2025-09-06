@@ -7,7 +7,7 @@ import { TooltipIcon } from "../../logistAssistant/generalComponents/TooltipIcon
 export const ProductRemarketing = () => {
   const { productData, updateProductData } = useProduct();
 
-  const [flowsState, setFlowsState] = useState();
+  const [flowsState, setFlowsState] = useState({});
 
   const handleInputChange = ({ target }) => {
     const fieldId = target.id.split("-")[0];
