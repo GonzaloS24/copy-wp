@@ -103,7 +103,11 @@ export const SectionContainer = ({
           </div>
         </div>
       </main>
-      <FloatingSaveButton onClick={handleSave} isLoading={isLoading} />
+      <FloatingSaveButton 
+        onClick={handleSave} 
+        isLoading={isLoading} 
+        formData={formData} 
+      />
       {modalData?.open && (
         <ModalContainer onClose={handleModalClose}>
           <AssistantFormModal
