@@ -4,6 +4,7 @@ import { useProductSave } from "../../hooks/useProductSave";
 import { AlertDialog } from "./content/dialog/AlertDialog";
 import { SaveButton } from "../buttons/SaveButton";
 import { AutoAssistantButton } from "./content/productInSeconds/AutoAssistantButton";
+import { showError, showSuccess } from "../../utils/sweetAlerts/sweetAlertUtils";
 
 export const ProductButtons = () => {
   const { productData } = useProduct();
@@ -33,7 +34,7 @@ export const ProductButtons = () => {
     const result = await saveProduct(productData, forceInactive, false, isEditMode());
 
     if (result.success) {
-      alert(result.message);
+      showSuccess('¡Éxito!', result.message);
       
       // Solo navegar si hay navigateTo definido
       if (result.navigateTo) {
@@ -45,7 +46,7 @@ export const ProductButtons = () => {
         window.dispatchEvent(new CustomEvent('resetProductState'));
       }
     } else if (result.error) {
-      alert(result.error);
+      showError('¡Error!', result.error);
     }
   };
 

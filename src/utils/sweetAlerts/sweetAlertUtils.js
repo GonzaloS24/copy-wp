@@ -1,160 +1,229 @@
-import Swal from 'sweetalert2';
+import Swal from "sweetalert2";
 
-// Configuración base para todas las alertas
 const baseConfig = {
-  confirmButtonColor: '#3085d6',
-  cancelButtonColor: '#d33',
-  confirmButtonText: 'Aceptar',
-  cancelButtonText: 'Cancelar',
-  reverseButtons: true
+  confirmButtonColor: "#3085d6",
+  cancelButtonColor: "#d33",
+  confirmButtonText: "Aceptar",
+  cancelButtonText: "Cancelar",
+  reverseButtons: true,
+  customClass: {
+    confirmButton: "swal2-confirm-custom",
+    cancelButton: "swal2-cancel-custom",
+    actions: "swal2-actions-custom",
+  },
 };
 
-// Alerta de éxito
-export const showSuccess = (title = '¡Éxito!', text = 'Operación completada correctamente') => {
+// Función para inyectar estilos
+const injectCustomStyles = () => {
+  if (!document.getElementById("swal2-tailwind-fix")) {
+    const style = document.createElement("style");
+    style.id = "swal2-tailwind-fix";
+    style.textContent = `
+      .swal2-confirm-custom,
+      .swal2-cancel-custom {
+        color: white !important;
+        border: none !important;
+        outline: none !important;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+        padding: 0.5rem 1rem !important;
+        border-radius: 0.375rem !important;
+        font-weight: 500 !important;
+        font-size: 0.875rem !important;
+        cursor: pointer !important;
+        transition: all 0.15s ease-in-out !important;
+        margin: 0 0.25rem !important;
+      }
+      
+      .swal2-confirm-custom {
+        background-color: #3085d6 !important;
+      }
+      
+      .swal2-confirm-custom:hover {
+        background-color: #2875c4 !important;
+        transform: translateY(-1px) !important;
+      }
+      
+      .swal2-cancel-custom {
+        background-color: #d33 !important;
+      }
+      
+      .swal2-cancel-custom:hover {
+        background-color: #b82e2e !important;
+        transform: translateY(-1px) !important;
+      }
+      
+      .swal2-actions-custom {
+        gap: 0.5rem !important;
+      }
+    `;
+    document.head.appendChild(style);
+  }
+};
+
+export const showSuccess = (
+  title = "¡Éxito!",
+  text = "Operación completada correctamente"
+) => {
+  injectCustomStyles();
   return Swal.fire({
     ...baseConfig,
-    icon: 'success',
+    icon: "success",
     title,
     text,
-    timer: 3000,
-    timerProgressBar: true
+    showConfirmButton: true,
+    allowOutsideClick: true,
+    allowEscapeKey: true,
   });
 };
 
-// Alerta de error
-export const showError = (title = '¡Error!', text = 'Ha ocurrido un error inesperado') => {
+export const showError = (
+  title = "¡Error!",
+  text = "Ha ocurrido un error inesperado"
+) => {
+  injectCustomStyles();
   return Swal.fire({
     ...baseConfig,
-    icon: 'error',
+    icon: "error",
     title,
-    text
+    text,
+    showConfirmButton: true,
+    allowOutsideClick: true,
+    allowEscapeKey: true,
   });
 };
 
-// Alerta de advertencia
-export const showWarning = (title = '¡Advertencia!', text = 'Por favor revisa la información') => {
+export const showWarning = (
+  title = "¡Advertencia!",
+  text = "Por favor revisa la información"
+) => {
+  injectCustomStyles();
   return Swal.fire({
     ...baseConfig,
-    icon: 'warning',
+    icon: "warning",
     title,
-    text
+    text,
   });
 };
 
-// Alerta de información
-export const showInfo = (title = 'Información', text = 'Mensaje informativo') => {
+export const showInfo = (
+  title = "Información",
+  text = "Mensaje informativo"
+) => {
+  injectCustomStyles();
   return Swal.fire({
     ...baseConfig,
-    icon: 'info',
+    icon: "info",
     title,
-    text
+    text,
   });
 };
 
-// Alerta de confirmación
 export const showConfirm = (
-  title = '¿Estás seguro?', 
-  text = 'Esta acción no se puede deshacer',
-  confirmText = 'Sí, confirmar',
-  cancelText = 'Cancelar'
+  title = "¿Estás seguro?",
+  text = "Esta acción no se puede deshacer",
+  confirmText = "Sí, confirmar",
+  cancelText = "Cancelar"
 ) => {
+  injectCustomStyles();
   return Swal.fire({
     ...baseConfig,
-    icon: 'question',
-    title,
-    text,
-    showCancelButton: true,
-    confirmButtonText: confirmText,
-    cancelButtonText: cancelText
-  });
-};
-
-// Alerta de confirmación para eliminación
-export const showDeleteConfirm = (
-  title = '¿Eliminar elemento?',
-  text = 'No podrás recuperar este elemento',
-  confirmText = 'Sí, eliminar',
-  cancelText = 'Cancelar'
-) => {
-  return Swal.fire({
-    ...baseConfig,
-    icon: 'warning',
+    icon: "question",
     title,
     text,
     showCancelButton: true,
     confirmButtonText: confirmText,
     cancelButtonText: cancelText,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6'
   });
 };
 
-// Alerta con input de texto
-export const showInputText = (
-  title = 'Ingresa un valor',
-  placeholder = 'Escribe aquí...',
-  inputValue = ''
+export const showDeleteConfirm = (
+  title = "¿Eliminar elemento?",
+  text = "No podrás recuperar este elemento",
+  confirmText = "Sí, eliminar",
+  cancelText = "Cancelar"
 ) => {
+  injectCustomStyles();
+  return Swal.fire({
+    ...baseConfig,
+    icon: "warning",
+    title,
+    text,
+    showCancelButton: true,
+    confirmButtonText: confirmText,
+    cancelButtonText: cancelText,
+    confirmButtonColor: "#d33",
+    cancelButtonColor: "#3085d6",
+  });
+};
+
+export const showInputText = (
+  title = "Ingresa un valor",
+  placeholder = "Escribe aquí...",
+  inputValue = ""
+) => {
+  injectCustomStyles();
   return Swal.fire({
     ...baseConfig,
     title,
-    input: 'text',
+    input: "text",
     inputPlaceholder: placeholder,
     inputValue,
     showCancelButton: true,
     inputValidator: (value) => {
       if (!value) {
-        return 'Debes ingresar un valor';
+        return "Debes ingresar un valor";
       }
-    }
+    },
   });
 };
 
-// Alerta con input de email
 export const showInputEmail = (
-  title = 'Ingresa tu email',
-  placeholder = 'email@ejemplo.com'
+  title = "Ingresa tu email",
+  placeholder = "email@ejemplo.com"
 ) => {
+  injectCustomStyles();
   return Swal.fire({
     ...baseConfig,
     title,
-    input: 'email',
+    input: "email",
     inputPlaceholder: placeholder,
     showCancelButton: true,
     inputValidator: (value) => {
       if (!value) {
-        return 'Debes ingresar un email';
+        return "Debes ingresar un email";
       }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-        return 'Ingresa un email válido';
+        return "Ingresa un email válido";
       }
-    }
+    },
   });
 };
 
-// Alerta con select/dropdown
 export const showSelect = (
-  title = 'Selecciona una opción',
-  options = { value1: 'Opción 1', value2: 'Opción 2' },
-  placeholder = 'Selecciona...'
+  title = "Selecciona una opción",
+  options = { value1: "Opción 1", value2: "Opción 2" },
+  placeholder = "Selecciona..."
 ) => {
+  injectCustomStyles();
   return Swal.fire({
     ...baseConfig,
     title,
-    input: 'select',
+    input: "select",
     inputOptions: options,
     inputPlaceholder: placeholder,
     showCancelButton: true,
     inputValidator: (value) => {
       if (!value) {
-        return 'Debes seleccionar una opción';
+        return "Debes seleccionar una opción";
       }
-    }
+    },
   });
 };
 
-// Alerta de carga/loading
-export const showLoading = (title = 'Procesando...', text = 'Por favor espera') => {
+export const showLoading = (
+  title = "Procesando...",
+  text = "Por favor espera"
+) => {
   return Swal.fire({
     title,
     text,
@@ -164,21 +233,19 @@ export const showLoading = (title = 'Procesando...', text = 'Por favor espera') 
     showConfirmButton: false,
     didOpen: () => {
       Swal.showLoading();
-    }
+    },
   });
 };
 
-// Cerrar alerta de carga
 export const closeLoading = () => {
   Swal.close();
 };
 
-// Toast notification (esquina superior derecha)
 export const showToast = (
-  type = 'success',
-  title = 'Operación exitosa',
+  type = "success",
+  title = "Operación exitosa",
   timer = 3000,
-  position = 'top-end'
+  position = "top-end"
 ) => {
   const Toast = Swal.mixin({
     toast: true,
@@ -187,39 +254,39 @@ export const showToast = (
     timer,
     timerProgressBar: true,
     didOpen: (toast) => {
-      toast.addEventListener('mouseenter', Swal.stopTimer);
-      toast.addEventListener('mouseleave', Swal.resumeTimer);
-    }
+      toast.addEventListener("mouseenter", Swal.stopTimer);
+      toast.addEventListener("mouseleave", Swal.resumeTimer);
+    },
   });
 
   return Toast.fire({
     icon: type,
-    title
+    title,
   });
 };
 
-// Alerta personalizada con HTML
 export const showCustomHtml = (
-  title = 'Contenido personalizado',
-  html = '<p>Contenido HTML personalizado</p>'
+  title = "Contenido personalizado",
+  html = "<p>Contenido HTML personalizado</p>"
 ) => {
+  injectCustomStyles();
   return Swal.fire({
     ...baseConfig,
     title,
     html,
-    showCloseButton: true
+    showCloseButton: true,
   });
 };
 
-// Alerta con imagen
 export const showWithImage = (
-  title = 'Título con imagen',
-  text = 'Descripción',
-  imageUrl = '',
+  title = "Título con imagen",
+  text = "Descripción",
+  imageUrl = "",
   imageWidth = 400,
   imageHeight = 200,
-  imageAlt = 'Imagen personalizada'
+  imageAlt = "Imagen personalizada"
 ) => {
+  injectCustomStyles();
   return Swal.fire({
     ...baseConfig,
     title,
@@ -227,40 +294,45 @@ export const showWithImage = (
     imageUrl,
     imageWidth,
     imageHeight,
-    imageAlt
+    imageAlt,
   });
 };
 
-// Función para mostrar progreso paso a paso
-export const showSteps = async (steps = ['Paso 1', 'Paso 2', 'Paso 3']) => {
+export const showSteps = async (steps = ["Paso 1", "Paso 2", "Paso 3"]) => {
+  injectCustomStyles();
   const Queue = Swal.mixin({
-    confirmButtonText: 'Siguiente &rarr;',
-    cancelButtonText: 'Anterior',
+    confirmButtonText: "Siguiente &rarr;",
+    cancelButtonText: "Anterior",
     showCancelButton: true,
-    progressSteps: steps.map((_, index) => index + 1)
+    progressSteps: steps.map((_, index) => index + 1),
+    customClass: {
+      confirmButton: "swal2-confirm-custom",
+      cancelButton: "swal2-cancel-custom",
+      actions: "swal2-actions-custom",
+    },
   });
 
   const results = [];
-  
+
   for (let i = 0; i < steps.length; i++) {
     const result = await Queue.fire({
       title: steps[i],
       text: `Paso ${i + 1} de ${steps.length}`,
       currentProgressStep: i,
-      confirmButtonText: i === steps.length - 1 ? 'Finalizar' : 'Siguiente &rarr;'
+      confirmButtonText:
+        i === steps.length - 1 ? "Finalizar" : "Siguiente &rarr;",
     });
 
     if (result.isDismissed) {
       break;
     }
-    
+
     results.push(result);
   }
-  
+
   return results;
 };
 
-// Configuración global personalizada
 export const configureGlobal = (config) => {
   Object.assign(baseConfig, config);
 };
