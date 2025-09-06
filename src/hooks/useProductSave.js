@@ -17,7 +17,6 @@ export const useProductSave = () => {
     return productName && location.pathname.includes(`/${productName}`);
   };
 
-
   const formatPromptText = (promptText, promptType) => {
     if (!promptText || typeof promptText !== 'string') return '';
     if (promptType === 'libre' && promptText.trim() !== '') {
@@ -49,7 +48,44 @@ export const useProductSave = () => {
     return formatPromptText(processedText, freePrompt?.promptType);
   };
 
-
+  // Función para extraer el ID del producto de la respuesta del servidor
+  const extractProductIdFromResponse = (response, productName) => {
+    // Intentar extraer el ID de diferentes partes de la respuesta
+    if (response?.data?.id) {
+      return response.data.id;
+    }
+    
+    if (response?.data?.product_id) {
+      return response.data.product_id;
+    }
+    
+    if (response?.data?.productId) {
+      return response.data.productId;
+    }
+    
+    // Si hay un campo name o similar que contenga el ID
+    if (response?.data?.name) {
+      const match = response.data.name.match(/\[Producto Ventas Wp\]\s*(.+)/);
+      if (match && match[1]) {
+        // Verificar si es un número puro
+        if (/^\d+$/.test(match[1].trim())) {
+          return match[1].trim();
+        }
+        return match[1].trim();
+      }
+    }
+    
+    // Como fallback, usar el nombre del producto limpio
+    if (productName && typeof productName === 'string') {
+      // Si el nombre del producto es solo un número, usarlo
+      if (/^\d+$/.test(productName.trim())) {
+        return productName.trim();
+      }
+      return productName.trim();
+    }
+    
+    return null;
+  };
 
   const validateRequiredFields = (productData) => {
     const missing = [];
@@ -189,10 +225,17 @@ export const useProductSave = () => {
         console.log('✅ Respuesta de creación:', response);
         
         if (response && (response.status === 'ok' || response.message || response.data)) {
+          // Extraer el ID del producto creado para redirigir a la página de edición
+          const productId = extractProductIdFromResponse(response, productNameFromData);
+          
+          const redirectPath = productId ? `/producto/${productId}` : '/productos-config';
+          
+          console.log(`🎯 Redirigiendo a: ${redirectPath}`);
+          
           return { 
             success: true, 
             message: `¡Asistente "${productNameFromData}" guardado exitosamente como ${isInactive ? 'inactivo' : 'activo'}!`,
-            navigateTo: '/productos-config'
+            navigateTo: redirectPath
           };
         } else {
           throw new Error('Error al guardar el asistente - respuesta inválida');
