@@ -10,7 +10,7 @@ export const MapTemplateCard = ({
 }) => {
   const handleMapTemplates = async () => {
     if (!flowsState.flowNs || !flowsState.subflowNs) {
-      const flowsData = await getSublowNs(subflowName)
+      const flowsData = await getSublowNs(encodeURIComponent(subflowName))
         .then(({ data }) => camelize(data))
         .catch((error) => {
           console.log(error);

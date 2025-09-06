@@ -63,18 +63,16 @@ export const DEFAULT_VALUES = {
     remarketing1: {
       time: 3,
       unit: "dias",
-      template: "",
     },
     remarketing2: {
       time: 5,
       unit: "dias",
-      template: "",
     },
-    templates: [
-      { value: "plantilla1", label: "Plantilla 1" },
-      { value: "plantilla2", label: "Plantilla 2" },
-      { value: "plantilla3", label: "Plantilla 3" },
-    ],
+    timeRange: {
+      enabled: false,
+      minTime: "09:00",
+      maxTime: "20:00",
+    },
   },
   activators: {
     keywords: ["", "", "", "", "", "", ""],

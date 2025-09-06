@@ -134,8 +134,6 @@ export const useProductMapping = () => {
 
       const reminder1Data = parseTimeAndUnit(recordatorios.tiempo_1);
       const reminder2Data = parseTimeAndUnit(recordatorios.tiempo_2);
-      const remarketing1Data = parseTimeAndUnit(remarketing.tiempo_1);
-      const remarketing2Data = parseTimeAndUnit(remarketing.tiempo_2);
 
       const multimediaData = embudoVentas.multimedia || {};
       const mediaItems = [];
@@ -235,14 +233,19 @@ export const useProductMapping = () => {
         },
         remarketing: {
           remarketing1: {
-            time: remarketing1Data.time,
-            unit: remarketing1Data.unit,
-            template: remarketing.plantilla_1 || "",
+            time: (remarketing.tiempo_1 ?? "").split(" ")?.[0],
+            unit: (remarketing.tiempo_1 ?? "").split(" ")?.[1],
           },
           remarketing2: {
-            time: remarketing2Data.time,
-            unit: remarketing2Data.unit,
-            template: remarketing.plantilla_2 || "",
+            time: (remarketing.tiempo_2 ?? "").split(" ")?.[0],
+            unit: (remarketing.tiempo_2 ?? "").split(" ")?.[1],
+          },
+          timeRange: {
+            enabled: !!(remarketing.hora_min || remarketing.horario_minimo),
+            minTime:
+              remarketing.hora_min || remarketing.horario_minimo || "09:00",
+            maxTime:
+              remarketing.hora_max || remarketing.horario_maximo || "20:00",
           },
         },
         activators: {

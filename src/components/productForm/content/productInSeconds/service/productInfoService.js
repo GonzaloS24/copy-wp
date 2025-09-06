@@ -321,14 +321,19 @@ const mapApiDataToContext = (apiData, productId, generatedPrompt = '', selectedS
     },
     remarketing: {
       remarketing1: {
-        time: 0,
-        unit: "minutos",
-        template: "",
+        time:
+          Number((apiData?.remarketing?.tiempo_1 ?? "").split(" ")?.[0]) || 3,
+        unit: (apiData?.remarketing?.tiempo_1 ?? "").split(" ")?.[1] || "dias",
       },
       remarketing2: {
-        time: 0,
-        unit: "minutos",
-        template: "",
+        time:
+          Number((apiData?.remarketing?.tiempo_2 ?? "").split(" ")?.[0]) || 5,
+        unit: (apiData?.remarketing?.tiempo_2 ?? "").split(" ")?.[1] || "dias",
+      },
+      timeRange: {
+        enabled: !!apiData?.remarketing?.hora_min,
+        minTime: apiData?.remarketing?.hora_min || "09:00",
+        maxTime: apiData?.remarketing?.hora_max || "20:00",
       },
     },
     activators: {
