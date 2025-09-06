@@ -171,7 +171,7 @@ export const useProductSave = () => {
     return errors;
   };
 
-  const saveProduct = async (productData, forceInactive = false) => {
+  const saveProduct = async (productData, forceInactive = false, silentSave = false, skipNavigation = false) => {
     const missingRequiredFields = validateRequiredFields(productData);
     const hasMissingFields = missingRequiredFields.length > 0;
     const isMissingName = missingRequiredFields.includes('Nombre del producto');
@@ -205,6 +205,7 @@ export const useProductSave = () => {
 
       if (isEditMode()) {
         console.log('Modo edición - actualizando producto:', productName);
+        console.log('Skip navigation:', skipNavigation);
         console.log('Datos a enviar para actualización:', mappedData);
         const response = await ProductService.updateProduct(productName, mappedData);
         console.log('Respuesta de actualización:', response);
@@ -213,7 +214,7 @@ export const useProductSave = () => {
           return { 
             success: true, 
             message: `¡Producto "${productName || 'nuevo'}" actualizado exitosamente!`,
-            navigateTo: '/productos-config'
+            navigateTo: skipNavigation ? null : '/productos-config'
           };
         } else {
           throw new Error('Error al actualizar el producto - respuesta inválida');

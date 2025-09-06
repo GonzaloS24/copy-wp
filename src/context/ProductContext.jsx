@@ -152,6 +152,43 @@ export const ProductProvider = ({ children }) => {
     }));
   };
 
+  const resetProductData = (newData) => {
+    setProductData(newData);
+    setValidationState({
+      info: { 
+        touchedFields: { 
+          name: false, 
+          price: false, 
+          image: false 
+        } 
+      },
+      messageWel: { 
+        touchedFields: { 
+          initialMessage: false, 
+          entryQuestion: false 
+        } 
+      },
+      freePrompt: { 
+        touchedFields: { 
+          promptText: false, 
+          contextualizacion: false, 
+          fichaTecnica: false, 
+          guionConversacional: false, 
+          posiblesSituaciones: false, 
+          reglasIA: false 
+        }
+      },
+      reminder: { 
+        touchedFields: { 
+          reminder1Time: false, 
+          reminder1Text: false, 
+          reminder2Time: false, 
+          reminder2Text: false 
+        }
+      }
+    });
+  };
+
   const getPromptDataForAPI = () => {
     const freePromptData = productData.freePrompt;
     const tipoPrompt = freePromptData.promptType || "libre";
@@ -195,6 +232,7 @@ export const ProductProvider = ({ children }) => {
         validationState,
         updateValidationState,
         getPromptDataForAPI,
+        resetProductData,
       }}
     >
       {children}

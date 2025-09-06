@@ -29,12 +29,20 @@ export const ProductButtons = () => {
   };
 
   const handleSave = async (forceInactive = false) => {
-    const result = await saveProduct(productData, forceInactive, false);
+    // Pasar skipNavigation: true cuando estemos en modo edición
+    const result = await saveProduct(productData, forceInactive, false, isEditMode());
 
     if (result.success) {
       alert(result.message);
+      
+      // Solo navegar si hay navigateTo definido
       if (result.navigateTo) {
         navigate(result.navigateTo);
+      }
+      // Si estamos en modo edición y no hay navigateTo, activar el reset
+      else if (isEditMode()) {
+        console.log('🔄 Disparando reset automático...');
+        window.dispatchEvent(new CustomEvent('resetProductState'));
       }
     } else if (result.error) {
       alert(result.error);
