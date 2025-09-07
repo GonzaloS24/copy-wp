@@ -12,7 +12,7 @@ export const DEFAULT_VALUES = {
   },
   messageWel: {
     formData: {
-      initialMessage: "¡Hola! Soy Laura, bienvenida a Dropi.",
+      initialMessage: "¡Hola! Soy Laura, bienvenido a nuestra tienda.",
       entryQuestion:
         "Gracias por interesarte en nuestro producto. Cuéntanos, ¿desde qué ciudad nos escribes?",
     },

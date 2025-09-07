@@ -102,29 +102,29 @@ export const useProductMapping = () => {
         };
       }
 
-      const activadoresData = apiData.activadores_del_flujo || {};
-      const keywordsFromApi = activadoresData.palabras_clave
-        ? activadoresData.palabras_clave
+        const activadoresData = apiData.activadores_del_flujo || {};
+
+        const processCommaSeparated = (str, defaultValue = "") => {
+          if (!str) return [];
+          return str
             .split(",")
-            .map((k) => k.trim())
-            .filter((k) => k)
-        : [];
+            .map(item => item.trim())
+            .filter(item => item);
+        };
 
-      const defaultKeywords = ["", "", "", "", "", "", ""];
-      const mergedKeywords = [...keywordsFromApi, ...defaultKeywords].slice(
-        0,
-        7
-      );
+        const keywordsFromApi = processCommaSeparated(activadoresData.palabras_clave);
+        const minKeywords = 7;
+        const mergedKeywords = [
+          ...keywordsFromApi,
+          ...Array(Math.max(0, minKeywords - keywordsFromApi.length)).fill("")
+        ];
 
-      const adIdsFromApi = activadoresData.ids_de_anuncio
-        ? activadoresData.ids_de_anuncio
-            .split(",")
-            .map((id) => id.trim())
-            .filter((id) => id)
-        : [];
-
-      const defaultAdIds = ["", "", "", "", "", "", ""];
-      const mergedAdIds = [...adIdsFromApi, ...defaultAdIds].slice(0, 7);
+        const adIdsFromApi = processCommaSeparated(activadoresData.ids_de_anuncio);
+        const minAdIds = 7;
+        const mergedAdIds = [
+          ...adIdsFromApi,
+          ...Array(Math.max(0, minAdIds - adIdsFromApi.length)).fill("")
+        ];
 
       const infoProducto = apiData.informacion_de_producto || {};
       const embudoVentas = apiData.embudo_de_ventas || {};

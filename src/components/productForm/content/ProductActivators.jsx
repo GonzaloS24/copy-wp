@@ -205,6 +205,35 @@ export const ProductActivators = () => {
     setTempAdIdValue(activatorsData.adIds[index]);
   };
 
+  // Nueva funcionalidad: agregar filas
+  const addKeywordRow = () => {
+    const newKeywords = [...activatorsData.keywords, ''];
+    setActivatorsData(prev => ({
+      ...prev,
+      keywords: newKeywords
+    }));
+    
+    setTimeout(() => {
+      updateProductData('activators', {
+        keywords: newKeywords
+      });
+    }, 300);
+  };
+
+  const addAdIdRow = () => {
+    const newAdIds = [...activatorsData.adIds, ''];
+    setActivatorsData(prev => ({
+      ...prev,
+      adIds: newAdIds
+    }));
+    
+    setTimeout(() => {
+      updateProductData('activators', {
+        adIds: newAdIds
+      });
+    }, 300);
+  };
+
   const openLinkGeneratorModal = () => {
     setIsLinkDialogOpen(true);
   };
@@ -271,6 +300,14 @@ export const ProductActivators = () => {
                 )}
               </div>
             ))}
+            <button
+              onClick={addKeywordRow}
+              className="min-h-[45px] border-2 border-dashed border-blue-300 rounded-lg bg-blue-50 hover:bg-blue-100 hover:border-blue-400 p-2 flex items-center justify-center transition-all duration-200 text-blue-600 hover:text-blue-700"
+              title="Agregar palabra clave"
+            >
+              <span className="text-2xl font-bold">+</span>
+              <span className="ml-2 text-sm font-medium">Agregar palabra clave</span>
+            </button>
           </div>
         </div>
 
@@ -327,6 +364,14 @@ export const ProductActivators = () => {
                 )}
               </div>
             ))}
+            <button
+              onClick={addAdIdRow}
+              className="min-h-[45px] border-2 border-dashed border-slate-300 rounded-lg bg-slate-50 hover:bg-slate-100 hover:border-slate-400 p-2 flex items-center justify-center transition-all duration-200 text-slate-600 hover:text-slate-700"
+              title="Agregar ID de anuncio"
+            >
+              <span className="text-2xl font-bold">+</span>
+              <span className="ml-2 text-sm font-medium">Agregar ID de anuncio</span>
+            </button>
           </div>
         </div>
       </div>
@@ -357,4 +402,4 @@ export const ProductActivators = () => {
 
     </div>
   );
-}
+};

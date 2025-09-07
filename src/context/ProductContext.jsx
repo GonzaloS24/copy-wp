@@ -19,7 +19,7 @@ export const ProductProvider = ({ children }) => {
     },
     messageWel: {
       formData: {
-        initialMessage: "¡Hola! Soy Laura, bienvenida a Dropi.",
+        initialMessage: "¡Hola! Soy Laura, bienvenido a nuestra tienda.",
         entryQuestion:
           "Gracias por interesarte en nuestro producto. Cuéntanos, ¿desde qué ciudad nos escribes?",
       },
@@ -95,6 +95,7 @@ export const ProductProvider = ({ children }) => {
         name: false,
         price: false,
         image: false,
+        dta_prompt: false
       },
     },
     messageWel: {

@@ -226,7 +226,6 @@ export const ProductReminder = () => {
                 }`}
               >
                 <option value="minutos">minutos</option>
-                <option value="segundos">segundos</option>
                 <option value="horas">horas</option>
                 <option value="dias">días</option>
               </select>

@@ -79,7 +79,12 @@ const useProductService = () => {
       if (multimedia) {
         Object.values(multimedia).forEach((url) => {
           if (url && typeof url === "string" && url.trim() !== "") {
-            urls_imagenes.push(url);
+            const urlSinParametros = url.split('?')[0];
+            const extension = urlSinParametros.split('.').pop().toLowerCase();
+
+            if (extension !== 'webp') {
+              urls_imagenes.push(url);
+            }
           }
         });
       }
@@ -153,28 +158,32 @@ const mapApiDataToContext = (apiData, productId, generatedPrompt = '', selectedS
   };
 
   const getFileType = (url) => {
-    if (!url || typeof url !== "string") return "document";
-
-    const fileExtension = url.split(".").pop().toLowerCase();
-
-    if (
-      ["jpg", "jpeg", "png", "gif", "webp", "svg", "bmp"].includes(
-        fileExtension
-      )
-    ) {
-      return "image";
-    } else if (
-      ["mp4", "avi", "mov", "webm", "mkv", "flv"].includes(fileExtension)
-    ) {
-      return "video";
-    } else if (
-      ["mp3", "wav", "ogg", "m4a", "aac", "flac"].includes(fileExtension)
-    ) {
-      return "audio";
-    } else {
+    if (!url || typeof url !== "string") {
+      console.log('getFileType: URL inválida');
       return "document";
     }
-  };
+
+    const cleanUrl = url.split('?')[0];
+    const fileExtension = cleanUrl.split('.').pop().toLowerCase();
+
+
+    if (["jpg", "jpeg", "png", "gif", "svg", "bmp"].includes(fileExtension)) {
+      console.log('getFileType: Tipo IMAGE');
+      return "image";
+    } else if (["mp4", "avi", "mov", "webm", "mkv", "flv"].includes(fileExtension)) {
+      console.log('getFileType: Tipo VIDEO');
+      return "video";
+    } else if (["mp3", "wav", "ogg", "m4a", "aac", "flac", "mpeg"].includes(fileExtension)) {
+      console.log('getFileType: Tipo AUDIO');
+      return "audio";
+    } else if (fileExtension === "pdf") {
+      console.log('getFileType: Tipo DOCUMENT');
+      return "document";
+    } else {
+      console.log('getFileType: Tipo DOCUMENT (por defecto)');
+      return "document";
+    }
+  };  
 
   const getFileIcon = (type) => {
     const icons = {
@@ -186,19 +195,39 @@ const mapApiDataToContext = (apiData, productId, generatedPrompt = '', selectedS
     return icons[type] || "📄";
   };
 
+
   const processMultimedia = (multimedia, source) => {
     const mediaItems = [];
+    const ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.mp4', '.pdf', '.mp3', '.wav', '.ogg', '.mpeg'];
+
 
     if (multimedia) {
       Object.entries(multimedia).forEach(([key, url], index) => {
+        console.log('\n--- Procesando item ---');
+        console.log('Key:', key);
+        console.log('URL original:', url);
+
         if (url && typeof url === "string" && url.trim() !== "") {
-          const fullUrl =
-            source === "url" || source === "shopify"
-              ? url
-              : url.startsWith("http")
-              ? url
-              : `${CLOUDFRONT_URL}${url}`;
+          const urlWithoutParams = url.split('?')[0];
+          const fileName = urlWithoutParams.split('/').pop();
+          const fileExtension = '.' + fileName.split('.').pop().toLowerCase();
+
+          const isExtensionAllowed = ALLOWED_EXTENSIONS.includes(fileExtension);
+          console.log('¿Extensión permitida?', isExtensionAllowed);
+
+          if (!isExtensionAllowed) {
+            console.log('❌ URL EXCLUIDA por extensión no permitida');
+            return; 
+          }
+
+          const fullUrl = source === "url" || source === "shopify"
+            ? url
+            : url.startsWith("http")
+            ? url
+            : `${CLOUDFRONT_URL}${url}`;
+          
           const fileType = getFileType(fullUrl);
+          
           mediaItems.push({
             id: index + 1,
             type: fileType,
@@ -206,13 +235,22 @@ const mapApiDataToContext = (apiData, productId, generatedPrompt = '', selectedS
             filled: true,
             url: fullUrl,
             key: key,
-            fileName: url.split("/").pop() || `archivo_${index + 1}`,
+            fileName: fileName || `archivo_${index + 1}`,
           });
+        } else {
+          console.log('❌ URL inválida o vacía');
         }
       });
+    } else {
+      console.log('❌ Multimedia es null o undefined');
     }
 
+    console.log('\n=== MediaItems final ===');
+    console.log('Total items:', mediaItems.length);
+    console.log('Items:', mediaItems);
+
     if (mediaItems.length === 0) {
+      console.log('⚠️  No hay items válidos, agregando placeholders');
       mediaItems.push(
         { id: 1, type: "image", icon: "🖼️", filled: false, url: "" },
         { id: 2, type: "video", icon: "▶️", filled: false, url: "" },
@@ -223,6 +261,12 @@ const mapApiDataToContext = (apiData, productId, generatedPrompt = '', selectedS
     return mediaItems;
   };
 
+  const mediaItemsResult = processMultimedia(
+    apiData.embudo_de_ventas?.multimedia,
+    selectedSource
+  );
+
+  
   const recordatoriosData = apiData.recordatorios || {};
   const reminder1Data = parseTimeAndUnit(
     recordatoriosData.tiempo_recordatorio_1
@@ -270,8 +314,9 @@ const mapApiDataToContext = (apiData, productId, generatedPrompt = '', selectedS
             : `${CLOUDFRONT_URL}${apiData.informacion_de_producto.imagen_del_producto}`
           : null,
         currency: "COP",
+        productType: apiData.informacion_de_producto?.tipo_de_producto || "",
+
       },
-      productType: "simple",
       isActive: false,
     },
     messageWel: {
@@ -279,14 +324,8 @@ const mapApiDataToContext = (apiData, productId, generatedPrompt = '', selectedS
         initialMessage: apiData.embudo_de_ventas?.mensaje_inicial || "",
         entryQuestion: apiData.embudo_de_ventas?.pregunta_de_entrada || "",
       },
-      mediaItems: processMultimedia(
-        apiData.embudo_de_ventas?.multimedia,
-        selectedSource
-      ),
-      totalFiles: processMultimedia(
-        apiData.embudo_de_ventas?.multimedia,
-        selectedSource
-      ).filter((item) => item.filled).length,
+      mediaItems: mediaItemsResult,
+totalFiles: mediaItemsResult.filter((item) => item.filled).length,
     },
     freePrompt: {
       promptText: (generatedPrompt || "").replace(/(\\{1,2})n/g, "\n"),

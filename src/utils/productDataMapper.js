@@ -93,19 +93,19 @@ export const mapProductDataToServiceFormat = (
         productData.reminder?.reminder1?.unit
           ? `${productData.reminder.reminder1.time} ${productData.reminder.reminder1.unit}`
           : "",
-      mensaje_recordatorio_1: productData.reminder?.reminder1?.text || "",
+      mensaje_recordatorio_1: productData.reminder?.reminder1?.text || "ay me dejaste en visto",
       tiempo_recordatorio_2:
         productData.reminder?.reminder2?.time &&
         productData.reminder?.reminder2?.unit
           ? `${productData.reminder.reminder2.time} ${productData.reminder.reminder2.unit}`
           : "",
-      mensaje_recordatorio_2: productData.reminder?.reminder2?.text || "",
+      mensaje_recordatorio_2: productData.reminder?.reminder2?.text || "[indicale al cliente un testimonio de un cliente que compró el producto y cómo resolvió su dolor específico]",
       hora_min: productData.reminder?.timeRange?.enabled
         ? productData.reminder.timeRange.minTime
-        : "",
+        : "08:00",
       hora_max: productData.reminder?.timeRange?.enabled
         ? productData.reminder.timeRange.maxTime
-        : "",
+        : "22:00",
     },
     remarketing: {
       tiempo_remarketing_1: productData.remarketing?.remarketing1?.time
