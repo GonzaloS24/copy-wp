@@ -131,6 +131,7 @@ export const useProductMapping = () => {
       const vozIA = apiData.voz_con_ia || {};
       const recordatorios = apiData.recordatorios || {};
       const remarketing = apiData.remarketing || {};
+      const metaConversionData = apiData.meta_conversion || {};
 
       const reminder1Data = parseTimeAndUnit(recordatorios.tiempo_1);
       const reminder2Data = parseTimeAndUnit(recordatorios.tiempo_2);
@@ -251,6 +252,11 @@ export const useProductMapping = () => {
         activators: {
           keywords: mergedKeywords,
           adIds: mergedAdIds,
+        },
+        metaConversion: {
+          useDefault: metaConversionData.por_defecto === "si",
+          pageId: metaConversionData.id || "",
+          audienceId: metaConversionData.aud_id || "",
         },
       };
     },

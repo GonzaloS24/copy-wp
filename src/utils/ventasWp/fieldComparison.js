@@ -1,4 +1,3 @@
-
 export const FIELD_DISPLAY_NAMES = {
   name: 'Nombre del producto',
   price: 'Precio',
@@ -20,7 +19,10 @@ export const FIELD_DISPLAY_NAMES = {
   style: 'Estilo de voz',
   useSpeakerBoost: 'Speaker Boost',
   keywords: 'Palabras clave',
-  adIds: 'IDs de anuncio'
+  adIds: 'IDs de anuncio',
+  useDefault: 'Configuración por defecto',
+  pageId: 'Page ID',
+  audienceId: 'Custom Audience ID'
 };
 
 export const getFieldDisplayName = (fieldKey) => {

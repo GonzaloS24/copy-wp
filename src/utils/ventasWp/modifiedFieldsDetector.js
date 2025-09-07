@@ -157,5 +157,20 @@ export const detectModifiedFields = (productData, comparisonData, isEditMode) =>
     }
   }
 
+  // Meta Conversion
+  if (productData.metaConversion && comparisonData.metaConversion) {
+    if (areValuesDifferent(productData.metaConversion.useDefault, comparisonData.metaConversion.useDefault)) {
+      modified.push('Pixel Meta: Configuración por defecto');
+    }
+    
+    if (areValuesDifferent(productData.metaConversion.pageId, comparisonData.metaConversion.pageId)) {
+      modified.push('Pixel Meta: Page ID');
+    }
+    
+    if (areValuesDifferent(productData.metaConversion.audienceId, comparisonData.metaConversion.audienceId)) {
+      modified.push('Pixel Meta: Custom Audience ID');
+    }
+  }
+
   return modified;
 };
