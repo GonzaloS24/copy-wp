@@ -269,16 +269,20 @@ export const IntegrationsPlatform = () => {
                       >
                         Configurar
                       </button>
-                      <button
-                        onClick={() => handleDisconnect(integration.id)}
-                        className="
+                      {!!deleteIntegrations?.[
+                        `${integration.id}DeleteIntegration`
+                      ] && (
+                        <button
+                          onClick={() => handleDisconnect(integration.id)}
+                          className="
                           bg-red-500 hover:bg-red-600 text-white px-5 py-2.5 
                           rounded-xl font-semibold text-sm transition-all duration-300
                           hover:-translate-y-0.5
                         "
-                      >
-                        Eliminar
-                      </button>
+                        >
+                          Eliminar
+                        </button>
+                      )}
                     </div>
                   ) : (
                     <button
