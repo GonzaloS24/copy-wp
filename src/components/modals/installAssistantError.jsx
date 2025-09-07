@@ -8,13 +8,13 @@ export const InstallAssistantErrorModal = ({ onClose, data }) => {
   const [modalData, setModalData] = useState({
     tittle: "Error al instalar el asistente",
     message:
-      "Ocurrió un error inesperado al intentar instalar el asistente, por favor intente de nuevo más tarde",
+      "Ocurrió un error inesperado al intentar instalar el asistente, por favor intente de nuevo más tarde" + 
+      " Si el problema persiste contacta a soporte.",
   });
 
   const handleOpenLink = (href) => window.open(href);
 
   useEffect(() => {
-    console.log(data);
     if (!data.cause) return;
 
     if (!installAssistantErrorsData[data.templateNs]) return;
@@ -23,7 +23,8 @@ export const InstallAssistantErrorModal = ({ onClose, data }) => {
       installAssistantErrorsData[data.templateNs][data.cause] ?? {
         tittle: "Error al instalar el asistente",
         message:
-          "Ocurrió un error inesperado al intentar instalar el asistente, por favor intente de nuevo más tarde",
+          "Ocurrió un error inesperado al intentar instalar el asistente, por favor intente de nuevo más tarde" + 
+          " Si el problema persiste contacta a soporte.",
       }
     );
   }, [data]);
