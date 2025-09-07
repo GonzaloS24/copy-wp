@@ -19,6 +19,7 @@ import { VerificateExit } from '../components/productForm/VerificateExit';
 import { useProductMapping } from '../hooks/useProductMapping'; 
 import { NavigationBlockProvider } from '../context/NavigationBlockContext'; 
 import { useVerificationExit } from '../hooks/useVerificationExit'; 
+import PixelYAudienciasSection from '../components/productForm/content/PixelYAudienciasSection';
 
 const NavigationBlockWrapper = ({ children }) => {
   const { blockProgrammaticNavigation } = useVerificationExit();
@@ -111,6 +112,8 @@ const ProductContentFormInner = () => {
         return <ProductActivators />;
       case 'prueba-flujo':
         return <ProductChat />;
+      case 'pixel-audiencias':
+        return <PixelYAudienciasSection />;
       default:
         return <div className="flex items-center justify-center h-full text-gray-500">Sección en desarrollo</div>;
     }
