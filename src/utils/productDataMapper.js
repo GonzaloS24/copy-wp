@@ -129,11 +129,17 @@ export const mapProductDataToServiceFormat = (
       ids_de_anuncio:
         productData.triggers?.adIds || productData.activators?.adIds || "",
     },
-    meta_conversion: {
-      por_defecto: productData.metaConversion?.useDefault ? "si" : "no",
-      id: productData.metaConversion?.pageId || "",
-      aud_id: productData.metaConversion?.audienceId || "",
-    },
+    meta_conversion: productData.metaConversion?.enabled
+      ? {
+          por_defecto: productData.metaConversion?.useDefault ? "si" : "no",
+          id: productData.metaConversion?.pageId || "",
+          aud_id: productData.metaConversion?.audienceId || "",
+        }
+      : {
+          por_defecto: "",
+          id: "",
+          aud_id: "",
+        },
   };
 
   console.log("🎯 Datos mapeados completos:", mappedData);

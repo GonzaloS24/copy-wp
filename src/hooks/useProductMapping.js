@@ -164,6 +164,11 @@ export const useProductMapping = () => {
         );
       }
 
+      // Procesar metaConversion con la nueva estructura
+      const isMetaEnabled = metaConversionData.por_defecto !== "" || 
+      metaConversionData.id !== "" || 
+      metaConversionData.aud_id !== "";
+
       return {
         info: {
           formData: {
@@ -254,6 +259,7 @@ export const useProductMapping = () => {
           adIds: mergedAdIds,
         },
         metaConversion: {
+          enabled: isMetaEnabled,
           useDefault: metaConversionData.por_defecto === "si",
           pageId: metaConversionData.id || "",
           audienceId: metaConversionData.aud_id || "",

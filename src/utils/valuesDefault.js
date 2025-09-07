@@ -79,6 +79,7 @@ export const DEFAULT_VALUES = {
     adIds: ["", "", "", "", "", "", ""],
   },
   metaConversion: {
+    enabled: false,
     useDefault: true,
     pageId: "",
     audienceId: "",

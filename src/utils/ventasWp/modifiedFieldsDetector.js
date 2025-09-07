@@ -157,18 +157,42 @@ export const detectModifiedFields = (productData, comparisonData, isEditMode) =>
     }
   }
 
-  // Meta Conversion
+  // Meta Conversion - Detección corregida
   if (productData.metaConversion && comparisonData.metaConversion) {
-    if (areValuesDifferent(productData.metaConversion.useDefault, comparisonData.metaConversion.useDefault)) {
-      modified.push('Pixel Meta: Configuración por defecto');
+    const currentMeta = productData.metaConversion;
+    const comparisonMeta = comparisonData.metaConversion;
+    
+    // Detectar cambio en el estado habilitado
+    if (areValuesDifferent(currentMeta.enabled, comparisonMeta.enabled)) {
+      modified.push('Pixel Meta: Estado habilitado');
     }
     
-    if (areValuesDifferent(productData.metaConversion.pageId, comparisonData.metaConversion.pageId)) {
-      modified.push('Pixel Meta: Page ID');
+    // Si ambos están habilitados, comparar los demás campos
+    if (currentMeta.enabled && comparisonMeta.enabled) {
+      // Detectar cambio en useDefault (por defecto vs personalizado)
+      if (areValuesDifferent(currentMeta.useDefault, comparisonMeta.useDefault)) {
+        modified.push('Pixel Meta: Configuración por defecto');
+      }
+      
+      // Detectar cambios en Page ID
+      if (areValuesDifferent(currentMeta.pageId, comparisonMeta.pageId)) {
+        modified.push('Pixel Meta: Page ID');
+      }
+      
+      // Detectar cambios en Custom Audience ID
+      if (areValuesDifferent(currentMeta.audienceId, comparisonMeta.audienceId)) {
+        modified.push('Pixel Meta: Custom Audience ID');
+      }
     }
-    
-    if (areValuesDifferent(productData.metaConversion.audienceId, comparisonData.metaConversion.audienceId)) {
-      modified.push('Pixel Meta: Custom Audience ID');
+    // Si uno está habilitado y el otro no, pero había datos previos, también detectar cambios en campos
+    else if (currentMeta.enabled && !comparisonMeta.enabled) {
+      // Si se habilita y se agregan datos
+      if (currentMeta.pageId && currentMeta.pageId.trim() !== '') {
+        modified.push('Pixel Meta: Page ID');
+      }
+      if (currentMeta.audienceId && currentMeta.audienceId.trim() !== '') {
+        modified.push('Pixel Meta: Custom Audience ID');
+      }
     }
   }
 

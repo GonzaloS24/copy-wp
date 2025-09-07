@@ -22,7 +22,8 @@ export const FIELD_DISPLAY_NAMES = {
   adIds: 'IDs de anuncio',
   useDefault: 'Configuración por defecto',
   pageId: 'Page ID',
-  audienceId: 'Custom Audience ID'
+  audienceId: 'Custom Audience ID',
+  enabled: 'Estado habilitado'
 };
 
 export const getFieldDisplayName = (fieldKey) => {

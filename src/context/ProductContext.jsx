@@ -88,6 +88,7 @@ export const ProductProvider = ({ children }) => {
       adIds: ["", "", "", "", "", "", ""],
     },
     metaConversion: {
+      enabled: false,
       useDefault: true,
       pageId: "",
       audienceId: "",
