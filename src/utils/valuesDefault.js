@@ -78,4 +78,10 @@ export const DEFAULT_VALUES = {
     keywords: ["", "", "", "", "", "", ""],
     adIds: ["", "", "", "", "", "", ""],
   },
+  metaConversion: {
+    enabled: false,
+    useDefault: true,
+    pageId: "",
+    audienceId: "",
+  },
 };

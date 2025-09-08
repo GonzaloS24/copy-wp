@@ -131,6 +131,7 @@ export const useProductMapping = () => {
       const vozIA = apiData.voz_con_ia || {};
       const recordatorios = apiData.recordatorios || {};
       const remarketing = apiData.remarketing || {};
+      const metaConversionData = apiData.meta_conversion || {};
 
       const reminder1Data = parseTimeAndUnit(recordatorios.tiempo_1);
       const reminder2Data = parseTimeAndUnit(recordatorios.tiempo_2);
@@ -162,6 +163,11 @@ export const useProductMapping = () => {
           { id: 3, type: "audio", icon: "🔊", filled: false, url: "" }
         );
       }
+
+      // Procesar metaConversion con la nueva estructura
+      const isMetaEnabled = metaConversionData.por_defecto !== "" || 
+      metaConversionData.id !== "" || 
+      metaConversionData.aud_id !== "";
 
       return {
         info: {
@@ -251,6 +257,12 @@ export const useProductMapping = () => {
         activators: {
           keywords: mergedKeywords,
           adIds: mergedAdIds,
+        },
+        metaConversion: {
+          enabled: isMetaEnabled,
+          useDefault: metaConversionData.por_defecto === "si",
+          pageId: metaConversionData.id || "",
+          audienceId: metaConversionData.aud_id || "",
         },
       };
     },

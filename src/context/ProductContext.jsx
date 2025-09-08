@@ -87,6 +87,12 @@ export const ProductProvider = ({ children }) => {
       keywords: ["", "", "", "", "", "", ""],
       adIds: ["", "", "", "", "", "", ""],
     },
+    metaConversion: {
+      enabled: false,
+      useDefault: true,
+      pageId: "",
+      audienceId: "",
+    },
   });
 
   const [validationState, setValidationState] = useState({
