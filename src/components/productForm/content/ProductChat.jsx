@@ -2,6 +2,8 @@ import { useParams } from "react-router-dom";
 import { ApiChatProvider } from "../../apichat/ApiChatContext";
 import ApiChat from "../../apichat/ApiChat";
 import { ASSISTANT_TEMPLATE_NS } from "../../../utils/constants/assistants";
+import { NavigationBlockProvider } from "../../../context/NavigationBlockContext";
+import { useVerificationExit } from "../../../hooks/useVerificationExit";
 
 export const ProductChat = () => {
   const { productName } = useParams();
@@ -63,12 +65,25 @@ export const ProductChat = () => {
 
   // Si estamos editando un producto existente, mostrar chat normal con productId
   return (
-    <ApiChatProvider
-      ASSISTANT_TEMPLATE_NS={WHATSAPP_SALES}
-      productId={productId}
-    >
-      <ApiChatWithProductId productId={productId} />
-    </ApiChatProvider>
+    <NavigationBlockWrapper>
+      <ApiChatProvider
+        ASSISTANT_TEMPLATE_NS={WHATSAPP_SALES}
+        productId={productId}
+      >
+        <ApiChatWithProductId productId={productId} />
+      </ApiChatProvider>
+    </NavigationBlockWrapper>
+  );
+};
+
+// Wrapper para proveer contexto de navegación
+const NavigationBlockWrapper = ({ children }) => {
+  const { blockProgrammaticNavigation } = useVerificationExit();
+  
+  return (
+    <NavigationBlockProvider blockProgrammaticNavigation={blockProgrammaticNavigation}>
+      {children}
+    </NavigationBlockProvider>
   );
 };
 
