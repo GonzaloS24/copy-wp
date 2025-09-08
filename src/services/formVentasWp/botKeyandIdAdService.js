@@ -3,7 +3,6 @@ import { BACK_BASE_URL } from "../../utils/backendUrl";
 import { getAuthToken } from "../../utils/authCookies";
 
 const botKeyandIdAdService = {
-
   async getTriggerField() {
     try {
       const authToken = getAuthToken();
@@ -12,7 +11,7 @@ const botKeyandIdAdService = {
       }
 
       const response = await axios.get(
-        `${BACK_BASE_URL}/api/integrations/chateapro/trigger-field`,
+        `${BACK_BASE_URL}/api/assistants/ventas-wp/trigger-field`,
         {
           headers: {
             "Content-Type": "application/json",
@@ -36,7 +35,7 @@ const botKeyandIdAdService = {
       console.error("Error fetching bot trigger field:", error);
       throw new Error(`Error al obtener campo del bot: ${error.message}`);
     }
-  }
+  },
 };
 
 export default botKeyandIdAdService;
