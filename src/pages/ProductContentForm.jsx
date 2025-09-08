@@ -112,8 +112,8 @@ const ProductContentFormInner = () => {
         return <ProductActivators />;
       case 'prueba-flujo':
         return <ProductChat />;
-      case 'pixel-audiencias':
-        return <PixelYAudienciasSection />;
+      // case 'pixel-audiencias':
+      //   return <PixelYAudienciasSection />;
       default:
         return <div className="flex items-center justify-center h-full text-gray-500">Sección en desarrollo</div>;
     }

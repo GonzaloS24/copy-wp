@@ -14,7 +14,7 @@ export class CarritoService {
       }
 
       const payload = {
-        name: "[Carritos] Configuracion General",
+        name: "[Carritos] Configuracion",
         value: JSON.stringify(configData),
       };
 
