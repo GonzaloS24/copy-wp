@@ -1,11 +1,17 @@
 import { useState, useRef, useEffect } from "react";
 import { useApiChat } from "./ApiChatContext";
 import { TestRestartService } from "../../services/apichat/testRestartService";
+import { useVerificationExit } from "../../hooks/useVerificationExit";
+import { showWarning } from "../../utils/sweetAlerts/sweetAlertUtils";
 
 const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
   const [inputValue, setInputValue] = useState("");
   const [isStartingTest, setIsStartingTest] = useState(false);
   const messagesEndRef = useRef(null);
+
+  // Importar la detección de cambios
+  const { modifiedFields } = useVerificationExit();
+  const hasUnsavedChanges = modifiedFields.length > 0;
 
   const {
     messages,
@@ -40,9 +46,18 @@ const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
     }
   }, [productId, contextProductId]);
 
-  // Nueva función para iniciar la prueba
+  // Nueva función para iniciar la prueba con validación
   const handleStartTest = async () => {
     if (isStartingTest || isConnected) return;
+
+    // Validar cambios sin guardar antes de continuar
+    if (hasUnsavedChanges) {
+      showWarning(
+        'Cambios sin guardar',
+        'Primero debes guardar los últimos cambios para probar el asistente con la configuración actualizada.'
+      );
+      return;
+    }
 
     setIsStartingTest(true);
 
@@ -197,6 +212,21 @@ const ApiChat = ({ title = "Chat en vivo", productId = null }) => {
           )}
         </div>
       </div>
+
+      {/* Mensaje de advertencia si hay cambios sin guardar */}
+      {hasUnsavedChanges && (
+        <div className="mb-6 p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-700 text-sm">
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <div>
+              <p className="font-medium">Cambios sin guardar detectados</p>
+              <p className="text-xs mt-1">Guarda los cambios antes de probar el asistente para ver la configuración actualizada.</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Status/Error Messages */}
       {error && (
