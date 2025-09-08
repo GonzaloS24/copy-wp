@@ -2,6 +2,7 @@ import React, { useEffect, useCallback, useState } from 'react';
 import { useProduct } from '../../../context/ProductContext';
 import { ProductGuidePrompt } from './ProductGuidePrompt';
 import { ProductService } from '../../../services/productService'; 
+import { MultimediaUploadModal } from './MultimediaUploadModal';
 
 // CONSTANTES INMUTABLES fuera del componente
 const MAX_CHARACTERS = 10000;
@@ -15,6 +16,7 @@ export const ProductFreePrompt = ({ productName }) => {
   } = useProduct();
 
   const [localText, setLocalText] = useState('');
+  const [showMultimediaModal, setShowMultimediaModal] = useState(false);
 
   const freePromptData = productData.freePrompt || {
     promptType: 'libre',
@@ -184,7 +186,7 @@ export const ProductFreePrompt = ({ productName }) => {
 
   const handleCreadorPrompts = () => console.log('Abrir creador de prompts');
   const handleClasesPrompts = () => console.log('Abrir clases para crear prompts');
-  const handleCreadorEnlaces = () => console.log('Abrir creador de enlaces multimedia');
+  const handleCreadorEnlaces = () => setShowMultimediaModal(true);
 
   return (
     <div className="block">
@@ -360,6 +362,12 @@ export const ProductFreePrompt = ({ productName }) => {
           </div>
         )}
       </div>
+
+      {/* Modal de crear enlaces multimedia */}
+      <MultimediaUploadModal 
+        isOpen={showMultimediaModal}
+        onClose={() => setShowMultimediaModal(false)}
+      />
     </div>
   );
 };
