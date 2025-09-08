@@ -47,7 +47,7 @@ export class ProductService {
       );
 
       const response = await fetch(
-        `${BACK_BASE_URL}/api/integrations/chateapro/bot-fields`,
+        `${BACK_BASE_URL}/api/assistants/ventas-wp/bot-fields`,
         this.createPostFetchOptions(token, payload)
       );
 
@@ -75,7 +75,7 @@ export class ProductService {
       if (!token) throw new Error("No se encontró token de autenticación");
 
       const response = await fetch(
-        `${BACK_BASE_URL}/api/integrations/chateapro/products`,
+        `${BACK_BASE_URL}/api/assistants/ventas-wp/products`,
         this.createFetchOptions(token)
       );
 
@@ -106,7 +106,7 @@ export class ProductService {
 
       console.log(" Obteniendo configuración del producto ID:", cleanId);
 
-      const endpoint = `${BACK_BASE_URL}/api/integrations/chateapro/products/${cleanId}`;
+      const endpoint = `${BACK_BASE_URL}/api/assistants/ventas-wp/products/${cleanId}`;
 
       const response = await fetch(endpoint, this.createFetchOptions(token));
 
@@ -181,7 +181,7 @@ export class ProductService {
       };
 
       const response = await fetch(
-        `${BACK_BASE_URL}/api/integrations/chateapro/bot-fields`,
+        `${BACK_BASE_URL}/api/assistants/ventas-wp/bot-fields`,
         fetchOptions
       );
 
@@ -211,7 +211,6 @@ export class ProductService {
     const recordatorios = productData.recordatorios || {};
     const remarketing = productData.remarketing || {};
     const activadores = productData.activadores_del_flujo || {};
-
 
     const multimediaData = embudo.multimedia || {};
     console.log("🔧 [NORMALIZE] Multimedia extraída:", multimediaData);

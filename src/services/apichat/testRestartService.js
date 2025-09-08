@@ -2,7 +2,7 @@ import apiClient from "../../config/api";
 import apichat from "../../config/apichat";
 
 const ENDPOINTS = {
-  GET_KEYWORDS: "/api/integrations/chateapro/trigger-field",
+  GET_KEYWORDS: "/api/assistants/ventas-wp/trigger-field",
   RESTART_CHAT: "/api/chats",
 };
 
