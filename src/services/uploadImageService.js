@@ -100,7 +100,6 @@ export class uploadImage {
       );
 
  if (!response.ok) {
-      // ERRORES ESPECÍFICOS DE UPLOAD
       let errorMessage = `Error ${response.status} al subir archivo`;
       
       if (result.error === 'NO_FILE_PROVIDED') {

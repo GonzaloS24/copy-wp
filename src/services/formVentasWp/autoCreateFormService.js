@@ -150,17 +150,11 @@ const autoCreateFormService = {
       }
 
       return response.data;
-    } catch (error) {
+    }catch (error) {
       const detailedError = parseBackendError(error);
-      console.error("Error detallado generating prompt with OpenAI:", {
-        error: detailedError,
-        requestData: {
-          nombre: promptData.nombre,
-          precio: promptData.precio,
-          producto_json_type: typeof promptData.producto_json
-        }
-      });
-      throw new Error(`Error al generar prompt: ${detailedError}`);
+      console.error("Error detallado fetching product from openai URL:", detailedError);
+      throw new Error(`Error al obtener producto: ${detailedError}`);
+  
     }
   },
 
@@ -192,9 +186,9 @@ const autoCreateFormService = {
       console.error("Error detallado generating prompt with OpenAI:", {
         error: detailedError,
         requestData: {
-          nombre: promptData.nombre,
-          precio: promptData.precio,
-          producto_json_type: typeof promptData.producto_json
+          nombre: productId.nombre,
+          precio: productId.precio,
+          producto_json_type: typeof productId.producto_json
         }
       });
       throw new Error(`Error al generar prompt: ${detailedError}`);

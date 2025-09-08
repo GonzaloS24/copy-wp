@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Package, ShoppingCart, Globe, MessageCircle, Zap, X, Loader } from 'lucide-react';
 import { createPortal } from 'react-dom';
 import { useProductService } from '../productInSeconds/service/productInfoService';
-import OpenAIWarningModal from './OpenAIWarningModal'; 
+import OpenAIWarningModal from './OpenAIWarningModal';
+import { useNavigate } from 'react-router-dom';
 
 const ProductInfoSelector = ({ isOpen, onClose }) => {
   const [selectedSource, setSelectedSource] = useState('dropi');
@@ -10,9 +11,11 @@ const ProductInfoSelector = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingState, setLoadingState] = useState(1);
   const [error, setError] = useState(null);
- const [showOpenAIWarning, setShowOpenAIWarning] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
+  const [warningType, setWarningType] = useState('openai');
 
   const modalRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -99,35 +102,46 @@ const ProductInfoSelector = ({ isOpen, onClose }) => {
   const { processProductInfo } = useProductService();
 
   const handleSubmit = async () => {
-    if (!inputValue.trim()) return;
+      if (!inputValue.trim()) return;
 
-    setError(null);
-    setShowOpenAIWarning(false);
-    setIsLoading(true);
-    setLoadingState(1);
-
-    try {
-      await processProductInfo(selectedSource, inputValue, setLoadingState);
-      
-      setLoadingState(3);
-      await new Promise(resolve => setTimeout(resolve, 1500)); 
-      
-      onClose();
-    } catch (err) {
-      console.error('Error al obtener información del producto:', err);
-      
-      if (err.message.includes('OpenAI API key not found')) {
-        setShowOpenAIWarning(true);
-      } else {
-        setError('No se pudo obtener la información del producto. Verifica el ID e intenta nuevamente.');
-      }
-    } finally {
-      setIsLoading(false);
+      setError(null);
+      setShowWarning(false);
+      setIsLoading(true);
       setLoadingState(1);
-    }
-  };
 
-  if (!isOpen) return null;
+      try {
+        await processProductInfo(selectedSource, inputValue, setLoadingState);
+        
+        setLoadingState(3);
+        await new Promise(resolve => setTimeout(resolve, 1500)); 
+        
+        onClose();
+      } catch (err) {
+        console.error('Error al obtener información del producto:', err);
+        
+        if (err.message.includes('OpenAI API key not found')) {
+          setWarningType('openai');
+          setShowWarning(true);
+        } else if (err.message.includes('Shopify credentials not configured')) {
+          setWarningType('shopify');
+          setShowWarning(true);
+        } else if (err.message.includes('Clave de integración Dropi no proporcionada')) {
+          setWarningType('dropi');
+          setShowWarning(true);
+        } else {
+          setError('No se pudo obtener la información del producto. Verifica el ID e intenta nuevamente.');
+        }
+      } finally {
+        setIsLoading(false);
+        setLoadingState(1);
+      }
+    };
+
+    const handleRedirectToIntegrations = () => {
+      setShowWarning(false);
+      onClose();
+      navigate('/integraciones');
+    };
 
   const modalContent = (
     <div 
@@ -333,12 +347,15 @@ const ProductInfoSelector = ({ isOpen, onClose }) => {
           </p>
         </div>
       </div>
-     <OpenAIWarningModal 
-     isOpen={showOpenAIWarning} 
-     onClose={() => setShowOpenAIWarning(false)} 
-     />
-    </div>
+      
+      <OpenAIWarningModal 
+        isOpen={showWarning} 
+        onClose={() => setShowWarning(false)} 
+        onRedirect={handleRedirectToIntegrations}
+        type={warningType}
+      />
     
+    </div>
   );
   
   return createPortal(modalContent, document.body);
