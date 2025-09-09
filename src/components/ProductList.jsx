@@ -35,7 +35,21 @@ export const ProductList = () => {
   const handleConfigureProduct = (productId) =>
     navigate(`/producto/${productId}`);
 
-  const handleDeleteProduct = async (productId) => {};
+  const handleDeleteProduct = async (productId) => {
+    if (window.confirm("¿Estás seguro de que deseas eliminar este producto?")) {
+      try {
+        await ProductService.deleteProduct(productId);
+        setProducts((prevProducts) =>
+          prevProducts.filter((product) => product.id !== productId)
+        );
+      } catch (err) {
+        console.error("Error deleting product:", err);
+        alert(
+          "Hubo un error al eliminar el producto. Por favor, inténtalo de nuevo."
+        );
+      }
+    }
+  };
 
   const handleRetry = () => {
     fetchProducts();
