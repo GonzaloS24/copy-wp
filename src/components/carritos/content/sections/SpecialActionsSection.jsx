@@ -52,6 +52,7 @@ const SpecialActionsSection = () => {
   };
 
   const autoUpload = carritoData.acciones_especiales?.subida_automatica;
+  const product_images = carritoData.acciones_especiales?.imagenes_producto;
   // const infoSource = carritoData.acciones_especiales?.origen_datos;
 
   return (
@@ -101,6 +102,55 @@ const SpecialActionsSection = () => {
             />
             <label
               htmlFor="subida-no"
+              className="text-base text-slate-700 cursor-pointer font-medium"
+            >
+              No
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-3">
+          <label className="block font-semibold text-slate-700 text-base tracking-tight">
+            enviar imágenes del producto
+          </label>
+          <Tooltip content="Permite que el pedido recuperado se suba automáticamente a Shopify sin supervisión humana. Si seleccionas 'No', el carrito se quedará en Chatea PRO para que un asesor verifique los datos y lo suba desde chatea pro." />
+        </div>
+        <div className="flex gap-10 mt-3">
+          <div className="flex items-center gap-3">
+            <input
+              type="radio"
+              id="imagen-si"
+              name="imagen-producto"
+              className="w-5 h-5 border-2 border-slate-300 rounded-full cursor-pointer relative appearance-none transition-all duration-200 bg-white checked:border-sky-500"
+              value="si"
+              checked={product_images === "si"}
+              onChange={(e) =>
+                handleInputChange("imagenes_producto", e.target.value)
+              }
+            />
+            <label
+              htmlFor="imagen-si"
+              className="text-base text-slate-700 cursor-pointer font-medium"
+            >
+              Sí
+            </label>
+          </div>
+          <div className="flex items-center gap-3">
+            <input
+              type="radio"
+              id="imagen-no"
+              name="imagen-producto"
+              className="w-5 h-5 border-2 border-slate-300 rounded-full cursor-pointer relative appearance-none transition-all duration-200 bg-white checked:border-sky-500"
+              value="no"
+              checked={product_images === "no"}
+              onChange={(e) =>
+                handleInputChange("imagenes_producto", e.target.value)
+              }
+            />
+            <label
+              htmlFor="imagen-no"
               className="text-base text-slate-700 cursor-pointer font-medium"
             >
               No

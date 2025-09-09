@@ -34,6 +34,7 @@ export const CarritosProvider = ({ children }) => {
       posicion_imagen: 1,
       tiempo_recordatorio_1: "5 minutos",
       tiempo_recordatorio_2: "10 minutos",
+      tiempo_recordatorio_3: "15 minutos",
       mensaje_agradecimiento:
         "Gracias por recuperar tu carrito. Próximamente te enviaremos el número de guía de tu pedido.",
     },
@@ -45,6 +46,7 @@ export const CarritosProvider = ({ children }) => {
     },
     acciones_especiales: {
       subida_automatica: "",
+      imagenes_producto: "",
       origen_datos: "",
     },
   };
