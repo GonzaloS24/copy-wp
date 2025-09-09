@@ -4,6 +4,9 @@ import { ProductService } from "../services/productService";
 import { ProductCard, ProductCardSkeleton } from "./ProductCard";
 import { EmptyState } from "./states/EmptyStatet";
 import { ErrorState } from "./states/ErrorState";
+import { showDeleteConfirm } from "../utils/sweetAlerts/sweetAlertUtils";
+import { showPromiseToast } from "../utils/toastNotifications";
+import { ToastContainer } from "react-toastify";
 
 export const ProductList = () => {
   const [products, setProducts] = useState([]);
@@ -36,9 +39,20 @@ export const ProductList = () => {
     navigate(`/producto/${productId}`);
 
   const handleDeleteProduct = async (productId) => {
-    if (window.confirm("¿Estás seguro de que deseas eliminar este producto?")) {
+    const confirmation = await showDeleteConfirm(
+      "¿Deseas eliminar este producto?",
+      "No podrás recuperarlo después de eliminarlo."
+    );
+
+    if (confirmation.isConfirmed) {
       try {
-        await ProductService.deleteProduct(productId);
+        showPromiseToast(ProductService.deleteProduct(productId), {
+          pending: "Eliminando producto...",
+          success: "Producto eliminado exitosamente.",
+          error:
+            "Error al eliminar el producto. Por favor, inténtalo de nuevo.",
+        });
+
         setProducts((prevProducts) =>
           prevProducts.filter((product) => product.id !== productId)
         );
@@ -123,5 +137,24 @@ const AddProductCard = ({ onClick }) => (
         Agregar nuevo producto
       </p>
     </div>
+
+    <ToastContainer
+      position="bottom-right"
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={false}
+      closeOnClick
+      rtl={false}
+      pauseOnFocusLoss
+      draggable
+      pauseOnHover
+      theme="light"
+      progressStyle={{
+        backgroundColor: "#e5e7eb",
+      }}
+      closeButtonStyle={{
+        color: "#6b7280",
+      }}
+    />
   </div>
 );
