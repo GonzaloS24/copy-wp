@@ -62,3 +62,12 @@ export const showWarningToast = (message) => {
     },
   });
 };
+
+export const showPromiseToast = (promise, messages) => {
+  toast.promise(promise, messages, {
+    ...baseToastConfig,
+    progressStyle: {
+      backgroundColor: "#F59E0B",
+    },
+  });
+};

@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-export const ProductCard = ({ product, onConfigure }) => {
+export const ProductCard = ({ product, onConfigure, onDelete }) => {
   const [imageError, setImageError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
-  
 
   const generatePlaceholder = (text) => {
     const encodedText = encodeURIComponent(text.substring(0, 20));
@@ -11,12 +10,11 @@ export const ProductCard = ({ product, onConfigure }) => {
   };
 
   const handleImageError = (e) => {
-
     if (retryCount < 1) {
-      setRetryCount(prev => prev + 1);
+      setRetryCount((prev) => prev + 1);
       return;
     }
-    
+
     setImageError(true);
     e.target.src = generatePlaceholder(product.name);
   };
@@ -25,11 +23,11 @@ export const ProductCard = ({ product, onConfigure }) => {
     if (imageError) {
       return generatePlaceholder(product.name);
     }
-    
-    if (!product.image || product.image.trim() === '') {
+
+    if (!product.image || product.image.trim() === "") {
       return generatePlaceholder(product.name);
     }
-    
+
     return product.image;
   };
 
@@ -52,12 +50,14 @@ export const ProductCard = ({ product, onConfigure }) => {
           {product.name}
         </h3>
         <div className="flex justify-between items-center text-xs">
-          <span className={`px-2 py-1 rounded-full ${
-            product.status === 'activo' 
-              ? 'bg-green-100 text-green-800' 
-              : 'bg-gray-100 text-gray-800'
-          }`}>
-            {product.status === 'activo' ? 'Activo' : 'Inactivo'}
+          <span
+            className={`px-2 py-1 rounded-full ${
+              product.status === "activo"
+                ? "bg-green-100 text-green-800"
+                : "bg-gray-100 text-gray-800"
+            }`}
+          >
+            {product.status === "activo" ? "Activo" : "Inactivo"}
           </span>
           <span className="text-slate-500">{product.type}</span>
         </div>
@@ -65,11 +65,17 @@ export const ProductCard = ({ product, onConfigure }) => {
           {product.price}
         </p>
       </div>
-      <button 
+      <button
         className="w-full bg-blue-500 hover:bg-blue-600 text-white text-xs py-2 px-4 rounded"
         onClick={onConfigure}
       >
         Configurar
+      </button>
+      <button
+        className="w-full mt-2 bg-red-500 hover:bg-red-600 text-white text-xs py-2 px-4 rounded"
+        onClick={onDelete}
+      >
+        Eliminar
       </button>
     </div>
   );

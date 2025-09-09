@@ -1,3 +1,5 @@
+import camelize from "camelize";
+import apiClient from "../config/api";
 import { getAuthToken } from "../utils/authCookies";
 import { BACK_BASE_URL } from "../utils/backendUrl";
 
@@ -65,6 +67,34 @@ export class ProductService {
       return result;
     } catch (error) {
       console.error("Error en ProductService.createProduct:", error);
+      throw error;
+    }
+  }
+
+  static async deleteProduct(productId) {
+    try {
+      const token = getAuthToken();
+      if (!token) throw new Error("No se encontró token de autenticación");
+
+      const response = camelize(
+        (
+          await apiClient.delete(
+            `/api/assistants/ventas-wp/products/delete-by-id/${productId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+              credentials: "include",
+            }
+          )
+        ).data
+      );
+
+      if (response.status !== "ok") {
+        throw new Error(response.message || "Error al eliminar el producto");
+      }
+
+      return response;
+    } catch (error) {
+      console.error("Error al intentar eliminar el producto: ", error);
       throw error;
     }
   }
@@ -211,7 +241,6 @@ export class ProductService {
     const recordatorios = productData.recordatorios || {};
     const remarketing = productData.remarketing || {};
     const activadores = productData.activadores_del_flujo || {};
-
 
     const multimediaData = embudo.multimedia || {};
     console.log("🔧 [NORMALIZE] Multimedia extraída:", multimediaData);
