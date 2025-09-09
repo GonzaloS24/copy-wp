@@ -43,6 +43,9 @@ const RecoveryMessagesSection = () => {
   const reminder2Data = parseTimeString(
     carritoData.mensajes_recuperacion?.tiempo_recordatorio_2 || "10 minutos"
   );
+  const reminder3Data = parseTimeString(
+    carritoData.mensajes_recuperacion?.tiempo_recordatorio_3 || "15 minutos"
+  );
 
   const Tooltip = ({ content }) => (
     <div className="relative inline-block group">
@@ -185,6 +188,44 @@ const RecoveryMessagesSection = () => {
                   value={reminder2Data.unit}
                   onChange={(e) =>
                     handleTimeChange(2, reminder2Data.time, e.target.value)
+                  }
+                >
+                  {timeUnits.map((unit) => (
+                    <option key={unit.value} value={unit.value}>
+                      {unit.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="flex flex-col">
+              <div className="flex items-center gap-3 mb-3">
+                <label className="block font-semibold text-slate-700 text-sm sm:text-base tracking-tight">
+                  Tiempo del recordatorio 3
+                </label>
+                <Tooltip content="Tiempo de espera antes de enviar el segundo recordatorio. Ajusta según el flujo ideal para tu tienda." />
+              </div>
+              <div className="flex gap-0">
+                <input
+                  type="number"
+                  className="flex-1 p-3 sm:p-4 border-2 border-slate-200 border-r-0 rounded-l-xl text-sm sm:text-base text-center bg-white text-slate-700 min-w-0 focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10"
+                  min="1"
+                  placeholder="15"
+                  value={reminder3Data.time}
+                  onChange={(e) =>
+                    handleTimeChange(
+                      3,
+                      parseInt(e.target.value) || 1,
+                      reminder3Data.unit
+                    )
+                  }
+                />
+                <select
+                  className="flex-1 p-3 sm:p-4 border-2 border-slate-200 rounded-r-xl text-sm sm:text-base bg-white text-slate-700 cursor-pointer min-w-0 focus:outline-none focus:border-sky-500 focus:shadow-lg focus:shadow-sky-500/10"
+                  value={reminder3Data.unit}
+                  onChange={(e) =>
+                    handleTimeChange(3, reminder3Data.time, e.target.value)
                   }
                 >
                   {timeUnits.map((unit) => (

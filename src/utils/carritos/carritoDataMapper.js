@@ -64,6 +64,8 @@ export const mapCarritoDataToApiFormat = (carritoData) => {
         carritoData.mensajes_recuperacion?.tiempo_recordatorio_1 || "",
       tiempo_recordatorio_2:
         carritoData.mensajes_recuperacion?.tiempo_recordatorio_2 || "",
+      tiempo_recordatorio_3:
+        carritoData.mensajes_recuperacion?.tiempo_recordatorio_3 || "",
       mensaje_agradecimiento:
         carritoData.mensajes_recuperacion?.mensaje_agradecimiento || "",
     },
@@ -76,6 +78,9 @@ export const mapCarritoDataToApiFormat = (carritoData) => {
       // Solo convierte a boolean si no es string vacío
       subida_automatica: carritoData.acciones_especiales?.subida_automatica
         ? formatBoolean(carritoData.acciones_especiales.subida_automatica)
+        : "no",
+      imagenes_producto: carritoData.acciones_especiales?.imagenes_producto
+        ? formatBoolean(carritoData.acciones_especiales.imagenes_producto)
         : "no",
       origen_datos: carritoData.acciones_especiales?.origen_datos || "",
     },
