@@ -3,7 +3,7 @@ import apiClient from "../../config/api";
 const CARRITO_ENDPOINTS = {
   SAVE_CONFIGURATION: "/api/assistants/set-info",
   GET_CONFIGURATION:
-    "/api/assistants/get-info/[Carritos]%20Configuracion%20General",
+    "/api/assistants/get-info/[Carritos]%20Configuracion",
 };
 
 export class CarritoService {
