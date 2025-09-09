@@ -1,3 +1,5 @@
+import camelize from "camelize";
+import apiClient from "../config/api";
 import { getAuthToken } from "../utils/authCookies";
 import { BACK_BASE_URL } from "../utils/backendUrl";
 
@@ -47,7 +49,7 @@ export class ProductService {
       );
 
       const response = await fetch(
-        `${BACK_BASE_URL}/api/assistants/ventas-wp/bot-fields`,
+        `${BACK_BASE_URL}/api/integrations/chateapro/bot-fields`,
         this.createPostFetchOptions(token, payload)
       );
 
@@ -69,13 +71,41 @@ export class ProductService {
     }
   }
 
+  static async deleteProduct(productId) {
+    try {
+      const token = getAuthToken();
+      if (!token) throw new Error("No se encontró token de autenticación");
+
+      const response = camelize(
+        (
+          await apiClient.delete(
+            `/api/assistants/ventas-wp/products/delete-by-id/${productId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+              credentials: "include",
+            }
+          )
+        ).data
+      );
+
+      if (response.status !== "ok") {
+        throw new Error(response.message || "Error al eliminar el producto");
+      }
+
+      return response;
+    } catch (error) {
+      console.error("Error al intentar eliminar el producto: ", error);
+      throw error;
+    }
+  }
+
   static async getProducts() {
     try {
       const token = getAuthToken();
       if (!token) throw new Error("No se encontró token de autenticación");
 
       const response = await fetch(
-        `${BACK_BASE_URL}/api/assistants/ventas-wp/products`,
+        `${BACK_BASE_URL}/api/integrations/chateapro/products`,
         this.createFetchOptions(token)
       );
 
@@ -106,7 +136,7 @@ export class ProductService {
 
       console.log(" Obteniendo configuración del producto ID:", cleanId);
 
-      const endpoint = `${BACK_BASE_URL}/api/assistants/ventas-wp/products/${cleanId}`;
+      const endpoint = `${BACK_BASE_URL}/api/integrations/chateapro/products/${cleanId}`;
 
       const response = await fetch(endpoint, this.createFetchOptions(token));
 
@@ -181,7 +211,7 @@ export class ProductService {
       };
 
       const response = await fetch(
-        `${BACK_BASE_URL}/api/assistants/ventas-wp/bot-fields`,
+        `${BACK_BASE_URL}/api/integrations/chateapro/bot-fields`,
         fetchOptions
       );
 

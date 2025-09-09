@@ -11,7 +11,7 @@ const botKeyandIdAdService = {
       }
 
       const response = await axios.get(
-        `${BACK_BASE_URL}/api/assistants/ventas-wp/trigger-field`,
+        `${BACK_BASE_URL}/api/integrations/chateapro/trigger-field`,
         {
           headers: {
             "Content-Type": "application/json",

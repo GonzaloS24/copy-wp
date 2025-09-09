@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export const ProductCard = ({ product, onConfigure }) => {
+export const ProductCard = ({ product, onConfigure, onDelete }) => {
   const [imageError, setImageError] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
 
@@ -66,17 +66,17 @@ export const ProductCard = ({ product, onConfigure }) => {
         </p>
       </div>
       <button
-        className="w-30% mx-5% bg-blue-500 hover:bg-blue-600 text-white text-xs py-2 px-4 rounded"
+        className="w-full bg-blue-500 hover:bg-blue-600 text-white text-xs py-2 px-4 rounded"
         onClick={onConfigure}
       >
         Configurar
       </button>
-      {/* <button
-        className="w-30% mx-5% bg-blue-500 hover:bg-blue-600 text-white text-xs py-2 px-4 rounded"
-        onClick={onConfigure}
+      <button
+        className="w-full mt-2 bg-red-500 hover:bg-red-600 text-white text-xs py-2 px-4 rounded"
+        onClick={onDelete}
       >
         Eliminar
-      </button> */}
+      </button>
     </div>
   );
 };

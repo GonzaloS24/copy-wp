@@ -32,7 +32,7 @@ export class productConfigService {
       console.log("Configuring product with data:", configData);
 
       const response = await fetch(
-        `${BACK_BASE_URL}/api/assistants/ventas-wp/set-bot-fields-by-name`,
+        `${BACK_BASE_URL}/api/integrations/chateapro/set-bot-fields-by-name`,
         this.createFetchOptions(token, configData)
       );
 
@@ -62,7 +62,7 @@ export class productConfigService {
       console.log("Fetching general configuration...");
 
       const response = await fetch(
-        `${BACK_BASE_URL}/api/assistants/ventas-wp/general-configuration`,
+        `${BACK_BASE_URL}/api/integrations/chateapro/general-configuration`,
         this.createFetchOptions(token)
       );
 
