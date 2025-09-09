@@ -9,6 +9,7 @@ import { showError, showSuccess } from "../../utils/sweetAlerts/sweetAlertUtils"
 export const ProductButtons = () => {
   const { productData } = useProduct();
   const [isGeneratingAssistant, setIsGeneratingAssistant] = useState(false);
+  
 
   const {
     isSaving,
@@ -24,23 +25,25 @@ export const ProductButtons = () => {
     navigate,
   } = useProductSave();
 
-  const openAutoAssistantModal = () => {
-    setIsGeneratingAssistant(true);
+ const openAutoAssistantModal = () => {
+    setIsGeneratingAssistant(true); 
     console.log("Abriendo modal de asistente automático");
-  };
+ };
+
+  const closeAutoAssistantModal = () => {
+   setIsGeneratingAssistant(false);
+  console.log("Cerrando modal de asistente automático");  
+};
 
   const handleSave = async (forceInactive = false) => {
-    // Pasar skipNavigation: true cuando estemos en modo edición
     const result = await saveProduct(productData, forceInactive, false, isEditMode());
 
     if (result.success) {
       showSuccess('¡Éxito!', result.message);
       
-      // Solo navegar si hay navigateTo definido
       if (result.navigateTo) {
         navigate(result.navigateTo);
       }
-      // Si estamos en modo edición y no hay navigateTo, activar el reset
       else if (isEditMode()) {
         console.log('🔄 Disparando reset automático...');
         window.dispatchEvent(new CustomEvent('resetProductState'));
@@ -156,10 +159,12 @@ export const ProductButtons = () => {
   return (
     <>
       <div className="fixed bottom-8 left-80 right-8 flex justify-between items-center">
-        <SaveButton isLoading={isSaving} onClick={() => handleSave(false)} />
-        <AutoAssistantButton
-          isLoading={isGeneratingAssistant}
-          onClick={openAutoAssistantModal}
+      <SaveButton isLoading={isSaving} onClick={() => handleSave(false)} />
+      <AutoAssistantButton
+        isLoading={isGeneratingAssistant}
+        onClick={openAutoAssistantModal}
+        isModalOpen={isGeneratingAssistant} 
+        onClose={closeAutoAssistantModal} 
         />
       </div>
 

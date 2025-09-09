@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
+import React from 'react'; 
 import ProductInfoSelector from '../dialog/ProductInfoSelector';
 
 export const AutoAssistantButton = ({
   isLoading = false,
   onClick,
+  isModalOpen,
+  onClose,
   loadingText = 'Generando...',
   defaultText = 'Crea tu asistente en segundos',
   className = ''
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
   return (
     <>
       <button 
@@ -18,7 +18,7 @@ export const AutoAssistantButton = ({
             ? 'bg-gray-400 cursor-not-allowed' 
             : 'bg-gradient-to-r from-blue-500 to-blue-600 shadow-blue-500/25 hover:from-blue-600 hover:to-blue-700 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-blue-500/35 active:translate-y-0'
         } ${className}`}
-        onClick={() => setIsModalOpen(true)}
+        onClick={onClick}
         disabled={isLoading}
       >
         <span className="text-base">
@@ -30,8 +30,8 @@ export const AutoAssistantButton = ({
       </button>
 
       <ProductInfoSelector 
-        isOpen={isModalOpen} 
-        onClose={() => setIsModalOpen(false)} 
+        isOpen={isModalOpen}
+        onClose={onClose}
       />
     </>
   );

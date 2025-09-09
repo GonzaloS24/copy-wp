@@ -41,6 +41,10 @@ const ProductInfoSelector = ({ isOpen, onClose }) => {
     };
   }, [isOpen, onClose, isLoading]);
 
+  if (!isOpen) {
+    return null;
+  }
+
   const sources = {
     dropi: {
       id: 'dropi',
@@ -144,10 +148,10 @@ const ProductInfoSelector = ({ isOpen, onClose }) => {
     };
 
   const modalContent = (
-    <div 
-      className="fixed inset-0 top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 flex items-center justify-center p-4 animate-in fade-in duration-300"
+    <div
+    className="fixed inset-0 top-0 left-0 right-0 bottom-0 bg-black bg-opacity-50 flex items-center justify-center p-4 animate-in fade-in duration-300"
       style={{ zIndex: 99999, position: 'fixed', width: '100vw', height: '100vh' }}
-    >
+      >
       <div 
         ref={modalRef}
         className="max-w-md w-full mx-auto bg-white rounded-3xl shadow-2xl p-6 relative animate-in slide-in-from-bottom-4 duration-500 border border-gray-100"
